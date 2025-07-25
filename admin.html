@@ -72,6 +72,12 @@
             background-color: #6c757d;
             cursor: default;
         }
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        .btn-delete:hover {
+            background-color: #bd2130;
+        }
         .search-container {
             margin-bottom: 20px;
             display: flex;
@@ -246,6 +252,7 @@
                     <th>Referencia</th>
                     <th>Estado</th>
                     <th>Acciones</th>
+                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -383,10 +390,13 @@
 
         // Actualizar estadísticas
         function updateStats(transactions) {
-            const totalSales = transactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+            // Solo incluir transacciones verificadas en las ventas totales
+            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+            
+            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
             const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
-            const verifiedCount = transactions.filter(t => t.status === 'VERIFICADO').length;
-            const soldTickets = transactions.filter(t => t.status === 'VERIFICADO').reduce((sum, t) => sum + t.tickets, 0);
+            const verifiedCount = verifiedTransactions.length;
+            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
             
             document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
             document.getElementById('pendingCount').textContent = pendingCount;
@@ -400,7 +410,7 @@
             tbody.innerHTML = "";
 
             if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;">No se encontraron transacciones</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">No se encontraron transacciones</td></tr>`;
                 return;
             }
 
@@ -425,9 +435,49 @@
                             `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">Verificar</button>` : 
                             '<button class="btn-verified" disabled>Verificado</button>'}
                     </td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // Eliminar transacción
+        async function deleteTransaction(transactionId) {
+            if (confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) {
+                try {
+                    // 1. Eliminar transacción
+                    const deleteRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    });
+                    
+                    if (deleteRes.ok) {
+                        // 2. Eliminar tickets asociados
+                        await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        });
+                        
+                        alert("Transacción eliminada correctamente");
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error eliminando transacción:", error);
+                    alert("Ocurrió un error al eliminar la transacción");
+                }
+            }
         }
 
         // Verificar pago
