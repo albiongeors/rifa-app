@@ -231,6 +231,53 @@
         let currentFilter = 'all';
         let currentSearch = '';
 
+        // Función para generar tickets
+        async function generateTickets(transactionId, quantity) {
+            try {
+                // Obtener el último número de ticket
+                const lastTicketRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&order=ticket_number.desc&limit=1`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                let lastTicketNumber = 0;
+                if (lastTicketRes.ok) {
+                    const lastTickets = await lastTicketRes.json();
+                    if (lastTickets.length > 0) {
+                        lastTicketNumber = lastTickets[0].ticket_number;
+                    }
+                }
+                
+                // Generar nuevos tickets
+                const tickets = [];
+                for (let i = 1; i <= quantity; i++) {
+                    tickets.push({
+                        transaction_id: transactionId,
+                        ticket_number: lastTicketNumber + i,
+                        status: "ACTIVO"
+                    });
+                }
+                
+                // Insertar en la base de datos
+                const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(tickets)
+                });
+                
+                return insertRes.ok;
+            } catch (error) {
+                console.error("Error generando tickets:", error);
+                return false;
+            }
+        }
+
         // Cargar configuración
         async function loadConfig() {
             try {
@@ -337,7 +384,7 @@
                     <td>${transaction.status}</td>
                     <td>
                         ${transaction.status !== "VERIFICADO" ? 
-                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id})">Verificar</button>` : 
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets})">Verificar</button>` : 
                             '<button class="btn-verified" disabled>Verificado</button>'}
                     </td>
                 `;
@@ -346,9 +393,18 @@
         }
 
         // Verificar pago
-        async function verifyPayment(transactionId) {
+        async function verifyPayment(transactionId, ticketQuantity) {
             if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
                 try {
+                    // 1. Generar tickets
+                    const ticketsGenerated = await generateTickets(transactionId, ticketQuantity);
+                    
+                    if (!ticketsGenerated) {
+                        alert("Error generando tickets. Verifica la consola para más detalles.");
+                        return;
+                    }
+                    
+                    // 2. Actualizar estado de transacción
                     const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
                         method: 'PATCH',
                         headers: {
@@ -361,7 +417,7 @@
                     
                     if (response.ok) {
                         loadTransactions();
-                        alert("Pago verificado correctamente");
+                        alert(`Pago verificado y ${ticketQuantity} tickets generados correctamente`);
                     } else {
                         throw new Error("Error en la respuesta");
                     }

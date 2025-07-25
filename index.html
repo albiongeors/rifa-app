@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rifa Dream ON & Husky Dexa™</title>
+    <title>GANA CON YAIR™</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -125,7 +125,7 @@
     <div class="container">
         <header>
             <h1>RIFA PREMIUM</h1>
-            <p>Dream ON & Husky Dexa™</p>
+            <p>GANA CON YAIR™</p>
         </header>
 
         <!-- Paso 1: Inicio -->
@@ -226,7 +226,7 @@
         const CONFIG = {
             adminWhatsApp: "584127430912",         // Tu número de WhatsApp con código de país
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",        // URL de tu proyecto Supabase
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0NDIwMzYsImV4cCI6MjA2OTAxODAzNn0.miemXAkYOwzOwBhUX4DOGc7plqHvBuKTjd4BLElNBpw",        // Clave anónima de Supabase
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",        // Clave anónima de Supabase
             adminPanelUrl: "https://rifa-app-dp6h.vercel.app/admin",               // URL del panel de administración
             totalTickets: 5000,                    // Total de boletos disponibles
             pricePerTicket: 80,                   // Precio por boleto
@@ -278,7 +278,7 @@
             updateTicketUI();
         }
 
-        // Obtener boletos vendidos desde Supabase
+        // Obtener boletos vendidos desde Supabase (CORREGIDO)
         async function fetchSoldTickets() {
             try {
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
@@ -288,6 +288,8 @@
                     }
                 });
                 
+                if (!response.ok) throw new Error('Error en la respuesta');
+                
                 const transactions = await response.json();
                 soldTickets = transactions
                     .filter(t => t.status === 'VERIFICADO')
@@ -296,11 +298,13 @@
                 document.getElementById('soldTickets').textContent = soldTickets;
                 document.getElementById('availableTickets').textContent = CONFIG.totalTickets - soldTickets;
                 
-                // Actualizar barra de progreso
                 const progress = (soldTickets / CONFIG.totalTickets) * 100;
                 document.getElementById('progressBar').style.width = `${progress}%`;
             } catch (error) {
                 console.error("Error obteniendo boletos vendidos:", error);
+                // Mostrar valores por defecto en caso de error
+                document.getElementById('soldTickets').textContent = "0";
+                document.getElementById('availableTickets').textContent = CONFIG.totalTickets;
             }
         }
 
@@ -313,57 +317,58 @@
             document.getElementById('mobileAmount').textContent = total;
         }
 
-        // Guardar datos en Supabase
+        // Guardar datos en Supabase (CORREGIDO)
         async function saveData() {
-    const data = {
-        name: document.getElementById('fullName').value,
-        id_number: document.getElementById('idNumber').value,
-        phone: document.getElementById('phone').value,
-        email: document.getElementById('email').value,
-        tickets: ticketQuantity,
-        reference: document.getElementById('referenceNumber').value,
-        status: "PENDIENTE"
-    };
+            const data = {
+                name: document.getElementById('fullName').value,
+                id_number: document.getElementById('idNumber').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                tickets: ticketQuantity,
+                reference: document.getElementById('referenceNumber').value,
+                status: "PENDIENTE"
+            };
 
-    try {
-        const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': CONFIG.supabaseKey,
-                'Authorization': `Bearer ${CONFIG.supabaseKey}`
-            },
-            body: JSON.stringify(data)
-        });
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(data)
+                });
 
-        // CORRECCIÓN: Supabase devuelve un array con los objetos insertados
-        const result = await response.json();
-        
-        // Verificar si la respuesta contiene elementos
-        if (result && result.length > 0) {
-            return { success: true, id: result[0].id };
-        } else {
-            throw new Error('Respuesta vacía de Supabase');
-        }
-    } catch (error) {
-        console.error("Error guardando datos:", error);
-        return { success: false };
+                // Verificar si la respuesta es exitosa
+                if (response.ok) {
+                    const result = await response.json();
+                    return { success: true, id: result[0].id };
+                } else {
+                    const errorData = await response.json();
+                    console.error("Error en la respuesta:", errorData);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("Error guardando datos:", error);
+                return { success: false };
             }
         }
 
-        // Enviar notificación por WhatsApp
+        // Enviar notificación por WhatsApp (CORREGIDO)
         function sendWhatsAppNotification(data) {
+            const formattedPhone = CONFIG.adminWhatsApp.replace(/[^0-9]/g, '');
             const message = `NUEVO PAGO REPORTADO!%0A%0A` +
-                           `Nombre: ${data.name}%0A` +
-                           `CI: ${data.id_number}%0A` +
-                           `Teléfono: ${data.phone}%0A` +
-                           `Email: ${data.email}%0A` +
+                           `Nombre: ${encodeURIComponent(data.name)}%0A` +
+                           `CI: ${encodeURIComponent(data.id_number)}%0A` +
+                           `Teléfono: ${encodeURIComponent(data.phone)}%0A` +
+                           `Email: ${encodeURIComponent(data.email)}%0A` +
                            `Boletos: ${data.tickets}%0A` +
-                           `Referencia: ${data.reference}%0A` +
+                           `Referencia: ${encodeURIComponent(data.reference)}%0A` +
                            `Monto: ${data.tickets * CONFIG.pricePerTicket} Bs.%0A%0A` +
-                           `Verificar en: ${window.location.origin}${CONFIG.adminPanelUrl}`;
+                           `Verificar en: ${encodeURIComponent(window.location.origin + CONFIG.adminPanelUrl)}`;
             
-            window.open(`https://wa.me/${CONFIG.adminWhatsApp}?text=${message}`, '_blank');
+            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
         }
 
         // Cambiar entre pasos
