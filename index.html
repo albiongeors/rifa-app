@@ -94,30 +94,18 @@
             transition: width 0.5s ease;
         }
         
-        .ticket-counter {
+        .ticket-input-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             margin: 20px 0;
         }
         
-        .counter-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: #4361ee;
-            color: white;
+        .ticket-input-container input {
+            max-width: 200px;
+            text-align: center;
             font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .counter-value {
-            font-size: 24px;
-            margin: 0 20px;
+            padding: 15px;
         }
         
         .prize-image {
@@ -126,6 +114,12 @@
             margin-bottom: 20px;
             max-height: 200px;
             object-fit: cover;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin: 5px 0 15px;
+            display: none;
         }
     </style>
 </head>
@@ -153,10 +147,8 @@
         <!-- Paso 2: Cantidad de boletos -->
         <div id="step2" class="step-container">
             <h2 style="text-align:center; margin-bottom:20px;">¿Cuántos boletos?</h2>
-            <div class="ticket-counter">
-                <button id="decreaseBtn" class="counter-btn">-</button>
-                <span id="ticketQuantity" class="counter-value">1</span>
-                <button id="increaseBtn" class="counter-btn">+</button>
+            <div class="ticket-input-container">
+                <input type="number" id="ticketQuantityInput" min="1" value="1" required>
             </div>
             <p style="text-align:center;">Precio por boleto: <strong id="ticketPrice">Bs. 0</strong></p>
             <p style="text-align:center; font-size:20px; margin:10px 0;">Total: <strong id="totalAmount">0</strong> Bs.</p>
@@ -192,8 +184,8 @@
             <div id="bankDetails">
                 <h3 style="text-align:center; margin-bottom:15px;">Datos para transferencia</h3>
                 <p><strong>Banco:</strong> <span id="bankName">Banco de Venezuela</span></p>
-                <p><strong>Titular:</strong> <span id="accountHolder">Dream ON, C.A.</span></p>
-                <p><strong>RIF:</strong> <span id="accountRif">J-412345678</span></p>
+                <p><strong>Titular:</strong> <span id="accountHolder">GANA CON YAIR, C.A.</span></p>
+                <p><strong>RIF:</strong> <span id="accountRif">V-412345678</span></p>
                 <p><strong>Cuenta:</strong> <span id="accountNumber">0102-0456-7890123456</span></p>
                 <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
@@ -208,7 +200,8 @@
 
             <div style="margin:20px 0;">
                 <label>Número de referencia</label>
-                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required readonly>
+                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required>
+                <div id="referenceError" class="error-message"></div>
             </div>
 
             <button id="whatsappBtn" class="btn btn-whatsapp">
@@ -238,8 +231,8 @@
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",        // URL de tu proyecto Supabase
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",        // Clave anónima de Supabase
             adminPanelUrl: "https://rifa-app-dp6h.vercel.app/admin",               // URL del panel de administración
-            totalTickets: 5000,                    // Total de boletos disponibles
-            pricePerTicket: 80,                   // Precio por boleto
+            totalTickets: 10000,                   // 10,000 boletos
+            pricePerTicket: 80,                    // Precio por boleto
             raffleDate: "15 de Diciembre 2025",    // Fecha del sorteo
             prizeImage: "https://via.placeholder.com/400x200?text=Imagen+del+Premio", // URL de la imagen del premio
             
@@ -262,13 +255,7 @@
 
         // Variables globales
         let currentStep = 1;
-        let ticketQuantity = 1;
         let soldTickets = 0;
-
-        // Generar número de referencia único
-        function generateReference() {
-            return 'REF-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-        }
 
         // Inicialización
         async function init() {
@@ -325,7 +312,7 @@
 
         // Actualizar UI de boletos
         function updateTicketUI() {
-            document.getElementById('ticketQuantity').textContent = ticketQuantity;
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
             const total = ticketQuantity * CONFIG.pricePerTicket;
             document.getElementById('totalAmount').textContent = total;
             document.getElementById('paymentAmount').textContent = total;
@@ -334,6 +321,7 @@
 
         // Guardar datos en Supabase
         async function saveData() {
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
             const data = {
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
@@ -372,6 +360,7 @@
 
         // Enviar notificación por WhatsApp
         function openWhatsApp() {
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
             const phone = document.getElementById('phone').value;
@@ -402,21 +391,52 @@
                 container.classList.remove('active');
             });
             document.getElementById(`step${step}`).classList.add('active');
+        }
+
+        // Validar cantidad de boletos
+        function validateTicketQuantity() {
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
+            const availableTickets = CONFIG.totalTickets - soldTickets;
             
-            // Al entrar al paso 4, generar referencia automática
-            if (step === 4) {
-                if (!document.getElementById('referenceNumber').value) {
-                    document.getElementById('referenceNumber').value = generateReference();
-                }
+            if (ticketQuantity < 1) {
+                alert("La cantidad de boletos debe ser al menos 1");
+                return false;
             }
+            
+            if (ticketQuantity > availableTickets) {
+                alert(`Solo quedan ${availableTickets} boletos disponibles`);
+                return false;
+            }
+            
+            return true;
         }
 
         // Event Listeners
         document.addEventListener('DOMContentLoaded', init);
         
         document.getElementById('startBtn').addEventListener('click', () => goToStep(2));
-        document.getElementById('continueToInfo').addEventListener('click', () => goToStep(3));
-        document.getElementById('continueToPayment').addEventListener('click', () => goToStep(4));
+        
+        document.getElementById('continueToInfo').addEventListener('click', () => {
+            if (validateTicketQuantity()) {
+                goToStep(3);
+            }
+        });
+        
+        document.getElementById('continueToPayment').addEventListener('click', () => {
+            // Validar datos personales
+            const name = document.getElementById('fullName').value;
+            const id = document.getElementById('idNumber').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            
+            if (!name || !id || !phone || !email) {
+                alert("Por favor completa todos los campos");
+                return;
+            }
+            
+            goToStep(4);
+        });
+        
         document.getElementById('prevBtn2').addEventListener('click', () => goToStep(1));
         document.getElementById('prevBtn3').addEventListener('click', () => goToStep(2));
         document.getElementById('prevBtn4').addEventListener('click', () => goToStep(3));
@@ -427,23 +447,18 @@
             document.getElementById('phone').value = '';
             document.getElementById('email').value = '';
             document.getElementById('referenceNumber').value = '';
-            ticketQuantity = 1;
+            document.getElementById('ticketQuantityInput').value = '1';
             updateTicketUI();
             goToStep(1);
         });
 
-        document.getElementById('increaseBtn').addEventListener('click', () => {
-            if (ticketQuantity < 10) {
-                ticketQuantity++;
-                updateTicketUI();
+        // Actualizar el total cuando cambia la cantidad
+        document.getElementById('ticketQuantityInput').addEventListener('input', updateTicketUI);
+        document.getElementById('ticketQuantityInput').addEventListener('change', function() {
+            if (this.value < 1) {
+                this.value = 1;
             }
-        });
-
-        document.getElementById('decreaseBtn').addEventListener('click', () => {
-            if (ticketQuantity > 1) {
-                ticketQuantity--;
-                updateTicketUI();
-            }
+            updateTicketUI();
         });
 
         document.getElementById('paymentMethod').addEventListener('change', function() {
@@ -457,10 +472,15 @@
             const id = document.getElementById('idNumber').value;
             const phone = document.getElementById('phone').value;
             const email = document.getElementById('email').value;
+            const reference = document.getElementById('referenceNumber').value;
             
-            if (!name || !id || !phone || !email) {
-                alert("Por favor completa todos tus datos en el paso anterior.");
-                goToStep(3);
+            if (!name || !id || !phone || !email || !reference) {
+                alert("Por favor completa todos los campos");
+                return;
+            }
+            
+            // Validar cantidad de boletos
+            if (!validateTicketQuantity()) {
                 return;
             }
             
@@ -470,7 +490,7 @@
             // Guardar datos en Supabase
             const result = await saveData();
             if (result.success) {
-                document.getElementById('reportReference').textContent = document.getElementById('referenceNumber').value;
+                document.getElementById('reportReference').textContent = reference;
                 goToStep(5);
             } else {
                 alert("Ocurrió un error al guardar tus datos. Por favor contacta al administrador.");
