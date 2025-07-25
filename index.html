@@ -315,32 +315,39 @@
 
         // Guardar datos en Supabase
         async function saveData() {
-            const data = {
-                name: document.getElementById('fullName').value,
-                id_number: document.getElementById('idNumber').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                tickets: ticketQuantity,
-                reference: document.getElementById('referenceNumber').value,
-                status: "PENDIENTE"
-            };
+    const data = {
+        name: document.getElementById('fullName').value,
+        id_number: document.getElementById('idNumber').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        tickets: ticketQuantity,
+        reference: document.getElementById('referenceNumber').value,
+        status: "PENDIENTE"
+    };
 
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    },
-                    body: JSON.stringify(data)
-                });
+    try {
+        const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': CONFIG.supabaseKey,
+                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+            },
+            body: JSON.stringify(data)
+        });
 
-                const result = await response.json();
-                return { success: true, id: result[0].id };
-            } catch (error) {
-                console.error("Error guardando datos:", error);
-                return { success: false };
+        // CORRECCIÓN: Supabase devuelve un array con los objetos insertados
+        const result = await response.json();
+        
+        // Verificar si la respuesta contiene elementos
+        if (result && result.length > 0) {
+            return { success: true, id: result[0].id };
+        } else {
+            throw new Error('Respuesta vacía de Supabase');
+        }
+    } catch (error) {
+        console.error("Error guardando datos:", error);
+        return { success: false };
             }
         }
 
