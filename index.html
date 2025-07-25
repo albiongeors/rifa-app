@@ -62,6 +62,14 @@
             background: #6c757d;
         }
         
+        .btn-whatsapp {
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
         input, select {
             width: 100%;
             padding: 12px;
@@ -200,10 +208,12 @@
 
             <div style="margin:20px 0;">
                 <label>Número de referencia</label>
-                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required>
+                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required readonly>
             </div>
 
-            <button id="continueToReport" class="btn">Reportar pago</button>
+            <button id="whatsappBtn" class="btn btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> Enviar comprobante por WhatsApp
+            </button>
             <button id="prevBtn4" class="btn btn-secondary">Atrás</button>
         </div>
 
@@ -212,7 +222,7 @@
             <div style="text-align:center; padding:20px;">
                 <i class="fas fa-check-circle" style="font-size:60px; color:#4cc9f0; margin-bottom:20px;"></i>
                 <h2>¡Pago Reportado!</h2>
-                <p style="margin:20px 0;">Hemos recibido tu reporte de pago. Estaremos verificando y en cuanto sea confirmado, te enviaremos tus boletos al correo electrónico.</p>
+                <p style="margin:20px 0;">Hemos recibido tu reporte de pago. Estaremos verificando y en cuanto sea confirmado, te enviaremos tus boletos por WhatsApp.</p>
                 <p>Tu número de referencia es: <strong id="reportReference"></strong></p>
                 <button id="returnHome" class="btn">Volver al inicio</button>
             </div>
@@ -255,6 +265,11 @@
         let ticketQuantity = 1;
         let soldTickets = 0;
 
+        // Generar número de referencia único
+        function generateReference() {
+            return 'REF-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        }
+
         // Inicialización
         async function init() {
             // Configurar elementos con valores editables
@@ -278,7 +293,7 @@
             updateTicketUI();
         }
 
-        // Obtener boletos vendidos desde Supabase (CORREGIDO)
+        // Obtener boletos vendidos desde Supabase
         async function fetchSoldTickets() {
             try {
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
@@ -317,7 +332,7 @@
             document.getElementById('mobileAmount').textContent = total;
         }
 
-        // Guardar datos en Supabase (CORREGIDO)
+        // Guardar datos en Supabase
         async function saveData() {
             const data = {
                 name: document.getElementById('fullName').value,
@@ -355,18 +370,27 @@
             }
         }
 
-        // Enviar notificación por WhatsApp (CORREGIDO)
-        function sendWhatsAppNotification(data) {
+        // Enviar notificación por WhatsApp
+        function openWhatsApp() {
+            const name = document.getElementById('fullName').value;
+            const id = document.getElementById('idNumber').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const reference = document.getElementById('referenceNumber').value;
+            const amount = ticketQuantity * CONFIG.pricePerTicket;
+            
             const formattedPhone = CONFIG.adminWhatsApp.replace(/[^0-9]/g, '');
-            const message = `NUEVO PAGO REPORTADO!%0A%0A` +
-                           `Nombre: ${encodeURIComponent(data.name)}%0A` +
-                           `CI: ${encodeURIComponent(data.id_number)}%0A` +
-                           `Teléfono: ${encodeURIComponent(data.phone)}%0A` +
-                           `Email: ${encodeURIComponent(data.email)}%0A` +
-                           `Boletos: ${data.tickets}%0A` +
-                           `Referencia: ${encodeURIComponent(data.reference)}%0A` +
-                           `Monto: ${data.tickets * CONFIG.pricePerTicket} Bs.%0A%0A` +
-                           `Verificar en: ${encodeURIComponent(window.location.origin + CONFIG.adminPanelUrl)}`;
+            const message = encodeURIComponent(
+                `*NUEVO PAGO REPORTADO - RIFA PREMIUM*\n\n` +
+                `*Nombre:* ${name}\n` +
+                `*Cédula:* ${id}\n` +
+                `*Teléfono:* ${phone}\n` +
+                `*Email:* ${email}\n` +
+                `*Boletos:* ${ticketQuantity}\n` +
+                `*Referencia:* ${reference}\n` +
+                `*Monto:* ${amount} Bs.\n\n` +
+                `Adjunto comprobante de pago`
+            );
             
             window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
         }
@@ -378,6 +402,13 @@
                 container.classList.remove('active');
             });
             document.getElementById(`step${step}`).classList.add('active');
+            
+            // Al entrar al paso 4, generar referencia automática
+            if (step === 4) {
+                if (!document.getElementById('referenceNumber').value) {
+                    document.getElementById('referenceNumber').value = generateReference();
+                }
+            }
         }
 
         // Event Listeners
@@ -420,28 +451,29 @@
             document.getElementById('mobileDetails').style.display = this.value === 'mobile' ? 'block' : 'none';
         });
 
-        document.getElementById('continueToReport').addEventListener('click', async () => {
-            if (!document.getElementById('referenceNumber').value) {
-                alert("Por favor ingresa el número de referencia");
+        document.getElementById('whatsappBtn').addEventListener('click', async () => {
+            // Validar que los campos estén llenos
+            const name = document.getElementById('fullName').value;
+            const id = document.getElementById('idNumber').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            
+            if (!name || !id || !phone || !email) {
+                alert("Por favor completa todos tus datos en el paso anterior.");
+                goToStep(3);
                 return;
             }
-
+            
+            // Abrir WhatsApp
+            openWhatsApp();
+            
+            // Guardar datos en Supabase
             const result = await saveData();
             if (result.success) {
-                const transactionData = {
-                    name: document.getElementById('fullName').value,
-                    id_number: document.getElementById('idNumber').value,
-                    phone: document.getElementById('phone').value,
-                    email: document.getElementById('email').value,
-                    tickets: ticketQuantity,
-                    reference: document.getElementById('referenceNumber').value
-                };
-                
-                sendWhatsAppNotification(transactionData);
-                document.getElementById('reportReference').textContent = transactionData.reference;
+                document.getElementById('reportReference').textContent = document.getElementById('referenceNumber').value;
                 goToStep(5);
             } else {
-                alert("Ocurrió un error al guardar tus datos. Por favor, inténtalo de nuevo.");
+                alert("Ocurrió un error al guardar tus datos. Por favor contacta al administrador.");
             }
         });
     </script>

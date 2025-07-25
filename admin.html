@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Panel de Administración - Rifa Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -134,6 +135,43 @@
         .config-panel h2 {
             margin-top: 0;
         }
+        
+        /* Modal de tickets */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -152,11 +190,11 @@
                 </div>
                 <div>
                     <label>Precio por Boleto (Bs.)</label>
-                    <input type="number" id="ticketPrice" value="699" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                    <input type="number" id="ticketPrice" value="80" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
                 </div>
                 <div>
                     <label>Fecha del Sorteo</label>
-                    <input type="text" id="raffleDate" value="15 de Diciembre 2023" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                    <input type="text" id="raffleDate" value="15 de Diciembre 2025" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
                 </div>
                 <div>
                     <label>URL Imagen Premio</label>
@@ -224,7 +262,8 @@
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 5000,
-            pricePerTicket: 80
+            pricePerTicket: 80,
+            adminWhatsApp: "584127430912"
         };
         // ==========================================
 
@@ -271,7 +310,7 @@
                     body: JSON.stringify(tickets)
                 });
                 
-                return insertRes.ok;
+                return insertRes.ok ? tickets : false;
             } catch (error) {
                 console.error("Error generando tickets:", error);
                 return false;
@@ -305,7 +344,6 @@
             };
             
             // En una implementación real, esto guardaría en una base de datos
-            // Aquí simulamos guardar en localStorage
             localStorage.setItem('rifaConfig', JSON.stringify(config));
             alert("Configuración guardada. Recuerda actualizar el archivo config.json en producción.");
         }
@@ -384,7 +422,7 @@
                     <td>${transaction.status}</td>
                     <td>
                         ${transaction.status !== "VERIFICADO" ? 
-                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets})">Verificar</button>` : 
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">Verificar</button>` : 
                             '<button class="btn-verified" disabled>Verificado</button>'}
                     </td>
                 `;
@@ -393,13 +431,13 @@
         }
 
         // Verificar pago
-        async function verifyPayment(transactionId, ticketQuantity) {
+        async function verifyPayment(transactionId, ticketQuantity, phone) {
             if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
                 try {
                     // 1. Generar tickets
-                    const ticketsGenerated = await generateTickets(transactionId, ticketQuantity);
+                    const tickets = await generateTickets(transactionId, ticketQuantity);
                     
-                    if (!ticketsGenerated) {
+                    if (!tickets) {
                         alert("Error generando tickets. Verifica la consola para más detalles.");
                         return;
                     }
@@ -416,8 +454,9 @@
                     });
                     
                     if (response.ok) {
+                        // Mostrar modal con tickets
+                        showTicketsModal(tickets, phone, transactionId);
                         loadTransactions();
-                        alert(`Pago verificado y ${ticketQuantity} tickets generados correctamente`);
                     } else {
                         throw new Error("Error en la respuesta");
                     }
@@ -426,6 +465,55 @@
                     alert("Ocurrió un error al verificar el pago");
                 }
             }
+        }
+
+        // Mostrar modal con tickets
+        function showTicketsModal(tickets, phone, transactionId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const ticketNumbers = tickets.map(t => t.ticket_number).join(', ');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2 style="color:#3a0ca3;">Tickets Generados</h2>
+                    <p>Se han generado ${tickets.length} tickets para la transacción #${transactionId}:</p>
+                    <textarea id="ticketNumbers" style="width:100%; height:150px; margin:15px 0; padding:10px; border-radius:5px; font-family:monospace;">${ticketNumbers}</textarea>
+                    <div class="modal-buttons">
+                        <button onclick="copyTicketNumbers()">Copiar Números</button>
+                        <button class="btn-whatsapp" onclick="sendTicketsByWhatsApp('${phone}', '${ticketNumbers}')">
+                            <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                        </button>
+                        <button onclick="this.closest('.modal').remove()">Cerrar</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Copiar números de tickets
+        function copyTicketNumbers() {
+            const textarea = document.getElementById('ticketNumbers');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Números copiados al portapapeles!');
+        }
+
+        // Enviar tickets por WhatsApp
+        function sendTicketsByWhatsApp(phone, ticketNumbers) {
+            // Limpiar y formatear el teléfono
+            const cleanedPhone = phone.replace(/[^0-9]/g, '');
+            const formattedPhone = cleanedPhone.startsWith('58') ? cleanedPhone : '58' + cleanedPhone;
+            
+            const message = encodeURIComponent(
+                `*TUS TICKETS PARA LA RIFA PREMIUM*\n\n` +
+                `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
+                `${ticketNumbers}\n\n` +
+                `¡Mucha suerte en el sorteo! 🍀`
+            );
+            
+            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
         }
 
         // Establecer filtro
