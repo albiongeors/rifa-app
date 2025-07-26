@@ -178,38 +178,10 @@
             justify-content: center;
             gap: 8px;
         }
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            color: white;
-            font-size: 24px;
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 20px;
-        }
-        .pagination button {
-            padding: 5px 10px;
-            min-width: 35px;
-        }
     </style>
 </head>
 <body>
-    <div id="loadingScreen" class="loading" style="display:none;">
-        <i class="fas fa-spinner fa-spin"></i> Procesando...
-    </div>
-    
-    <div class="container" id="adminContainer" style="display:none;">
+    <div class="container">
         <div class="header">
             <h1>Panel de Administración - Rifa Premium</h1>
             <button onclick="location.reload()">Actualizar</button>
@@ -287,10 +259,6 @@
                 <!-- Los datos se cargarán con JavaScript -->
             </tbody>
         </table>
-        
-        <div class="pagination" id="pagination">
-            <!-- La paginación se cargará con JavaScript -->
-        </div>
     </div>
 
     <script>
@@ -300,84 +268,70 @@
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 10000,
+            totalTickets: 10000,  // 10,000 boletos
             pricePerTicket: 80,
-            adminWhatsApp: "584127430912",
-            adminPassword: "maxi2930", // Cambiar en producción
-            itemsPerPage: 20
+            adminWhatsApp: "584127430912"
         };
         // ==========================================
 
-        // Autenticación
-        function checkAuth() {
-            const password = localStorage.getItem('admin_password');
-            if (password === CONFIG.adminPassword) {
-                document.getElementById('adminContainer').style.display = 'block';
-                initAdmin();
-            } else {
-                const input = prompt("Ingrese la contraseña de administrador:");
-                if (input === CONFIG.adminPassword) {
-                    localStorage.setItem('admin_password', input);
-                    document.getElementById('adminContainer').style.display = 'block';
-                    initAdmin();
-                } else {
-                    alert("Acceso denegado");
-                    window.location.href = "/";
-                }
-            }
-        }
-
         let currentFilter = 'all';
         let currentSearch = '';
-        let currentPage = 1;
-        let totalPages = 1;
-
-        async function initAdmin() {
-            await loadConfig();
-            await loadTransactions();
-            setInterval(loadTransactions, 120000); // Recargar cada 2 minutos
-        }
 
         // Función para formatear números de ticket
         function formatTicketNumber(number) {
-            return String(number).padStart(4, '0');
-        }
-
-        // Función para reservar tickets
-        async function reserveTickets(quantity) {
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/rpc/reserve_tickets`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    },
-                    body: JSON.stringify({ qty: quantity })
-                });
-                
-                if (!response.ok) throw new Error("Error en reserva");
-                
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error("Error reservando tickets:", error);
-                return false;
+            if (number < 100) {
+                return String(number).padStart(3, '0');
+            } else {
+                return String(number);
             }
         }
 
-        // Función para generar tickets
+        // Función para generar tickets aleatorios sin repetir
         async function generateTickets(transactionId, quantity) {
             try {
-                // Reservar tickets
-                const reservedTickets = await reserveTickets(quantity);
-                if (!reservedTickets || reservedTickets.length !== quantity) {
-                    alert(`Error: Solo se pudieron reservar ${reservedTickets?.length || 0} tickets de ${quantity}`);
+                // Obtener todos los tickets existentes
+                const existingTicketsRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const existingTickets = new Set();
+                if (existingTicketsRes.ok) {
+                    const ticketsData = await existingTicketsRes.json();
+                    ticketsData.forEach(ticket => {
+                        existingTickets.add(ticket.ticket_number);
+                    });
+                }
+                
+                // Generar números aleatorios únicos
+                const newTickets = [];
+                const maxAttempts = 10000; // Límite para evitar bucles infinitos
+                let attempts = 0;
+                
+                while (newTickets.length < quantity && attempts < maxAttempts) {
+                    attempts++;
+                    
+                    // Generar número aleatorio entre 1 y totalTickets
+                    const randomNum = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
+                    
+                    // Saltar si ya existe
+                    if (existingTickets.has(randomNum)) continue;
+                    
+                    // Agregar a nuevos tickets y al conjunto existente
+                    newTickets.push(randomNum);
+                    existingTickets.add(randomNum);
+                }
+                
+                // Si no se pudieron generar suficientes tickets
+                if (newTickets.length < quantity) {
+                    alert(`Error: Solo se pudieron generar ${newTickets.length} tickets de ${quantity} solicitados`);
                     return false;
                 }
                 
                 // Preparar datos para insertar
-                const ticketsToInsert = reservedTickets.map(ticketNumber => ({
+                const ticketsToInsert = newTickets.map(ticketNumber => ({
                     transaction_id: transactionId,
                     ticket_number: ticketNumber,
                     status: "ACTIVO"
@@ -435,7 +389,7 @@
         // Cargar transacciones
         async function loadTransactions() {
             try {
-                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
                 
                 // Aplicar filtros
                 if (currentFilter === 'pending') {
@@ -449,11 +403,6 @@
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
                 }
                 
-                // Paginación
-                const from = (currentPage - 1) * CONFIG.itemsPerPage;
-                const to = from + CONFIG.itemsPerPage - 1;
-                url += `&limit=${CONFIG.itemsPerPage}&offset=${from}`;
-                
                 const response = await fetch(url, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
@@ -461,104 +410,29 @@
                     }
                 });
                 
-                // Obtener total de registros para paginación
-                const countResponse = await fetch(`${url}&select=count`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                const countData = await countResponse.json();
-                const totalCount = countData[0]?.count || 0;
-                totalPages = Math.ceil(totalCount / CONFIG.itemsPerPage);
-                
                 const transactions = await response.json();
                 renderTransactions(transactions);
                 updateStats(transactions);
-                renderPagination();
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 alert("Error al cargar las transacciones");
             }
         }
 
-        // Renderizar paginación
-        function renderPagination() {
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            
-            if (totalPages <= 1) return;
-            
-            // Botón Anterior
-            const prevButton = document.createElement('button');
-            prevButton.textContent = '←';
-            prevButton.disabled = currentPage === 1;
-            prevButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadTransactions();
-                }
-            });
-            pagination.appendChild(prevButton);
-            
-            // Números de página
-            const startPage = Math.max(1, currentPage - 2);
-            const endPage = Math.min(totalPages, startPage + 4);
-            
-            for (let i = startPage; i <= endPage; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.disabled = i === currentPage;
-                pageButton.classList.toggle('active', i === currentPage);
-                pageButton.addEventListener('click', () => {
-                    currentPage = i;
-                    loadTransactions();
-                });
-                pagination.appendChild(pageButton);
-            }
-            
-            // Botón Siguiente
-            const nextButton = document.createElement('button');
-            nextButton.textContent = '→';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadTransactions();
-                }
-            });
-            pagination.appendChild(nextButton);
-        }
-
         // Actualizar estadísticas
-        async function updateStats(transactions) {
-            try {
-                // Obtener todas las transacciones verificadas para estadísticas precisas
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                if (!response.ok) throw new Error('Error en estadísticas');
-                
-                const allTransactions = await response.json();
-                const verifiedTransactions = allTransactions.filter(t => t.status === 'VERIFICADO');
-                
-                const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
-                const pendingCount = allTransactions.filter(t => t.status === 'PENDIENTE').length;
-                const verifiedCount = verifiedTransactions.length;
-                const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
-                
-                document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
-                document.getElementById('pendingCount').textContent = pendingCount;
-                document.getElementById('verifiedCount').textContent = verifiedCount;
-                document.getElementById('soldTickets').textContent = soldTickets;
-            } catch (error) {
-                console.error("Error actualizando estadísticas:", error);
-            }
+        function updateStats(transactions) {
+            // Solo incluir transacciones verificadas en las ventas totales
+            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+            
+            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+            const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+            const verifiedCount = verifiedTransactions.length;
+            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
+            
+            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('verifiedCount').textContent = verifiedCount;
+            document.getElementById('soldTickets').textContent = soldTickets;
         }
 
         // Renderizar transacciones
@@ -604,105 +478,73 @@
 
         // Eliminar transacción
         async function deleteTransaction(transactionId) {
-            if (!confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) return;
-            
-            showLoading(true);
-            
-            try {
-                // 1. Obtener tickets asociados para liberarlos
-                const ticketsRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                const tickets = await ticketsRes.json();
-                const ticketNumbers = tickets.map(t => t.ticket_number);
-                
-                // 2. Liberar tickets en el pool
-                if (ticketNumbers.length > 0) {
-                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/rpc/release_tickets`, {
-                        method: 'POST',
+            if (confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) {
+                try {
+                    // 1. Eliminar transacción
+                    const deleteRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'DELETE',
                         headers: {
-                            'Content-Type': 'application/json',
                             'apikey': CONFIG.supabaseKey,
                             'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                        },
-                        body: JSON.stringify({ ticket_numbers: ticketNumbers })
+                        }
                     });
+                    
+                    if (deleteRes.ok) {
+                        // 2. Eliminar tickets asociados
+                        await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        });
+                        
+                        alert("Transacción eliminada correctamente");
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error eliminando transacción:", error);
+                    alert("Ocurrió un error al eliminar la transacción");
                 }
-                
-                // 3. Eliminar tickets
-                await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                // 4. Eliminar transacción
-                await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                alert("Transacción eliminada correctamente");
-                loadTransactions();
-            } catch (error) {
-                console.error("Error eliminando transacción:", error);
-                alert("Ocurrió un error al eliminar la transacción");
-            } finally {
-                showLoading(false);
             }
         }
 
         // Verificar pago
         async function verifyPayment(transactionId, ticketQuantity, phone) {
-            if (!confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) return;
-            
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
-            button.disabled = true;
-            
-            try {
-                // 1. Generar tickets
-                const tickets = await generateTickets(transactionId, ticketQuantity);
-                
-                if (!tickets) {
-                    alert("Error generando tickets. Verifica la consola para más detalles.");
-                    return;
+            if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
+                try {
+                    // 1. Generar tickets
+                    const tickets = await generateTickets(transactionId, ticketQuantity);
+                    
+                    if (!tickets) {
+                        alert("Error generando tickets. Verifica la consola para más detalles.");
+                        return;
+                    }
+                    
+                    // 2. Actualizar estado de transacción
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ status: 'VERIFICADO' })
+                    });
+                    
+                    if (response.ok) {
+                        // Mostrar modal con tickets
+                        showTicketsModal(tickets, phone, transactionId);
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error verificando pago:", error);
+                    alert("Ocurrió un error al verificar el pago");
                 }
-                
-                // 2. Actualizar estado de transacción
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    },
-                    body: JSON.stringify({ status: 'VERIFICADO' })
-                });
-                
-                if (response.ok) {
-                    // Mostrar modal con tickets
-                    showTicketsModal(tickets, phone, transactionId);
-                    loadTransactions();
-                } else {
-                    throw new Error("Error en la respuesta");
-                }
-            } catch (error) {
-                console.error("Error verificando pago:", error);
-                alert("Ocurrió un error al verificar el pago");
-            } finally {
-                button.innerHTML = originalText;
-                button.disabled = false;
             }
         }
 
@@ -763,7 +605,6 @@
         // Establecer filtro
         function setFilter(filter) {
             currentFilter = filter;
-            currentPage = 1; // Resetear a primera página
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -774,16 +615,15 @@
         // Buscar transacciones
         function searchTransactions() {
             currentSearch = document.getElementById('searchInput').value;
-            currentPage = 1; // Resetear a primera página
             loadTransactions();
         }
 
-        function showLoading(show) {
-            document.getElementById('loadingScreen').style.display = show ? 'flex' : 'none';
-        }
-
         // Inicialización
-        document.addEventListener('DOMContentLoaded', checkAuth);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadTransactions();
+            setInterval(loadTransactions, 120000); // Recargar cada 2 minutos
+        });
     </script>
 </body>
 </html>
