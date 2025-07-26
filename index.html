@@ -121,6 +121,20 @@
             margin: 5px 0 15px;
             display: none;
         }
+        
+        /* Estilos para la imagen de premio */
+        .prize-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .prize-image {
+            max-width: 90%;
+            border-radius: 10px;
+            border: 3px solid #4361ee;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -133,7 +147,9 @@
         <!-- Paso 1: Inicio -->
         <div id="step1" class="step-container active">
             <div style="text-align: center; padding: 20px;">
-                <img id="prizeImage" class="prize-image" alt="Premio">
+                <div class="prize-container">
+                    <img id="prizeImage" class="prize-image" alt="Premio">
+                </div>
                 <div class="progress-bar">
                     <div class="progress" id="progressBar"></div>
                 </div>
@@ -227,14 +243,15 @@
         // CONFIGURACIÓN FÁCIL DE EDITAR
         // ==========================================
         const CONFIG = {
-            adminWhatsApp: "584127430912",         // Tu número de WhatsApp con código de país
-            supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",        // URL de tu proyecto Supabase
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",        // Clave anónima de Supabase
-            adminPanelUrl: "https://rifa-app-dp6h.vercel.app/admin",               // URL del panel de administración
-            totalTickets: 10000,                   // 10,000 boletos
-            pricePerTicket: 80,                    // Precio por boleto
-            raffleDate: "15 de Diciembre 2025",    // Fecha del sorteo
-            prizeImage: "https://iili.io/FvJJVdG.jpg", // URL de la imagen del premio
+            adminWhatsApp: "584127430912",
+            supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            adminPanelUrl: "https://rifa-app-dp6h.vercel.app/admin",
+            totalTickets: 10000,
+            pricePerTicket: 80,
+            raffleDate: "15 de Diciembre 2025",
+            // Usamos la URL directa de la imagen
+            prizeImage: "https://iili.io/FvJJVdG.md.png",
             
             // Datos bancarios (editables)
             bankDetails: {
@@ -261,6 +278,7 @@
         async function init() {
             // Configurar elementos con valores editables
             document.getElementById('raffleDate').textContent = CONFIG.raffleDate;
+            // Establecer la imagen del premio desde CONFIG
             document.getElementById('prizeImage').src = CONFIG.prizeImage;
             document.getElementById('ticketPrice').textContent = `Bs. ${CONFIG.pricePerTicket}`;
             
