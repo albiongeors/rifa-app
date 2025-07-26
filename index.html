@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GANA CON YAIR™ - Mejoras</title>
+    <title>RIFA PREMIUM - GANA CON YAIR™</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -171,7 +171,28 @@
             transform: scale(1.1);
         }
         
-        /* Estilos para el ticket en WhatsApp */
+        /* Estilos para los premios */
+        .prizes-container {
+            margin-top: 20px;
+            text-align: left;
+            padding: 0 15px;
+        }
+        
+        .prizes-container h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .prizes-container ul {
+            padding-left: 20px;
+        }
+        
+        .prizes-container li {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        /* Estilos para el ticket */
         .ticket {
             width: 300px;
             background: linear-gradient(135deg, #4361ee, #3a0ca3);
@@ -267,6 +288,14 @@
                 <p>Vendido: <strong id="soldPercentage">0%</strong></p>
                 <p>Disponible: <strong id="availablePercentage">100%</strong></p>
                 <p>Sorteo: <strong id="raffleDate">15 de Diciembre 2025</strong></p>
+                
+                <div class="prizes-container">
+                    <h3>Premios</h3>
+                    <ul id="prizesList">
+                        <!-- Los premios se cargarán por JavaScript -->
+                    </ul>
+                </div>
+                
                 <button id="startBtn" class="btn">Comenzar</button>
             </div>
         </div>
@@ -374,6 +403,11 @@
             pricePerTicket: 80,
             raffleDate: "15 de Diciembre 2025",
             prizeImage: "https://iili.io/FvJJVdG.md.png",
+            prizes: [
+                "1er Premio: Moto Bera 0 km + Lavadora + Nevera",
+                "2do Premio: Cocina + $300",
+                "3er Premio: $500"
+            ],
             
             // Datos bancarios (editables)
             bankDetails: {
@@ -413,6 +447,15 @@
             document.getElementById('mobileBank').textContent = CONFIG.mobileDetails.bank;
             document.getElementById('mobilePhone').textContent = CONFIG.mobileDetails.phone;
             document.getElementById('mobileId').textContent = CONFIG.mobileDetails.id;
+            
+            // Cargar premios
+            const prizesList = document.getElementById('prizesList');
+            prizesList.innerHTML = '';
+            CONFIG.prizes.forEach(prize => {
+                const li = document.createElement('li');
+                li.textContent = prize;
+                prizesList.appendChild(li);
+            });
             
             // Obtener número de boletos vendidos
             await fetchSoldTickets();
