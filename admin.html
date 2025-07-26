@@ -7,20 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary: #3a0ca3;
-            --primary-light: #4361ee;
-            --secondary: #f72585;
-            --success: #4cc9f0;
-            --danger: #e63946;
-            --dark: #212529;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --border: #dee2e6;
-            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            --transition: all 0.3s ease;
-        }
-        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -30,106 +16,46 @@
         
         body {
             background: #f0f2f5;
-            padding: 0;
-            color: var(--dark);
-            line-height: 1.6;
+            padding: 20px;
+            color: #333;
         }
         
         .container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
         
-        /* Sidebar */
-        .sidebar {
-            background: var(--primary);
+        header {
+            background: linear-gradient(135deg, #3a0ca3, #4361ee);
             color: white;
-            padding: 20px 0;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            position: fixed;
-            width: 250px;
-            height: 100vh;
-            z-index: 100;
-            transition: var(--transition);
-        }
-        
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-        }
-        
-        .menu-item {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: var(--transition);
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .menu-item:hover, .menu-item.active {
-            background: rgba(255,255,255,0.1);
-            border-left: 4px solid var(--success);
-        }
-        
-        .menu-item i {
-            width: 24px;
-            text-align: center;
-        }
-        
-        /* Main Content */
-        .main-content {
-            grid-column: 2;
             padding: 20px;
-        }
-        
-        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
             flex-wrap: wrap;
-            gap: 20px;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
+            gap: 15px;
         }
         
-        .header-title h1 {
-            font-size: 28px;
-            color: var(--primary);
-        }
-        
-        .header-title p {
-            color: var(--gray);
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
         .header-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
         
         .btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 10px;
-            background: var(--primary-light);
+            border-radius: 8px;
+            background: #4361ee;
             color: white;
             font-size: 14px;
             font-weight: 600;
@@ -137,17 +63,17 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         
         .btn:hover {
-            background: var(--primary);
+            background: #3a0ca3;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .btn-secondary {
-            background: var(--gray);
+            background: #6c757d;
         }
         
         .btn-success {
@@ -155,88 +81,26 @@
         }
         
         .btn-danger {
-            background: var(--danger);
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: var(--dark);
+            background: #dc3545;
         }
         
         .btn-whatsapp {
             background: #25D366;
         }
         
-        .notification-btn {
-            position: relative;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--light);
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .notification-btn:hover {
-            background: #e9ecef;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            font-size: 10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
         }
         
         .card {
             background: white;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            padding: 25px;
-            transition: var(--transition);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            height: 100%;
         }
         
         .card-header {
@@ -244,94 +108,67 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
         }
         
         .card-title {
             font-size: 18px;
             font-weight: 600;
-            color: var(--primary);
+            color: #3a0ca3;
         }
         
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: rgba(67, 97, 238, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-light);
-            font-size: 24px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
-            color: var(--dark);
-            margin: 10px 0 5px;
+            color: #4361ee;
+            margin: 10px 0;
         }
         
         .stat-label {
-            color: var(--gray);
+            color: #6c757d;
             font-size: 14px;
-        }
-        
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        
-        .stat-change.up {
-            color: #28a745;
-        }
-        
-        .stat-change.down {
-            color: var(--danger);
         }
         
         .chart-container {
-            height: 250px;
+            height: 300px;
             margin-top: 15px;
-        }
-        
-        .data-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .section-title {
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--primary);
         }
         
         .search-container {
             display: flex;
             gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
         
-        .search-input {
+        .search-container input, 
+        .search-container select {
             flex: 1;
-            min-width: 250px;
-            padding: 12px 15px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            min-width: 200px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 14px;
         }
         
@@ -343,20 +180,20 @@
         }
         
         .filter-btn {
-            background: var(--light);
-            color: var(--dark);
-            border: 1px solid var(--border);
+            background: #e9ecef;
+            color: #495057;
+            border: 1px solid #dee2e6;
             padding: 8px 16px;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s;
             font-size: 14px;
         }
         
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--primary-light);
+        .filter-btn.active {
+            background: #4361ee;
             color: white;
-            border-color: var(--primary-light);
+            border-color: #4361ee;
         }
         
         table {
@@ -369,12 +206,12 @@
         th, td {
             padding: 15px;
             text-align: left;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #eee;
         }
         
         th {
             background-color: #f8f9fa;
-            color: var(--gray);
+            color: #495057;
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -384,21 +221,12 @@
             background-color: #f8faff;
         }
         
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+        .verified {
+            background-color: #e8f5e9;
         }
         
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-verified {
-            background: #d4edda;
-            color: #155724;
+        .pending {
+            background-color: #fff8e1;
         }
         
         .action-cell {
@@ -406,60 +234,11 @@
             gap: 8px;
         }
         
-        .action-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            background: var(--light);
-            color: var(--dark);
-            border: none;
-        }
-        
-        .action-btn:hover {
-            background: var(--primary-light);
-            color: white;
-        }
-        
-        .btn-verify {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-        
-        .btn-verify:hover {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-delete {
-            background: rgba(220, 53, 69, 0.1);
-            color: var(--danger);
-        }
-        
-        .btn-delete:hover {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .btn-view {
-            background: rgba(23, 162, 184, 0.1);
-            color: #17a2b8;
-        }
-        
-        .btn-view:hover {
-            background: #17a2b8;
-            color: white;
-        }
-        
         .pagination {
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin: 25px 0 10px;
+            margin: 20px 0;
         }
         
         .pagination button {
@@ -468,20 +247,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            background: var(--light);
-            color: var(--dark);
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #495057;
             border: none;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s;
         }
         
-        .pagination button.active, .pagination button:hover {
-            background: var(--primary-light);
+        .pagination button.active {
+            background: #4361ee;
             color: white;
         }
         
-        /* Modal */
+        .pagination button:hover:not(.active) {
+            background: #dae0e5;
+        }
+        
+        /* Modal de tickets */
         .modal {
             position: fixed;
             top: 0;
@@ -499,12 +282,12 @@
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 20px;
+            border-radius: 15px;
             width: 100%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
         .modal-header {
@@ -513,81 +296,51 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #eee;
         }
         
         .modal-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
-            color: var(--primary);
+            color: #3a0ca3;
         }
         
         .close-modal {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 24px;
             cursor: pointer;
-            color: var(--gray);
+            color: #6c757d;
         }
         
         .tickets-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 12px;
-            margin: 25px 0;
-            max-height: 400px;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 300px;
             overflow-y: auto;
-            padding: 10px;
+            padding: 5px;
         }
         
         .ticket-number {
             background: #f0f4ff;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 600;
-            color: var(--primary-light);
-            transition: var(--transition);
-        }
-        
-        .ticket-number:hover {
-            background: var(--primary-light);
-            color: white;
-            transform: scale(1.05);
+            color: #4361ee;
         }
         
         .modal-buttons {
             display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            gap: 10px;
+            margin-top: 20px;
             justify-content: flex-end;
         }
         
         /* Responsive */
         @media (max-width: 992px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                grid-column: 1;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -596,14 +349,32 @@
                 flex-direction: column;
             }
             
-            .search-input {
+            .search-container input, 
+            .search-container select {
                 width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
             }
         }
         
         /* Animaciones */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -615,318 +386,231 @@
         .stat-card:nth-child(2) { animation-delay: 0.2s; }
         .stat-card:nth-child(3) { animation-delay: 0.3s; }
         .stat-card:nth-child(4) { animation-delay: 0.4s; }
-        
-        /* Toggle sidebar */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 101;
-            background: var(--primary);
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        @media (max-width: 992px) {
-            .menu-toggle {
-                display: flex;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="menu-toggle">
-        <i class="fas fa-bars"></i>
-    </div>
-
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="fas fa-crown"></i>
-                    <span>Rifa Premium</span>
+        <header>
+            <div class="header-title">
+                <i class="fas fa-crown fa-2x"></i>
+                <div>
+                    <h1>Panel de Administración Premium</h1>
+                    <p>Gestión completa de la Rifa Premium</p>
                 </div>
             </div>
-            
-            <ul class="sidebar-menu">
-                <li class="menu-item active">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </li>
-                <li class="menu-item">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Transacciones</span>
-                </li>
-                <li class="menu-item">
-                    <i class="fas fa-users"></i>
-                    <span>Participantes</span>
-                </li>
-                <li class="menu-item">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Reportes</span>
-                </li>
-                <li class="menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Configuración</span>
-                </li>
-                <li class="menu-item">
-                    <i class="fas fa-gift"></i>
-                    <span>Sorteo</span>
-                </li>
-                <li class="menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Soporte</span>
-                </li>
-            </ul>
-        </div>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+                <button id="configBtn" class="btn btn-secondary">
+                    <i class="fas fa-cog"></i> Configuración
+                </button>
+                <button id="logoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </header>
         
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="header">
-                <div class="header-title">
-                    <h1>Panel de Control</h1>
-                    <p>Bienvenido de nuevo, Administrador</p>
-                </div>
-                
-                <div class="header-actions">
-                    <div class="notification-btn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
-                    
-                    <div class="user-profile">
-                        <div class="user-avatar">A</div>
-                        <div>
-                            <div>Administrador</div>
-                            <div style="font-size: 12px; color: var(--gray);">Superadmin</div>
-                        </div>
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Resumen de Ventas</h2>
+                    <div class="date-filter">
+                        <select id="timeFilter">
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month" selected>Este Mes</option>
+                            <option value="all">Todo el Tiempo</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-            
-            <div class="dashboard">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Ventas Totales</div>
-                        <div class="card-icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">VENTAS TOTALES</div>
+                        <div class="stat-value" id="totalSales">Bs. 0</div>
+                        <div class="stat-change" id="salesChange">+0%</div>
                     </div>
-                    <div class="stat-value">Bs. 24,800</div>
-                    <div class="stat-label">Total recaudado</div>
-                    <div class="stat-change up">
-                        <i class="fas fa-arrow-up"></i> 12.5% vs semana anterior
+                    <div class="stat-card">
+                        <div class="stat-label">BOLETOS VENDIDOS</div>
+                        <div class="stat-value" id="soldTickets">0</div>
+                        <div class="stat-change" id="ticketsChange">+0%</div>
                     </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Boletos Vendidos</div>
-                        <div class="card-icon">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-label">PENDIENTES</div>
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-change" id="pendingChange">+0%</div>
                     </div>
-                    <div class="stat-value">310</div>
-                    <div class="stat-label">Total vendidos</div>
-                    <div class="stat-change up">
-                        <i class="fas fa-arrow-up"></i> 8.3% vs semana anterior
+                    <div class="stat-card">
+                        <div class="stat-label">VERIFICADOS</div>
+                        <div class="stat-value" id="verifiedCount">0</div>
+                        <div class="stat-change" id="verifiedChange">+0%</div>
                     </div>
                 </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Transacciones Pendientes</div>
-                        <div class="card-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">12</div>
-                    <div class="stat-label">Por verificar</div>
-                    <div class="stat-change down">
-                        <i class="fas fa-arrow-down"></i> 3.2% vs semana anterior
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Participantes</div>
-                        <div class="card-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">285</div>
-                    <div class="stat-label">Registrados</div>
-                    <div class="stat-change up">
-                        <i class="fas fa-arrow-up"></i> 5.7% vs semana anterior
-                    </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
                 </div>
             </div>
             
-            <div class="data-section">
-                <div class="section-header">
-                    <h2 class="section-title">Transacciones Recientes</h2>
-                    <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Buscar...">
-                        <button class="btn"><i class="fas fa-search"></i> Buscar</button>
-                        <button class="btn btn-secondary"><i class="fas fa-download"></i> Exportar</button>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Distribución de Boletos</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">TOTAL DE BOLETOS</div>
+                        <div class="stat-value" id="totalTicketsStat">10,000</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">DISPONIBLES</div>
+                        <div class="stat-value" id="availableTickets">10,000</div>
+                        <div class="stat-percent" id="availablePercent">100%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">VENDIDOS</div>
+                        <div class="stat-value" id="soldTicketsStat">0</div>
+                        <div class="stat-percent" id="soldPercent">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">TASA DE VENTA</div>
+                        <div class="stat-value" id="salesRate">0/día</div>
                     </div>
                 </div>
-                
-                <div class="filters">
-                    <button class="filter-btn active">Todas</button>
-                    <button class="filter-btn">Hoy</button>
-                    <button class="filter-btn">Esta Semana</button>
-                    <button class="filter-btn">Este Mes</button>
-                    <button class="filter-btn">Pendientes</button>
-                    <button class="filter-btn">Verificados</button>
-                </div>
-                
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Participante</th>
-                                <th>Boletos</th>
-                                <th>Monto</th>
-                                <th>Referencia</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>15/07/2025 10:30</td>
-                                <td>María Rodríguez</td>
-                                <td>5</td>
-                                <td>Bs. 400</td>
-                                <td>REF-001234</td>
-                                <td><span class="status-badge status-verified">VERIFICADO</span></td>
-                                <td class="action-cell">
-                                    <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
-                                    <button class="action-btn btn-verify"><i class="fas fa-check"></i></button>
-                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>15/07/2025 11:45</td>
-                                <td>Carlos Pérez</td>
-                                <td>10</td>
-                                <td>Bs. 800</td>
-                                <td>REF-001235</td>
-                                <td><span class="status-badge status-pending">PENDIENTE</span></td>
-                                <td class="action-cell">
-                                    <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
-                                    <button class="action-btn btn-verify"><i class="fas fa-check"></i></button>
-                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>14/07/2025 09:15</td>
-                                <td>Ana Gómez</td>
-                                <td>2</td>
-                                <td>Bs. 160</td>
-                                <td>REF-001236</td>
-                                <td><span class="status-badge status-verified">VERIFICADO</span></td>
-                                <td class="action-cell">
-                                    <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
-                                    <button class="action-btn btn-verify"><i class="fas fa-check"></i></button>
-                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>14/07/2025 14:20</td>
-                                <td>Luis Martínez</td>
-                                <td>20</td>
-                                <td>Bs. 1,600</td>
-                                <td>REF-001237</td>
-                                <td><span class="status-badge status-verified">VERIFICADO</span></td>
-                                <td class="action-cell">
-                                    <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
-                                    <button class="action-btn btn-verify"><i class="fas fa-check"></i></button>
-                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>13/07/2025 16:50</td>
-                                <td>Elena Torres</td>
-                                <td>15</td>
-                                <td>Bs. 1,200</td>
-                                <td>REF-001238</td>
-                                <td><span class="status-badge status-pending">PENDIENTE</span></td>
-                                <td class="action-cell">
-                                    <button class="action-btn btn-view"><i class="fas fa-eye"></i></button>
-                                    <button class="action-btn btn-verify"><i class="fas fa-check"></i></button>
-                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="pagination">
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>4</button>
-                    <button>5</button>
-                </div>
-            </div>
-            
-            <div class="data-section">
-                <div class="section-header">
-                    <h2 class="section-title">Distribución de Boletos</h2>
-                    <div>
-                        <button class="btn"><i class="fas fa-sync-alt"></i> Actualizar</button>
-                    </div>
-                </div>
-                
                 <div class="chart-container">
                     <canvas id="ticketsChart"></canvas>
                 </div>
             </div>
         </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Transacciones</h2>
+                <div class="export-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-file-export"></i> Exportar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula, teléfono o referencia...">
+                <select id="statusFilter">
+                    <option value="">Todos los estados</option>
+                    <option value="PENDIENTE">Pendientes</option>
+                    <option value="VERIFICADO">Verificados</option>
+                </select>
+                <input type="date" id="dateFilter">
+                <button id="searchBtn" class="btn">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
+                <button class="filter-btn" onclick="setFilter('today')">Hoy</button>
+                <button class="filter-btn" onclick="setFilter('week')">Esta Semana</button>
+                <button class="filter-btn" onclick="setFilter('month')">Este Mes</button>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha <i class="fas fa-sort"></i></th>
+                            <th>Nombre <i class="fas fa-sort"></i></th>
+                            <th>CI</th>
+                            <th>Teléfono</th>
+                            <th>Boletos <i class="fas fa-sort"></i></th>
+                            <th>Referencia</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos se cargarán con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <!-- La paginación se generará con JavaScript -->
+            </div>
+        </div>
     </div>
 
-    <!-- Modal de Tickets -->
-    <div class="modal" style="display: none;">
+    <!-- Modal de Configuración -->
+    <div id="configModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Tickets Asignados</h2>
+                <h2 class="modal-title">Configuración del Sistema</h2>
                 <button class="close-modal">&times;</button>
             </div>
             
-            <p>Transacción: <strong>REF-001235</strong></p>
-            <p>Participante: <strong>Carlos Pérez</strong></p>
-            <p>Cantidad: <strong>10 boletos</strong></p>
-            
-            <div class="tickets-grid">
-                <div class="ticket-number">001</div>
-                <div class="ticket-number">045</div>
-                <div class="ticket-number">123</div>
-                <div class="ticket-number">256</div>
-                <div class="ticket-number">312</div>
-                <div class="ticket-number">487</div>
-                <div class="ticket-number">512</div>
-                <div class="ticket-number">689</div>
-                <div class="ticket-number">745</div>
-                <div class="ticket-number">999</div>
+            <div style="margin: 20px 0;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label>Total de Boletos</label>
+                        <input type="number" id="totalTickets" value="10000" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-top: 8px;">
+                    </div>
+                    <div>
+                        <label>Precio por Boleto (Bs.)</label>
+                        <input type="number" id="ticketPrice" value="80" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-top: 8px;">
+                    </div>
+                    <div>
+                        <label>Fecha del Sorteo</label>
+                        <input type="text" id="raffleDate" value="15 de Diciembre 2025" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-top: 8px;">
+                    </div>
+                    <div>
+                        <label>URL Imagen Premio</label>
+                        <input type="text" id="prizeImageUrl" value="https://iili.io/FvJJVdG.jpg" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-top: 8px;">
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h3>Datos Bancarios</h3>
+                        <div style="margin-top: 15px;">
+                            <div style="margin-bottom: 15px;">
+                                <label>Banco</label>
+                                <input type="text" value="Banco de Venezuela" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label>Titular</label>
+                                <input type="text" value="GANA CON YAIR, C.A." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label>RIF</label>
+                                <input type="text" value="V-412345678" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label>Cuenta</label>
+                                <input type="text" value="0102-0456-7890123456" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3>Datos de Pago Móvil</h3>
+                        <div style="margin-top: 15px;">
+                            <div style="margin-bottom: 15px;">
+                                <label>Banco</label>
+                                <input type="text" value="Banco de Venezuela" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label>Teléfono</label>
+                                <input type="text" value="0412-1234567" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label>Cédula</label>
+                                <input type="text" value="V-12345678" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 5px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="modal-buttons">
-                <button class="btn btn-whatsapp"><i class="fab fa-whatsapp"></i> Enviar por WhatsApp</button>
-                <button class="btn"><i class="fas fa-print"></i> Imprimir</button>
-                <button class="btn btn-secondary close-modal">Cerrar</button>
+                <button class="btn btn-secondary close-modal">Cancelar</button>
+                <button class="btn btn-success" onclick="saveConfig()">Guardar Cambios</button>
             </div>
         </div>
     </div>
@@ -944,23 +628,262 @@
         };
         // ==========================================
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            // Grafico de distribución de boletos
+        // Variables globales
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let transactions = [];
+        let salesChart, ticketsChart;
+
+        // Función para formatear números de ticket
+        function formatTicketNumber(number) {
+            if (number < 100) {
+                return String(number).padStart(3, '0');
+            } else {
+                return String(number);
+            }
+        }
+
+        // Función para generar tickets aleatorios sin repetir
+        async function generateTickets(transactionId, quantity) {
+            try {
+                // Obtener todos los tickets existentes
+                const existingTicketsRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const existingTickets = new Set();
+                if (existingTicketsRes.ok) {
+                    const ticketsData = await existingTicketsRes.json();
+                    ticketsData.forEach(ticket => {
+                        existingTickets.add(ticket.ticket_number);
+                    });
+                }
+                
+                // Generar números aleatorios únicos
+                const newTickets = [];
+                const maxAttempts = 10000;
+                let attempts = 0;
+                
+                while (newTickets.length < quantity && attempts < maxAttempts) {
+                    attempts++;
+                    
+                    // Generar número aleatorio entre 1 y totalTickets
+                    const randomNum = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
+                    
+                    // Saltar si ya existe
+                    if (existingTickets.has(randomNum)) continue;
+                    
+                    // Agregar a nuevos tickets y al conjunto existente
+                    newTickets.push(randomNum);
+                    existingTickets.add(randomNum);
+                }
+                
+                // Si no se pudieron generar suficientes tickets
+                if (newTickets.length < quantity) {
+                    alert(`Error: Solo se pudieron generar ${newTickets.length} tickets de ${quantity} solicitados`);
+                    return false;
+                }
+                
+                // Preparar datos para insertar
+                const ticketsToInsert = newTickets.map(ticketNumber => ({
+                    transaction_id: transactionId,
+                    ticket_number: ticketNumber,
+                    status: "ACTIVO"
+                }));
+                
+                // Insertar en la base de datos
+                const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(ticketsToInsert)
+                });
+                
+                return insertRes.ok ? ticketsToInsert : false;
+            } catch (error) {
+                console.error("Error generando tickets:", error);
+                return false;
+            }
+        }
+
+        // Cargar configuración
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                CONFIG.totalTickets = config.totalTickets;
+                CONFIG.pricePerTicket = config.pricePerTicket;
+                
+                document.getElementById('totalTickets').value = config.totalTickets;
+                document.getElementById('ticketPrice').value = config.pricePerTicket;
+                document.getElementById('raffleDate').value = config.raffleDate;
+                document.getElementById('prizeImageUrl').value = config.prizeImage;
+                
+                // Actualizar estadísticas
+                document.getElementById('totalTicketsStat').textContent = CONFIG.totalTickets.toLocaleString();
+            } catch (error) {
+                console.log("Usando configuración por defecto");
+            }
+        }
+
+        // Guardar configuración
+        async function saveConfig() {
+            const config = {
+                totalTickets: parseInt(document.getElementById('totalTickets').value),
+                pricePerTicket: parseInt(document.getElementById('ticketPrice').value),
+                raffleDate: document.getElementById('raffleDate').value,
+                prizeImage: document.getElementById('prizeImageUrl').value
+            };
+            
+            // En una implementación real, esto guardaría en una base de datos
+            localStorage.setItem('rifaConfig', JSON.stringify(config));
+            alert("Configuración guardada. Recuerda actualizar el archivo config.json en producción.");
+            
+            // Cerrar modal
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        // Cargar transacciones
+        async function loadTransactions() {
+            try {
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
+                
+                // Aplicar filtros
+                if (currentFilter === 'pending') {
+                    url += `&status=eq.PENDIENTE`;
+                } else if (currentFilter === 'verified') {
+                    url += `&status=eq.VERIFICADO`;
+                }
+                
+                // Aplicar búsqueda
+                if (currentSearch) {
+                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                transactions = await response.json();
+                renderTransactions();
+                updateStats();
+                updateCharts();
+            } catch (error) {
+                console.error("Error cargando transacciones:", error);
+                alert("Error al cargar las transacciones");
+            }
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            // Solo incluir transacciones verificadas en las ventas totales
+            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+            
+            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+            const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+            const verifiedCount = verifiedTransactions.length;
+            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
+            const availableTickets = CONFIG.totalTickets - soldTickets;
+            const soldPercent = ((soldTickets / CONFIG.totalTickets) * 100).toFixed(1);
+            const availablePercent = (100 - soldPercent).toFixed(1);
+            
+            // Calcular tasa de venta diaria (simulado)
+            const salesRate = Math.round(soldTickets / 30); // Suponiendo 30 días
+            
+            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('verifiedCount').textContent = verifiedCount;
+            document.getElementById('soldTickets').textContent = soldTickets;
+            document.getElementById('soldTicketsStat').textContent = soldTickets;
+            document.getElementById('availableTickets').textContent = availableTickets;
+            document.getElementById('soldPercent').textContent = `${soldPercent}%`;
+            document.getElementById('availablePercent').textContent = `${availablePercent}%`;
+            document.getElementById('salesRate').textContent = `${salesRate}/día`;
+            
+            // Actualizar cambios porcentuales (simulados)
+            document.getElementById('salesChange').textContent = '+12.5%';
+            document.getElementById('ticketsChange').textContent = '+8.3%';
+            document.getElementById('pendingChange').textContent = '-3.2%';
+            document.getElementById('verifiedChange').textContent = '+5.7%';
+        }
+
+        // Actualizar gráficos
+        function updateCharts() {
+            // Datos simulados para gráficos
+            const salesData = {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'Ventas Diarias (Bs.)',
+                    data: [12000, 19000, 15000, 18000, 22000, 17000, 25000],
+                    backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                    borderColor: 'rgba(67, 97, 238, 1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            };
+            
+            const ticketsData = {
+                labels: ['Disponibles', 'Vendidos'],
+                datasets: [{
+                    data: [75, 25],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.6)',
+                        'rgba(67, 97, 238, 0.6)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            // Destruir gráficos existentes si existen
+            if (salesChart) salesChart.destroy();
+            if (ticketsChart) ticketsChart.destroy();
+            
+            // Crear gráfico de ventas
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: salesData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Crear gráfico de tickets
             const ticketsCtx = document.getElementById('ticketsChart').getContext('2d');
-            const ticketsChart = new Chart(ticketsCtx, {
+            ticketsChart = new Chart(ticketsCtx, {
                 type: 'doughnut',
-                data: {
-                    labels: ['Vendidos', 'Disponibles'],
-                    datasets: [{
-                        data: [25, 75],
-                        backgroundColor: [
-                            '#4361ee',
-                            '#e9ecef'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
+                data: ticketsData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -969,26 +892,297 @@
                             position: 'bottom'
                         }
                     },
-                    cutout: '75%'
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Renderizar transacciones con paginación
+        function renderTransactions() {
+            const tbody = document.querySelector("#transactionsTable tbody");
+            tbody.innerHTML = "";
+            
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = "";
+
+            if (transactions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No se encontraron transacciones</td></tr>`;
+                return;
+            }
+            
+            // Calcular paginación
+            const totalPages = Math.ceil(transactions.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const paginatedTransactions = transactions.slice(startIndex, startIndex + itemsPerPage);
+            
+            // Generar botones de paginación
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.classList.toggle('active', i === currentPage);
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    renderTransactions();
+                });
+                pagination.appendChild(button);
+            }
+            
+            // Renderizar transacciones
+            paginatedTransactions.forEach(transaction => {
+                const row = document.createElement("tr");
+                row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
+                
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${transaction.name}</td>
+                    <td>${transaction.id_number}</td>
+                    <td>${transaction.phone}</td>
+                    <td>${transaction.tickets}</td>
+                    <td>${transaction.reference}</td>
+                    <td>
+                        <span class="status-badge ${transaction.status === 'VERIFICADO' ? 'verified-badge' : 'pending-badge'}">
+                            ${transaction.status}
+                        </span>
+                    </td>
+                    <td class="action-cell">
+                        ${transaction.status !== "VERIFICADO" ? 
+                            `<button class="btn btn-sm btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                                <i class="fas fa-check"></i> Verificar
+                            </button>` : 
+                            `<button class="btn btn-sm btn-verified" disabled>
+                                <i class="fas fa-check-circle"></i> Verificado
+                            </button>`}
+                        <button class="btn btn-sm btn-danger" onclick="deleteTransaction(${transaction.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="viewTickets(${transaction.id})">
+                            <i class="fas fa-ticket-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Eliminar transacción
+        async function deleteTransaction(transactionId) {
+            if (confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) {
+                try {
+                    // 1. Eliminar transacción
+                    const deleteRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    });
+                    
+                    if (deleteRes.ok) {
+                        // 2. Eliminar tickets asociados
+                        await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        });
+                        
+                        alert("Transacción eliminada correctamente");
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error eliminando transacción:", error);
+                    alert("Ocurrió un error al eliminar la transacción");
+                }
+            }
+        }
+
+        // Verificar pago
+        async function verifyPayment(transactionId, ticketQuantity, phone) {
+            if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
+                try {
+                    // 1. Generar tickets
+                    const tickets = await generateTickets(transactionId, ticketQuantity);
+                    
+                    if (!tickets) {
+                        alert("Error generando tickets. Verifica la consola para más detalles.");
+                        return;
+                    }
+                    
+                    // 2. Actualizar estado de transacción
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ status: 'VERIFICADO' })
+                    });
+                    
+                    if (response.ok) {
+                        // Mostrar modal con tickets
+                        showTicketsModal(tickets, phone, transactionId);
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error verificando pago:", error);
+                    alert("Ocurrió un error al verificar el pago");
+                }
+            }
+        }
+
+        // Ver tickets de una transacción
+        async function viewTickets(transactionId) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const tickets = await response.json();
+                    showTicketsModal(tickets, '', transactionId);
+                } else {
+                    throw new Error('Error al obtener tickets');
+                }
+            } catch (error) {
+                console.error('Error obteniendo tickets:', error);
+                alert('No se pudieron obtener los tickets de esta transacción');
+            }
+        }
+
+        // Mostrar modal con tickets
+        function showTicketsModal(tickets, phone, transactionId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            // Formatear números de tickets
+            const formattedTickets = tickets.map(t => 
+                formatTicketNumber(t.ticket_number)
+            );
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Tickets de la Transacción #${transactionId}</h2>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    
+                    <p>Se han generado ${tickets.length} tickets:</p>
+                    
+                    <div class="tickets-grid">
+                        ${formattedTickets.map(ticket => `
+                            <div class="ticket-number">${ticket}</div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button class="btn" onclick="copyTicketNumbers()">
+                            <i class="fas fa-copy"></i> Copiar Números
+                        </button>
+                        ${phone ? `
+                        <button class="btn btn-whatsapp" onclick="sendTicketsByWhatsApp('${phone}', '${formattedTickets.join(', ')}')">
+                            <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                        </button>
+                        ` : ''}
+                        <button class="btn btn-secondary close-modal">Cerrar</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Agregar funcionalidad de cierre
+            modal.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modal.remove();
+                });
+            });
+        }
+
+        // Copiar números de tickets
+        function copyTicketNumbers() {
+            const ticketNumbers = Array.from(document.querySelectorAll('.ticket-number'))
+                .map(el => el.textContent)
+                .join(', ');
+            
+            navigator.clipboard.writeText(ticketNumbers)
+                .then(() => alert('Números copiados al portapapeles!'))
+                .catch(err => console.error('Error al copiar:', err));
+        }
+
+        // Enviar tickets por WhatsApp
+        function sendTicketsByWhatsApp(phone, ticketNumbers) {
+            // Limpiar y formatear el teléfono
+            const cleanedPhone = phone.replace(/[^0-9]/g, '');
+            const formattedPhone = cleanedPhone.startsWith('58') ? cleanedPhone : '58' + cleanedPhone;
+            
+            const message = encodeURIComponent(
+                `*TUS TICKETS PARA LA RIFA PREMIUM*\n\n` +
+                `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
+                `${ticketNumbers}\n\n` +
+                `¡Mucha suerte en el sorteo! 🍀`
+            );
+            
+            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+        }
+
+        // Establecer filtro
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadTransactions();
+        }
+
+        // Buscar transacciones
+        function searchTransactions() {
+            currentSearch = document.getElementById('searchInput').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            currentFilter = statusFilter || 'all';
+            loadTransactions();
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadTransactions();
+            
+            // Configurar eventos
+            document.getElementById('refreshBtn').addEventListener('click', loadTransactions);
+            document.getElementById('searchBtn').addEventListener('click', searchTransactions);
+            document.getElementById('configBtn').addEventListener('click', () => {
+                document.getElementById('configModal').style.display = 'flex';
+            });
+            
+            // Cerrar modal al hacer clic fuera del contenido
+            document.getElementById('configModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('configModal')) {
+                    document.getElementById('configModal').style.display = 'none';
                 }
             });
             
-            // Toggle sidebar en móviles
-            document.querySelector('.menu-toggle').addEventListener('click', function() {
-                document.querySelector('.sidebar').classList.toggle('active');
-            });
-            
-            // Cerrar modal
-            document.querySelector('.close-modal').addEventListener('click', function() {
-                document.querySelector('.modal').style.display = 'none';
-            });
-            
-            // Abrir modal de tickets (ejemplo)
-            document.querySelectorAll('.btn-view').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.querySelector('.modal').style.display = 'flex';
+            // Cerrar modal con botones
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('configModal').style.display = 'none';
                 });
             });
+            
+            // Recargar cada 2 minutos
+            setInterval(loadTransactions, 120000);
         });
     </script>
 </body>
