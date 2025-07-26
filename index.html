@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIFA PREMIUM - GANA CON YAIR™</title>
+    <title>GANA CON YAIR - RIFA PREMIUN™</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -135,7 +135,6 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
-        /* Nuevos estilos para la selección de boletos */
         .ticket-selection {
             display: flex;
             flex-wrap: wrap;
@@ -171,7 +170,6 @@
             transform: scale(1.1);
         }
         
-        /* Estilos para los premios */
         .prizes-container {
             margin-top: 20px;
             text-align: left;
@@ -192,7 +190,6 @@
             font-weight: 500;
         }
         
-        /* Estilos para el ticket */
         .ticket {
             width: 300px;
             background: linear-gradient(135deg, #4361ee, #3a0ca3);
@@ -266,6 +263,10 @@
             color: #3a0ca3;
             font-size: 12px;
             font-weight: bold;
+        }
+        
+        .error {
+            border-color: #dc3545 !important;
         }
     </style>
 </head>
@@ -392,7 +393,7 @@
 
     <script>
         // ==========================================
-        // CONFIGURACIÓN FÁCIL DE EDITAR
+        // CONFIGURACIÓN
         // ==========================================
         const CONFIG = {
             adminWhatsApp: "584127430912",
@@ -409,7 +410,7 @@
                 "3er Premio: $500"
             ],
             
-            // Datos bancarios (editables)
+            // Datos bancarios
             bankDetails: {
                 name: "Banco de Venezuela",
                 holder: "GANA CON YAIR, C.A.",
@@ -417,7 +418,7 @@
                 account: "0102-0456-7890123456"
             },
             
-            // Datos de pago móvil (editables)
+            // Datos de pago móvil
             mobileDetails: {
                 bank: "Banco de Venezuela",
                 phone: "0412-1234567",
@@ -429,6 +430,29 @@
         // Variables globales
         let currentStep = 1;
         let soldTickets = 0;
+        let userData = {};
+
+        // Validaciones
+        function validateCI(ci) {
+            const regex = /^[VE]-\d{5,8}$/i;
+            return regex.test(ci);
+        }
+
+        function validatePhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            return cleaned.length >= 10;
+        }
+
+        // Guardar datos en localStorage
+        function saveUserData() {
+            userData = {
+                name: document.getElementById('fullName').value,
+                id: document.getElementById('idNumber').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
+            localStorage.setItem('rifaData', JSON.stringify(userData));
+        }
 
         // Inicialización
         async function init() {
@@ -456,6 +480,16 @@
                 li.textContent = prize;
                 prizesList.appendChild(li);
             });
+            
+            // Cargar datos guardados
+            const savedData = localStorage.getItem('rifaData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+                document.getElementById('fullName').value = userData.name || '';
+                document.getElementById('idNumber').value = userData.id || '';
+                document.getElementById('phone').value = userData.phone || '';
+                document.getElementById('email').value = userData.email || '';
+            }
             
             // Obtener número de boletos vendidos
             await fetchSoldTickets();
@@ -557,7 +591,7 @@
                 return { success: true };
             } catch (error) {
                 console.error("Error guardando datos:", error);
-                return { success: true };
+                return { success: false };
             }
         }
 
@@ -614,25 +648,6 @@
             return true;
         }
 
-        // Generar diseño de ticket para WhatsApp
-        function generateTicketDesign(ticketNumber) {
-            // Formatear número con ceros a la izquierda (3 dígitos)
-            const formattedNumber = String(ticketNumber).padStart(3, '0');
-            
-            return `
-                <div class="ticket">
-                    <div class="ticket-header">RIFA PREMIUM</div>
-                    <div class="ticket-number">${formattedNumber}</div>
-                    <div class="ticket-qr">CÓDIGO QR<br>${formattedNumber}</div>
-                    <div class="ticket-details">
-                        <div>Fecha: ${new Date().toLocaleDateString()}</div>
-                        <div>Valor: Bs. ${CONFIG.pricePerTicket}</div>
-                    </div>
-                    <div class="ticket-footer">GANA CON YAIR™</div>
-                </div>
-            `;
-        }
-
         // Event Listeners
         document.addEventListener('DOMContentLoaded', init);
         
@@ -640,23 +655,52 @@
         
         document.getElementById('continueToInfo').addEventListener('click', () => {
             if (validateTicketQuantity()) {
+                saveUserData();
                 goToStep(3);
             }
         });
         
         document.getElementById('continueToPayment').addEventListener('click', () => {
-            // Validar datos personales
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
             const phone = document.getElementById('phone').value;
             const email = document.getElementById('email').value;
             
-            if (!name || !id || !phone || !email) {
-                alert("Por favor completa todos los campos");
-                return;
+            // Validaciones
+            let valid = true;
+            if (!name) {
+                alert("Por favor ingresa tu nombre completo");
+                valid = false;
             }
             
-            goToStep(4);
+            if (!validateCI(id)) {
+                alert("Cédula inválida. Formato: V-12345678");
+                document.getElementById('idNumber').classList.add('error');
+                valid = false;
+            } else {
+                document.getElementById('idNumber').classList.remove('error');
+            }
+            
+            if (!validatePhone(phone)) {
+                alert("Teléfono inválido. Debe tener al menos 10 dígitos");
+                document.getElementById('phone').classList.add('error');
+                valid = false;
+            } else {
+                document.getElementById('phone').classList.remove('error');
+            }
+            
+            if (!email || !email.includes('@')) {
+                alert("Correo electrónico inválido");
+                document.getElementById('email').classList.add('error');
+                valid = false;
+            } else {
+                document.getElementById('email').classList.remove('error');
+            }
+            
+            if (valid) {
+                saveUserData();
+                goToStep(4);
+            }
         });
         
         document.getElementById('prevBtn2').addEventListener('click', () => goToStep(1));
@@ -706,15 +750,32 @@
                 return;
             }
             
+            // Validar cédula y teléfono
+            if (!validateCI(id)) {
+                alert("Cédula inválida. Formato: V-12345678");
+                document.getElementById('idNumber').classList.add('error');
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                alert("Teléfono inválido. Debe tener al menos 10 dígitos");
+                document.getElementById('phone').classList.add('error');
+                return;
+            }
+            
             // Abrir WhatsApp
             openWhatsApp();
             
-            // Guardar datos en Supabase (no bloquea el flujo si falla)
-            await saveData();
+            // Guardar datos en Supabase
+            const saveResult = await saveData();
             
-            // Mostrar mensaje de éxito
-            document.getElementById('reportReference').textContent = reference;
-            goToStep(5);
+            if (saveResult.success) {
+                // Mostrar mensaje de éxito
+                document.getElementById('reportReference').textContent = reference;
+                goToStep(5);
+            } else {
+                alert("Hubo un error al guardar tu información. Por favor contacta al administrador.");
+            }
         });
     </script>
 </body>
