@@ -6,82 +6,48 @@
     <title>RIFA PREMIUM - GANA CON YAIR™</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary-color: #f72585;
+            --success-color: #4cc9f0;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            padding: 20px;
+            background: linear-gradient(135deg, #f0f2f5, #e2e8f0);
+            color: var(--dark-text);
             line-height: 1.6;
+            padding: 15px;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-        }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at top right, rgba(67, 97, 238, 0.15) 0%, transparent 40%),
-                        radial-gradient(circle at bottom left, rgba(244, 92, 67, 0.15) 0%, transparent 40%);
-            z-index: -1;
         }
         
         .container {
-            width: 100%;
             max-width: 500px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 
-                        0 0 0 1px rgba(255, 255, 255, 0.05);
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             overflow: hidden;
-            position: relative;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #4361ee, #3a0ca3, #f45c43, #7209b7);
-            z-index: -1;
-            border-radius: 27px;
-            animation: animateBorder 8s linear infinite;
-            background-size: 400%;
-        }
-        
-        @keyframes animateBorder {
-            0% { background-position: 0 0; }
-            50% { background-position: 400% 0; }
-            100% { background-position: 0 0; }
         }
         
         header {
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             padding: 30px 20px;
             text-align: center;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(58, 12, 163, 0.4);
         }
         
         header::before {
@@ -89,339 +55,247 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.1;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f72585, #4cc9f0, #f8961e);
         }
         
-        h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-weight: 700;
-            letter-spacing: 0.5px;
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         header p {
-            font-size: 18px;
+            font-size: 1.2rem;
             opacity: 0.9;
-            position: relative;
-            z-index: 2;
-            font-weight: 500;
         }
         
         .step-container {
-            padding: 30px;
+            padding: 25px;
             display: none;
         }
         
         .step-container.active {
             display: block;
-            animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         .btn {
             display: block;
             width: 100%;
-            padding: 18px;
-            margin: 18px 0;
+            padding: 16px;
+            margin: 12px 0;
             border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            border-radius: 12px;
+            background: var(--primary-color);
             color: white;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 0.5px;
-        }
-        
-        .btn::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.6s ease;
-        }
-        
-        .btn:hover::after {
-            left: 100%;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
         }
         
         .btn:hover {
+            background: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(67, 97, 238, 0.5);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
         }
         
         .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+            transform: translateY(0);
         }
         
         .btn-secondary {
-            background: linear-gradient(135deg, #6c757d, #495057);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+            background: #6c757d;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
         }
         
         .btn-whatsapp {
-            background: linear-gradient(135deg, #25D366, #128C7E);
+            background: #25D366;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            gap: 10px;
         }
         
         .btn-whatsapp:hover {
-            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.5);
+            background: #1da851;
+            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
         }
         
         input, select {
             width: 100%;
-            padding: 16px 20px;
-            margin: 12px 0 25px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            font-size: 17px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            margin: 10px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--transition);
         }
         
         input:focus, select:focus {
-            border-color: #4361ee;
+            border-color: var(--primary-color);
             outline: none;
-            background: rgba(67, 97, 238, 0.15);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
         
         .progress-bar {
-            height: 15px;
-            background: rgba(255, 255, 255, 0.08);
+            height: 12px;
+            background: #e9ecef;
             border-radius: 10px;
             overflow: hidden;
-            margin: 30px 0 20px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            margin: 20px 0;
         }
         
         .progress {
             height: 100%;
-            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
             width: 0%;
-            transition: width 1s cubic-bezier(0.22, 0.61, 0.36, 1);
-            position: relative;
-            border-radius: 10px;
-        }
-        
-        .progress::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-            border-radius: 10px;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            transition: width 0.8s ease;
         }
         
         .ticket-input-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 30px 0;
+            margin: 25px 0;
         }
         
         .ticket-input-container input {
-            max-width: 240px;
+            max-width: 200px;
             text-align: center;
             font-size: 28px;
-            padding: 20px;
+            padding: 18px;
             font-weight: bold;
-            border: 2px solid #4361ee;
-            background: rgba(67, 97, 238, 0.15);
+            border: 2px solid #dee2e6;
         }
         
-        .prize-image {
-            width: 100%;
-            border-radius: 18px;
-            margin-bottom: 30px;
-            max-height: 260px;
-            object-fit: cover;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-            position: relative;
-        }
-        
-        .prize-image::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(67, 97, 238, 0.3), rgba(58, 12, 163, 0.3));
-            border-radius: 18px;
+        .ticket-input-container input:focus {
+            border-color: var(--primary-color);
         }
         
         .error-message {
-            color: #ff6b6b;
+            color: #f94144;
             margin: 5px 0 15px;
             display: none;
             font-weight: 500;
-            text-align: center;
         }
         
         .prize-container {
             display: flex;
             justify-content: center;
-            margin: 25px 0;
-            position: relative;
-            perspective: 1000px;
+            margin: 20px 0;
         }
         
         .prize-image {
-            max-width: 92%;
-            border-radius: 18px;
-            border: 4px solid rgba(67, 97, 238, 0.5);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            transform: rotateY(0deg);
-            transition: transform 0.8s ease;
+            max-width: 90%;
+            border-radius: 12px;
+            border: 3px solid var(--primary-color);
+            box-shadow: var(--shadow);
+            max-height: 220px;
+            object-fit: cover;
         }
         
-        .prize-container:hover .prize-image {
-            transform: rotateY(10deg);
-        }
-        
+        /* Nuevos estilos para la selección de boletos */
         .ticket-selection {
             display: flex;
             flex-wrap: wrap;
-            gap: 18px;
+            gap: 12px;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .ticket-option {
-            width: 80px;
-            height: 80px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--light-bg);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 26px;
+            font-size: 20px;
             cursor: pointer;
-            border: 3px solid transparent;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            transition: all 0.4s ease;
-            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+            border: 2px solid transparent;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
         
         .ticket-option:hover {
-            background: rgba(67, 97, 238, 0.3);
+            background: var(--primary-color);
             color: white;
-            transform: scale(1.08) translateY(-5px);
-            box-shadow: 0 12px 25px rgba(67, 97, 238, 0.4);
+            transform: translateY(-3px);
         }
         
         .ticket-option.selected {
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            background: var(--primary-color);
             color: white;
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: scale(1.15) translateY(-8px);
-            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.5);
+            border-color: var(--primary-dark);
+            transform: scale(1.1);
         }
         
+        /* Estilos para los premios */
         .prizes-container {
-            margin-top: 30px;
+            margin-top: 25px;
             text-align: left;
-            padding: 0;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0 15px;
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         
         .prizes-container h3 {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
-            color: white;
-            font-size: 22px;
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .prizes-container ul {
-            padding: 25px;
-            padding-top: 15px;
-            padding-left: 40px;
+            padding-left: 25px;
         }
         
         .prizes-container li {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: 500;
             position: relative;
-            padding-left: 35px;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 17px;
-            line-height: 1.5;
         }
         
         .prizes-container li::before {
-            content: "★";
-            color: #4361ee;
-            position: absolute;
-            left: 0;
-            font-size: 24px;
-            top: -2px;
-            text-shadow: 0 0 15px rgba(67, 97, 238, 0.8);
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
         }
         
+        /* Estilos para el ticket */
         .ticket {
-            width: 340px;
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
-            border-radius: 25px;
-            padding: 30px;
+            width: 320px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 20px;
+            padding: 25px;
             color: white;
             text-align: center;
             position: relative;
             overflow: hidden;
-            margin: 25px auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            transform: rotate(0deg);
-            transition: transform 0.6s ease;
-        }
-        
-        .ticket:hover {
-            transform: rotate(1deg);
+            margin: 20px auto;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         
         .ticket::before {
@@ -430,223 +304,138 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 12px;
+            height: 8px;
             background: repeating-linear-gradient(
                 45deg,
                 #f72585,
-                #f72585 20px,
-                #4361ee 20px,
-                #4361ee 40px
+                #f72585 10px,
+                #4361ee 10px,
+                #4361ee 20px
             );
         }
         
         .ticket-header {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .ticket-number {
-            font-size: 58px;
-            font-weight: 800;
-            margin: 30px 0;
+            font-size: 56px;
+            font-weight: bold;
+            margin: 25px 0;
             background: rgba(255,255,255,0.15);
-            border-radius: 18px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 15px;
             font-family: monospace;
-            letter-spacing: 6px;
-            border: 3px dashed rgba(255,255,255,0.2);
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            letter-spacing: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         
         .ticket-footer {
             font-size: 16px;
-            margin-top: 30px;
+            margin-top: 25px;
             opacity: 0.9;
             font-weight: 500;
-            letter-spacing: 0.5px;
         }
         
         .ticket-details {
             display: flex;
             justify-content: space-between;
-            margin-top: 25px;
-            font-size: 16px;
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 15px;
-            letter-spacing: 0.5px;
+            margin-top: 20px;
+            font-size: 15px;
+            padding: 0 10px;
         }
         
         .ticket-qr {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             background: #fff;
-            margin: 25px auto;
-            border-radius: 15px;
+            margin: 20px auto;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #3a0ca3;
+            color: var(--primary-dark);
             font-size: 14px;
             font-weight: bold;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        .ticket-qr::before {
-            content: "QR";
-            font-size: 40px;
-            font-weight: 800;
-            opacity: 0.2;
-        }
-        
-        h2 {
-            color: white;
-            margin-bottom: 30px;
+        .step-title {
             text-align: center;
-            position: relative;
-            padding-bottom: 15px;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        
-        h2::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, #4361ee, #f45c43);
-            border-radius: 4px;
-        }
-        
-        .payment-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 20px;
             margin-bottom: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .payment-section p {
-            margin: 15px 0;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 17px;
+            color: var(--primary-dark);
             display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.6rem;
         }
         
-        .payment-section p strong {
-            min-width: 100px;
-            color: #4cc9f0;
-            font-weight: 500;
+        .step-title i {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
-        .payment-section p:last-child {
-            border-bottom: none;
-        }
-        
-        .success-icon {
-            font-size: 100px;
-            color: #4cc9f0;
-            margin-bottom: 30px;
-            animation: pulse 2s infinite;
-            text-shadow: 0 0 30px rgba(76, 201, 240, 0.6);
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.9; }
-        }
-        
-        .floating {
-            animation: float 8s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            color: white;
-            margin: 20px 0;
+        .amount-display {
             text-align: center;
-            font-size: 18px;
-            font-weight: 500;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .stats span {
-            display: block;
             font-size: 24px;
-            font-weight: 700;
-            margin-top: 5px;
-            color: #4cc9f0;
-        }
-        
-        .ticket-price-tag {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #f45c43, #e63946);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-weight: 700;
-            box-shadow: 0 5px 15px rgba(244, 92, 67, 0.4);
-            z-index: 10;
-        }
-        
-        label {
-            display: block;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 17px;
-            padding-left: 5px;
-        }
-        
-        .total-display {
-            background: rgba(67, 97, 238, 0.15);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
             margin: 20px 0;
-            border: 2px solid rgba(67, 97, 238, 0.3);
-        }
-        
-        .total-display p {
-            font-size: 22px;
-            color: white;
             font-weight: 600;
+            color: var(--primary-dark);
         }
         
-        .total-display strong {
-            font-size: 28px;
-            color: #4cc9f0;
-            font-weight: 800;
+        .payment-details {
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .payment-details h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+        }
+        
+        .payment-details p {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #dee2e6;
+        }
+        
+        .payment-details p:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .confirmation-icon {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .confirmation-icon i {
+            font-size: 80px;
+            background: linear-gradient(135deg, var(--success-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="container floating">
+    <div class="container">
         <header>
-            <div class="ticket-price-tag">Bs. 80 c/u</div>
             <h1>RIFA PREMIUM</h1>
             <p>GANA CON YAIR™</p>
         </header>
@@ -655,36 +444,31 @@
         <div id="step1" class="step-container active">
             <div style="text-align: center; padding: 20px;">
                 <div class="prize-container">
-                    <img id="prizeImage" class="prize-image" src="https://iili.io/FvJJVdG.md.png" alt="Premio">
+                    <img id="prizeImage" class="prize-image" alt="Premio">
                 </div>
-                
-                <div class="stats">
-                    <div>Vendido: <span id="soldPercentage">32%</span></div>
-                    <div>Disponible: <span id="availablePercentage">68%</span></div>
-                </div>
-                
                 <div class="progress-bar">
-                    <div class="progress" id="progressBar" style="width: 32%;"></div>
+                    <div class="progress" id="progressBar"></div>
                 </div>
-                
-                <p style="color: rgba(255,255,255,0.8); margin: 20px 0;">Sorteo: <strong style="color: #4cc9f0;">15 de Diciembre 2025</strong></p>
+                <p>Vendido: <strong id="soldPercentage">0%</strong></p>
+                <p>Disponible: <strong id="availablePercentage">100%</strong></p>
+                <p>Sorteo: <strong id="raffleDate">15 de Diciembre 2025</strong></p>
                 
                 <div class="prizes-container">
-                    <h3>Premios</h3>
+                    <h3><i class="fas fa-gift"></i> Premios</h3>
                     <ul id="prizesList">
-                        <li>1er Premio: Moto Bera 0 km + Lavadora + Nevera</li>
-                        <li>2do Premio: Cocina + $300</li>
-                        <li>3er Premio: $500</li>
+                        <!-- Los premios se cargarán por JavaScript -->
                     </ul>
                 </div>
                 
-                <button id="startBtn" class="btn">Comenzar <i class="fas fa-arrow-right"></i></button>
+                <button id="startBtn" class="btn">
+                    <i class="fas fa-play"></i> Comenzar
+                </button>
             </div>
         </div>
 
         <!-- Paso 2: Cantidad de boletos -->
         <div id="step2" class="step-container">
-            <h2>¿Cuántos boletos?</h2>
+            <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
             
             <div class="ticket-selection">
                 <div class="ticket-option" data-quantity="1">1</div>
@@ -700,18 +484,19 @@
             <div class="ticket-input-container">
                 <input type="number" id="ticketQuantityInput" min="1" value="1" required>
             </div>
-            
-            <div class="total-display">
-                <p>Total: <strong id="totalAmount">80</strong> Bs.</p>
-            </div>
-            
-            <button id="continueToInfo" class="btn">Continuar <i class="fas fa-arrow-right"></i></button>
-            <button id="prevBtn2" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
+            <p style="text-align:center;">Precio por boleto: <strong id="ticketPrice">Bs. 0</strong></p>
+            <div class="amount-display">Total: <strong id="totalAmount">0</strong> Bs.</div>
+            <button id="continueToInfo" class="btn">
+                <i class="fas fa-arrow-right"></i> Continuar
+            </button>
+            <button id="prevBtn2" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Atrás
+            </button>
         </div>
 
         <!-- Paso 3: Información personal -->
         <div id="step3" class="step-container">
-            <h2>Tus datos</h2>
+            <h2 class="step-title"><i class="fas fa-user"></i> Tus datos</h2>
             <label>Nombre completo</label>
             <input type="text" id="fullName" placeholder="Ej: María Rodríguez" required>
             <label>Cédula de identidad</label>
@@ -720,35 +505,39 @@
             <input type="tel" id="phone" placeholder="Ej: 04141234567" required>
             <label>Correo electrónico</label>
             <input type="email" id="email" placeholder="Ej: usuario@ejemplo.com" required>
-            <button id="continueToPayment" class="btn">Continuar <i class="fas fa-arrow-right"></i></button>
-            <button id="prevBtn3" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
+            <button id="continueToPayment" class="btn">
+                <i class="fas fa-arrow-right"></i> Continuar
+            </button>
+            <button id="prevBtn3" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Atrás
+            </button>
         </div>
 
         <!-- Paso 4: Pago -->
         <div id="step4" class="step-container">
-            <h2>Método de pago</h2>
+            <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
             <div style="margin-bottom:25px;">
-                <select id="paymentMethod" style="width:100%; padding:16px 20px; border-radius:15px; border:2px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.08); color:white; font-size:17px;">
+                <select id="paymentMethod" required>
                     <option value="bank">Transferencia Bancaria</option>
                     <option value="mobile">Pago Móvil</option>
                 </select>
             </div>
 
-            <div class="payment-section" id="bankDetails">
-                <h3 style="text-align:center; margin-bottom:20px; color:#4cc9f0;">Datos para transferencia</h3>
+            <div id="bankDetails" class="payment-details">
+                <h3>Datos para transferencia</h3>
                 <p><strong>Banco:</strong> <span id="bankName">Banco de Venezuela</span></p>
                 <p><strong>Titular:</strong> <span id="accountHolder">GANA CON YAIR, C.A.</span></p>
                 <p><strong>RIF:</strong> <span id="accountRif">V-412345678</span></p>
                 <p><strong>Cuenta:</strong> <span id="accountNumber">0102-0456-7890123456</span></p>
-                <p><strong>Monto:</strong> <span id="paymentAmount">80</span> Bs.</p>
+                <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
 
-            <div class="payment-section" id="mobileDetails" style="display:none;">
-                <h3 style="text-align:center; margin-bottom:20px; color:#4cc9f0;">Datos para Pago Móvil</h3>
+            <div id="mobileDetails" class="payment-details" style="display:none;">
+                <h3>Datos para Pago Móvil</h3>
                 <p><strong>Banco:</strong> <span id="mobileBank">Banco de Venezuela</span></p>
                 <p><strong>Teléfono:</strong> <span id="mobilePhone">0412-1234567</span></p>
                 <p><strong>Cédula:</strong> <span id="mobileId">V-12345678</span></p>
-                <p><strong>Monto:</strong> <span id="mobileAmount">80</span> Bs.</p>
+                <p><strong>Monto:</strong> <span id="mobileAmount">0</span> Bs.</p>
             </div>
 
             <div style="margin:25px 0;">
@@ -760,26 +549,103 @@
             <button id="whatsappBtn" class="btn btn-whatsapp">
                 <i class="fab fa-whatsapp"></i> Enviar comprobante por WhatsApp
             </button>
-            <button id="prevBtn4" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
+            <button id="prevBtn4" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Atrás
+            </button>
         </div>
 
         <!-- Paso 5: Confirmación -->
         <div id="step5" class="step-container">
-            <div style="text-align:center; padding:20px;">
-                <div class="success-icon">
+            <div style="text-align:center; padding:30px 20px;">
+                <div class="confirmation-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h2>¡Pago Reportado!</h2>
-                <p style="margin:25px 0; font-size:18px; color:rgba(255,255,255,0.9); line-height:1.6;">Su compra está siendo procesada. En cuanto sea verificada, recibirá sus boletos por WhatsApp.</p>
-                <p style="font-size:18px; color:rgba(255,255,255,0.9);">Tu número de referencia es: <strong style="color:#4cc9f0; font-size:20px;" id="reportReference">1234567890</strong></p>
-                <button id="returnHome" class="btn">Volver al inicio <i class="fas fa-home"></i></button>
+                <h2 class="step-title">¡Pago Reportado!</h2>
+                <p style="margin:25px 0; font-size:18px; line-height:1.7;">
+                    Su compra está siendo procesada. En cuanto sea verificada, recibirá sus boletos por WhatsApp.
+                </p>
+                <p style="font-size:18px;">Tu número de referencia es:</p>
+                <div style="background: var(--light-bg); padding:15px; border-radius:12px; margin:20px 0; font-size:20px; font-weight:bold;">
+                    <span id="reportReference"></span>
+                </div>
+                <button id="returnHome" class="btn">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </button>
             </div>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // CONFIGURACIÓN FÁCIL DE EDITAR
+        // ==========================================
+        const CONFIG = {
+            adminWhatsApp: "584127430912",
+            supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            adminPanelUrl: "https://ganaconyair.vercel.app/admin",
+            totalTickets: 10000,
+            pricePerTicket: 80,
+            raffleDate: "15 de Diciembre 2025",
+            prizeImage: "https://iili.io/FvJJVdG.md.png",
+            prizes: [
+                "1er Premio: Moto Bera 0 km + Lavadora + Nevera",
+                "2do Premio: Cocina + $300",
+                "3er Premio: $500"
+            ],
+            
+            // Datos bancarios (editables)
+            bankDetails: {
+                name: "Banco de Venezuela",
+                holder: "GANA CON YAIR, C.A.",
+                rif: "V-412345678",
+                account: "0102-0456-7890123456"
+            },
+            
+            // Datos de pago móvil (editables)
+            mobileDetails: {
+                bank: "Banco de Venezuela",
+                phone: "0412-1234567",
+                id: "V-12345678"
+            }
+        };
+        // ==========================================
+
+        // Variables globales
+        let currentStep = 1;
+        let soldTickets = 0;
+
         // Inicialización
         async function init() {
+            // Configurar elementos con valores editables
+            document.getElementById('raffleDate').textContent = CONFIG.raffleDate;
+            document.getElementById('prizeImage').src = CONFIG.prizeImage;
+            document.getElementById('ticketPrice').textContent = `Bs. ${CONFIG.pricePerTicket}`;
+            
+            // Configurar datos bancarios
+            document.getElementById('bankName').textContent = CONFIG.bankDetails.name;
+            document.getElementById('accountHolder').textContent = CONFIG.bankDetails.holder;
+            document.getElementById('accountRif').textContent = CONFIG.bankDetails.rif;
+            document.getElementById('accountNumber').textContent = CONFIG.bankDetails.account;
+            
+            // Configurar datos de pago móvil
+            document.getElementById('mobileBank').textContent = CONFIG.mobileDetails.bank;
+            document.getElementById('mobilePhone').textContent = CONFIG.mobileDetails.phone;
+            document.getElementById('mobileId').textContent = CONFIG.mobileDetails.id;
+            
+            // Cargar premios
+            const prizesList = document.getElementById('prizesList');
+            prizesList.innerHTML = '';
+            CONFIG.prizes.forEach(prize => {
+                const li = document.createElement('li');
+                li.textContent = prize;
+                prizesList.appendChild(li);
+            });
+            
+            // Obtener número de boletos vendidos
+            await fetchSoldTickets();
+            updateTicketUI();
+            
             // Configurar eventos para botones de selección de boletos
             document.querySelectorAll('.ticket-option').forEach(option => {
                 option.addEventListener('click', function() {
@@ -794,15 +660,46 @@
                     this.classList.add('selected');
                 });
             });
-            
-            // Seleccionar la opción por defecto
-            document.querySelector('.ticket-option[data-quantity="1"]').classList.add('selected');
+        }
+
+        // Obtener boletos vendidos desde Supabase
+        async function fetchSoldTickets() {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Error en la respuesta');
+                
+                const transactions = await response.json();
+                soldTickets = transactions
+                    .filter(t => t.status === 'VERIFICADO')
+                    .reduce((sum, t) => sum + t.tickets, 0);
+                
+                // Calcular porcentajes
+                const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
+                const availablePercentage = (100 - soldPercentage).toFixed(1);
+                
+                document.getElementById('soldPercentage').textContent = `${soldPercentage}%`;
+                document.getElementById('availablePercentage').textContent = `${availablePercentage}%`;
+                
+                const progress = (soldTickets / CONFIG.totalTickets) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            } catch (error) {
+                console.error("Error obteniendo boletos vendidos:", error);
+                // Mostrar valores por defecto en caso de error
+                document.getElementById('soldPercentage').textContent = "0%";
+                document.getElementById('availablePercentage').textContent = "100%";
+            }
         }
 
         // Actualizar UI de boletos
         function updateTicketUI() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
-            const total = ticketQuantity * 80;
+            const total = ticketQuantity * CONFIG.pricePerTicket;
             document.getElementById('totalAmount').textContent = total;
             document.getElementById('paymentAmount').textContent = total;
             document.getElementById('mobileAmount').textContent = total;
@@ -818,6 +715,63 @@
             });
         }
 
+        // Guardar datos en Supabase
+        async function saveData() {
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
+            const data = {
+                name: document.getElementById('fullName').value,
+                id_number: document.getElementById('idNumber').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                tickets: ticketQuantity,
+                reference: document.getElementById('referenceNumber').value,
+                status: "PENDIENTE"
+            };
+
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                return { success: true };
+            } catch (error) {
+                console.error("Error guardando datos:", error);
+                return { success: true };
+            }
+        }
+
+        // Enviar notificación por WhatsApp
+        function openWhatsApp() {
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
+            const name = document.getElementById('fullName').value;
+            const id = document.getElementById('idNumber').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const reference = document.getElementById('referenceNumber').value;
+            const amount = ticketQuantity * CONFIG.pricePerTicket;
+            
+            const formattedPhone = CONFIG.adminWhatsApp.replace(/[^0-9]/g, '');
+            const message = encodeURIComponent(
+                `*NUEVO PAGO REPORTADO - RIFA PREMIUM*\n\n` +
+                `*Nombre:* ${name}\n` +
+                `*Cédula:* ${id}\n` +
+                `*Teléfono:* ${phone}\n` +
+                `*Email:* ${email}\n` +
+                `*Boletos:* ${ticketQuantity}\n` +
+                `*Referencia:* ${reference}\n` +
+                `*Monto:* ${amount} Bs.\n\n` +
+                `Adjunto comprobante de pago`
+            );
+            
+            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+        }
+
         // Cambiar entre pasos
         function goToStep(step) {
             currentStep = step;
@@ -830,7 +784,7 @@
         // Validar cantidad de boletos
         function validateTicketQuantity() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
-            const availableTickets = 5000 - 1600; // Simulando disponibilidad
+            const availableTickets = CONFIG.totalTickets - soldTickets;
             
             if (ticketQuantity < 1) {
                 alert("La cantidad de boletos debe ser al menos 1");
@@ -843,6 +797,25 @@
             }
             
             return true;
+        }
+
+        // Generar diseño de ticket para WhatsApp
+        function generateTicketDesign(ticketNumber) {
+            // Formatear número con ceros a la izquierda (3 dígitos)
+            const formattedNumber = String(ticketNumber).padStart(3, '0');
+            
+            return `
+                <div class="ticket">
+                    <div class="ticket-header">RIFA PREMIUM</div>
+                    <div class="ticket-number">${formattedNumber}</div>
+                    <div class="ticket-qr">CÓDIGO QR<br>${formattedNumber}</div>
+                    <div class="ticket-details">
+                        <div>Fecha: ${new Date().toLocaleDateString()}</div>
+                        <div>Valor: Bs. ${CONFIG.pricePerTicket}</div>
+                    </div>
+                    <div class="ticket-footer">GANA CON YAIR™</div>
+                </div>
+            `;
         }
 
         // Event Listeners
@@ -917,6 +890,12 @@
             if (!validateTicketQuantity()) {
                 return;
             }
+            
+            // Abrir WhatsApp
+            openWhatsApp();
+            
+            // Guardar datos en Supabase (no bloquea el flujo si falla)
+            await saveData();
             
             // Mostrar mensaje de éxito
             document.getElementById('reportReference').textContent = reference;
