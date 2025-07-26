@@ -204,7 +204,7 @@
                 </div>
                 <div>
                     <label>URL Imagen Premio</label>
-                    <input type="text" id="prizeImageUrl" value="https://via.placeholder.com/400x200?text=Imagen+del+Premio" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                    <input type="text" id="prizeImageUrl" value="https://iili.io/FvJJVdG.jpg" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
                 </div>
             </div>
             <button onclick="saveConfig()" style="background: #28a745;">Guardar Configuración</button>
@@ -277,34 +277,65 @@
         let currentFilter = 'all';
         let currentSearch = '';
 
-        // Función para generar tickets
+        // Función para formatear números de ticket
+        function formatTicketNumber(number) {
+            if (number < 100) {
+                return String(number).padStart(3, '0');
+            } else {
+                return String(number);
+            }
+        }
+
+        // Función para generar tickets aleatorios sin repetir
         async function generateTickets(transactionId, quantity) {
             try {
-                // Obtener el último número de ticket
-                const lastTicketRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&order=ticket_number.desc&limit=1`, {
+                // Obtener todos los tickets existentes
+                const existingTicketsRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
                 
-                let lastTicketNumber = 0;
-                if (lastTicketRes.ok) {
-                    const lastTickets = await lastTicketRes.json();
-                    if (lastTickets.length > 0) {
-                        lastTicketNumber = lastTickets[0].ticket_number;
-                    }
-                }
-                
-                // Generar nuevos tickets
-                const tickets = [];
-                for (let i = 1; i <= quantity; i++) {
-                    tickets.push({
-                        transaction_id: transactionId,
-                        ticket_number: lastTicketNumber + i,
-                        status: "ACTIVO"
+                const existingTickets = new Set();
+                if (existingTicketsRes.ok) {
+                    const ticketsData = await existingTicketsRes.json();
+                    ticketsData.forEach(ticket => {
+                        existingTickets.add(ticket.ticket_number);
                     });
                 }
+                
+                // Generar números aleatorios únicos
+                const newTickets = [];
+                const maxAttempts = 10000; // Límite para evitar bucles infinitos
+                let attempts = 0;
+                
+                while (newTickets.length < quantity && attempts < maxAttempts) {
+                    attempts++;
+                    
+                    // Generar número aleatorio entre 1 y totalTickets
+                    const randomNum = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
+                    
+                    // Saltar si ya existe
+                    if (existingTickets.has(randomNum)) continue;
+                    
+                    // Agregar a nuevos tickets y al conjunto existente
+                    newTickets.push(randomNum);
+                    existingTickets.add(randomNum);
+                }
+                
+                // Si no se pudieron generar suficientes tickets
+                if (newTickets.length < quantity) {
+                    alert(`Error: Solo se pudieron generar ${newTickets.length} tickets de ${quantity} solicitados`);
+                    return false;
+                }
+                
+                // Preparar datos para insertar
+                const ticketsToInsert = newTickets.map(ticketNumber => ({
+                    transaction_id: transactionId,
+                    ticket_number: ticketNumber,
+                    status: "ACTIVO"
+                }));
                 
                 // Insertar en la base de datos
                 const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
@@ -314,10 +345,10 @@
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     },
-                    body: JSON.stringify(tickets)
+                    body: JSON.stringify(ticketsToInsert)
                 });
                 
-                return insertRes.ok ? tickets : false;
+                return insertRes.ok ? ticketsToInsert : false;
             } catch (error) {
                 console.error("Error generando tickets:", error);
                 return false;
@@ -522,12 +553,17 @@
             const modal = document.createElement('div');
             modal.className = 'modal';
             
-            const ticketNumbers = tickets.map(t => t.ticket_number).join(', ');
+            // Formatear números de tickets
+            const formattedTickets = tickets.map(t => 
+                formatTicketNumber(t.ticket_number)
+            );
+            
+            const ticketNumbers = formattedTickets.join(', ');
             
             modal.innerHTML = `
                 <div class="modal-content">
                     <h2 style="color:#3a0ca3;">Tickets Generados</h2>
-                    <p>Se han generado ${tickets.length} tickets para la transacción #${transactionId}:</p>
+                    <p>Se han generado ${tickets.length} tickets:</p>
                     <textarea id="ticketNumbers" style="width:100%; height:150px; margin:15px 0; padding:10px; border-radius:5px; font-family:monospace;">${ticketNumbers}</textarea>
                     <div class="modal-buttons">
                         <button onclick="copyTicketNumbers()">Copiar Números</button>
