@@ -268,7 +268,7 @@
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 10000,  // 10,000 boletos
+            totalTickets: 10000,
             pricePerTicket: 80,
             adminWhatsApp: "584127430912"
         };
@@ -279,14 +279,10 @@
 
         // Función para formatear números de ticket
         function formatTicketNumber(number) {
-            if (number < 100) {
-                return String(number).padStart(3, '0');
-            } else {
-                return String(number);
-            }
+            return String(number).padStart(5, '0');
         }
 
-        // Función para generar tickets aleatorios sin repetir (SOLUCIÓN CORREGIDA)
+        // SOLUCIÓN CORREGIDA PARA GENERAR TICKETS (OPTIMIZADA)
         async function generateTickets(transactionId, quantity) {
             try {
                 // Obtener todos los tickets existentes
@@ -305,24 +301,37 @@
                     });
                 }
                 
-                // Crear lista de todos los tickets posibles
-                const allPossibleTickets = Array.from({length: CONFIG.totalTickets}, (_, i) => i + 1);
+                // Calcular tickets disponibles
+                const availableCount = CONFIG.totalTickets - existingTickets.size;
                 
-                // Filtrar solo los tickets disponibles
-                const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
-                
-                // Verificar si hay suficientes tickets disponibles
-                if (availableTickets.length < quantity) {
-                    alert(`Error: Solo hay ${availableTickets.length} boletos disponibles de ${quantity} solicitados`);
+                // Verificar disponibilidad
+                if (availableCount < quantity) {
+                    alert(`Error: Solo hay ${availableCount} boletos disponibles de ${quantity} solicitados`);
                     return false;
                 }
                 
-                // Seleccionar aleatoriamente de los disponibles
+                // Generar tickets usando un método más eficiente
                 const selectedTickets = [];
-                const shuffledTickets = [...availableTickets].sort(() => 0.5 - Math.random());
+                let attempts = 0;
+                const maxAttempts = quantity * 2; // Límite para evitar bucles infinitos
                 
-                for (let i = 0; i < quantity; i++) {
-                    selectedTickets.push(shuffledTickets[i]);
+                while (selectedTickets.length < quantity && attempts < maxAttempts) {
+                    attempts++;
+                    
+                    // Generar número aleatorio entre 1 y totalTickets
+                    const randomNum = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
+                    
+                    // Verificar si el ticket está disponible y no se ha seleccionado
+                    if (!existingTickets.has(randomNum) && !selectedTickets.includes(randomNum)) {
+                        selectedTickets.push(randomNum);
+                        existingTickets.add(randomNum); // Marcarlo como ocupado en este lote
+                    }
+                }
+                
+                // Verificar si se completó
+                if (selectedTickets.length < quantity) {
+                    alert(`Error: Solo se pudieron generar ${selectedTickets.length} tickets de ${quantity} solicitados`);
+                    return false;
                 }
                 
                 // Preparar datos para insertar
