@@ -4,6 +4,7 @@
     <title>Panel de Administración - Rifa Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Estilos CSS originales (sin cambios) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -268,7 +269,7 @@
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 10000,
+            totalTickets: 10000,  // 10,000 boletos
             pricePerTicket: 80,
             adminWhatsApp: "584127430912"
         };
@@ -279,10 +280,14 @@
 
         // Función para formatear números de ticket
         function formatTicketNumber(number) {
-            return String(number).padStart(5, '0');
+            if (number < 100) {
+                return String(number).padStart(3, '0');
+            } else {
+                return String(number);
+            }
         }
 
-        // SOLUCIÓN CORREGIDA PARA GENERAR TICKETS (OPTIMIZADA)
+        // Función para generar tickets aleatorios sin repetir - CORREGIDA
         async function generateTickets(transactionId, quantity) {
             try {
                 // Obtener todos los tickets existentes
@@ -301,37 +306,24 @@
                     });
                 }
                 
-                // Calcular tickets disponibles
-                const availableCount = CONFIG.totalTickets - existingTickets.size;
+                // Crear un array con todos los números posibles
+                const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
                 
-                // Verificar disponibilidad
-                if (availableCount < quantity) {
-                    alert(`Error: Solo hay ${availableCount} boletos disponibles de ${quantity} solicitados`);
+                // Filtrar solo los disponibles
+                const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
+                
+                // Verificar si hay suficientes tickets disponibles
+                if (availableTickets.length < quantity) {
+                    alert(`Error: Solo quedan ${availableTickets.length} boletos disponibles`);
                     return false;
                 }
                 
-                // Generar tickets usando un método más eficiente
+                // Seleccionar aleatoriamente
                 const selectedTickets = [];
-                let attempts = 0;
-                const maxAttempts = quantity * 2; // Límite para evitar bucles infinitos
-                
-                while (selectedTickets.length < quantity && attempts < maxAttempts) {
-                    attempts++;
-                    
-                    // Generar número aleatorio entre 1 y totalTickets
-                    const randomNum = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
-                    
-                    // Verificar si el ticket está disponible y no se ha seleccionado
-                    if (!existingTickets.has(randomNum) && !selectedTickets.includes(randomNum)) {
-                        selectedTickets.push(randomNum);
-                        existingTickets.add(randomNum); // Marcarlo como ocupado en este lote
-                    }
-                }
-                
-                // Verificar si se completó
-                if (selectedTickets.length < quantity) {
-                    alert(`Error: Solo se pudieron generar ${selectedTickets.length} tickets de ${quantity} solicitados`);
-                    return false;
+                while (selectedTickets.length < quantity) {
+                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
+                    selectedTickets.push(availableTickets[randomIndex]);
+                    availableTickets.splice(randomIndex, 1);
                 }
                 
                 // Preparar datos para insertar
