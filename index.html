@@ -52,7 +52,7 @@
         }
         
         .container {
-            max-width: 500px;
+            max-width: 700px; /* Aumentado para acomodar imagen más grande */
             margin: 0 auto;
             background: white;
             border-radius: var(--border-radius);
@@ -317,6 +317,7 @@
             text-align: center;
         }
         
+        /* --- MEJORA: Imagen más grande --- */
         .prize-container {
             display: flex;
             justify-content: center;
@@ -326,11 +327,11 @@
         
         .prize-image {
             width: 100%;
-            max-width: 300px;
+            max-width: 600px; /* Imagen mucho más grande */
             border-radius: 18px;
             border: 3px solid var(--primary-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-height: 220px;
+            max-height: 400px; /* Altura aumentada */
             object-fit: cover;
             transition: transform 0.5s ease;
         }
@@ -769,6 +770,79 @@
             background: var(--primary-color);
             transform: scale(1.2);
         }
+        
+        /* Nuevos estilos para configuración editable */
+        .config-helper {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 350px;
+            display: none;
+        }
+        
+        .config-helper h3 {
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .config-helper-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+            z-index: 1000;
+        }
+        
+        .config-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .config-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+        
+        .config-item input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        
+        .config-save-btn {
+            background: var(--success-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -776,6 +850,40 @@
     <div class="floating"></div>
     <div class="floating"></div>
     <div class="floating"></div>
+    
+    <!-- Botón de configuración -->
+    <div class="config-helper-btn" id="configBtn">
+        <i class="fas fa-cog"></i>
+    </div>
+    
+    <!-- Panel de configuración -->
+    <div class="config-helper" id="configHelper">
+        <h3><i class="fas fa-edit"></i> Configuración</h3>
+        
+        <div class="config-item">
+            <label>URL de la imagen del premio</label>
+            <input type="text" id="configPrizeImage" placeholder="URL de la imagen">
+        </div>
+        
+        <div class="config-item">
+            <label>Precio por boleto (Bs.)</label>
+            <input type="number" id="configTicketPrice" placeholder="Precio">
+        </div>
+        
+        <div class="config-item">
+            <label>Fecha de sorteo</label>
+            <input type="text" id="configRaffleDate" placeholder="Fecha de sorteo">
+        </div>
+        
+        <div class="config-item">
+            <label>WhatsApp del administrador</label>
+            <input type="text" id="configAdminWhatsApp" placeholder="Número de WhatsApp">
+        </div>
+        
+        <button class="config-save-btn" id="saveConfigBtn">
+            <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+    </div>
     
     <div class="container">
         <header>
@@ -954,7 +1062,7 @@
         // ==========================================
         // CONFIGURACIÓN FÁCIL DE EDITAR
         // ==========================================
-        const CONFIG = {
+        const DEFAULT_CONFIG = {
             adminWhatsApp: "584127430912",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
@@ -984,6 +1092,9 @@
                 id: "V-12345678"
             }
         };
+
+        // Cargar configuración desde localStorage o usar la predeterminada
+        let CONFIG = JSON.parse(localStorage.getItem('raffleConfig')) || DEFAULT_CONFIG;
         // ==========================================
 
         // Variables globales
@@ -1038,6 +1149,47 @@
             
             // Actualizar indicadores de paso
             updateStepIndicators();
+            
+            // Configurar panel de configuración
+            setupConfigHelper();
+        }
+
+        // Configurar el panel de configuración
+        function setupConfigHelper() {
+            // Rellenar valores en el panel de configuración
+            document.getElementById('configPrizeImage').value = CONFIG.prizeImage;
+            document.getElementById('configTicketPrice').value = CONFIG.pricePerTicket;
+            document.getElementById('configRaffleDate').value = CONFIG.raffleDate;
+            document.getElementById('configAdminWhatsApp').value = CONFIG.adminWhatsApp;
+            
+            // Evento para mostrar/ocultar el panel de configuración
+            document.getElementById('configBtn').addEventListener('click', function() {
+                const helper = document.getElementById('configHelper');
+                helper.style.display = helper.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            // Evento para guardar configuración
+            document.getElementById('saveConfigBtn').addEventListener('click', function() {
+                // Actualizar valores de configuración
+                CONFIG.prizeImage = document.getElementById('configPrizeImage').value;
+                CONFIG.pricePerTicket = parseFloat(document.getElementById('configTicketPrice').value) || DEFAULT_CONFIG.pricePerTicket;
+                CONFIG.raffleDate = document.getElementById('configRaffleDate').value || DEFAULT_CONFIG.raffleDate;
+                CONFIG.adminWhatsApp = document.getElementById('configAdminWhatsApp').value || DEFAULT_CONFIG.adminWhatsApp;
+                
+                // Guardar en localStorage
+                localStorage.setItem('raffleConfig', JSON.stringify(CONFIG));
+                
+                // Actualizar la UI con los nuevos valores
+                document.getElementById('prizeImage').src = CONFIG.prizeImage;
+                document.getElementById('ticketPrice').textContent = `Bs. ${CONFIG.pricePerTicket}`;
+                document.getElementById('raffleDate').textContent = CONFIG.raffleDate;
+                updateTicketUI();
+                
+                // Ocultar el panel
+                document.getElementById('configHelper').style.display = 'none';
+                
+                alert('Configuración guardada con éxito!');
+            });
         }
 
         // Actualizar indicadores de paso
