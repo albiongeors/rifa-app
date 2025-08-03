@@ -798,10 +798,6 @@
                     </div>
                 </div>
                 
-                <p style="margin: 20px 0; font-size: 18px; color: var(--primary-dark); font-weight: 500;">
-                    <i class="fas fa-calendar-alt"></i> Sorteo: <strong id="raffleDate">15 de Diciembre 2025</strong>
-                </p>
-                
                 <div class="prizes-container">
                     <h3><i class="fas fa-gift"></i> Premios</h3>
                     <ul id="prizesList">
@@ -975,13 +971,13 @@
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
-            pricePerTicket: 80,
-            raffleDate: "15 de Diciembre 2025",
-            prizeImage: "https://iili.io/FvJJVdG.md.png",
+            pricePerTicket: 70,
+            raffleDate: "",
+            prizeImage: "https://i.ibb.co/Kx3fHcx9/RIFA-IMAGEN.png",
             prizes: [
-                "1er Premio: <strong>Moto Bera 0 km</strong> + Lavadora + Nevera",
-                "2do Premio: <strong>Cocina</strong> + $300",
-                "3er Premio: <strong>$500</strong>"
+                "1er Premio: <strong>Combo Hogar + Mercado para un mes</strong>",
+                "2do Premio: <strong>300 dólares</strong>",
+                "3er Premio: <strong>Comprador de más tickets: 200 dólares</strong>"
             ],
             bankDetails: {
                 name: "Banco de Venezuela",
@@ -1000,7 +996,6 @@
         let soldTickets = 0;
 
         async function init() {
-            document.getElementById('raffleDate').textContent = CONFIG.raffleDate;
             document.getElementById('prizeImage').src = CONFIG.prizeImage;
             document.getElementById('ticketPrice').textContent = `Bs. ${CONFIG.pricePerTicket}`;
             
