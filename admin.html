@@ -576,6 +576,13 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto o cédula..." onkeyup="searchTickets()">
             </div>
+            
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <button class="filter-btn active" onclick="setTicketFilter('all')">Todos</button>
+                <button class="filter-btn" onclick="setTicketFilter('active')">Activos</button>
+                <button class="filter-btn" onclick="setTicketFilter('winner')">Ganadores</button>
+            </div>
+            
             <div id="ticketSearchResults" style="margin-top: 20px;"></div>
         </div>
         
@@ -970,34 +977,45 @@
         
         async function searchTickets() {
             const searchTerm = document.getElementById('ticketSearchInput').value.trim();
-            if (searchTerm.length < 3) {
-                document.getElementById('ticketSearchResults').innerHTML = '';
-                return;
-            }
             
             try {
                 if (/^\d+$/.test(searchTerm)) {
+                    // Búsqueda por número de boleto
                     const ticketNumber = parseInt(searchTerm);
-                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}&select=*,transactions(*)`, {
-                        headers: {
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    const response = await fetch(
+                        `${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}` +
+                        `&select=*,transactions(name,id_number,phone,email,date,reference)` +
+                        `&status=eq.${currentTicketFilter === 'all' ? 'ACTIVO' : currentTicketFilter.toUpperCase()}`,
+                        {
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
                         }
-                    });
+                    );
                     
                     const tickets = await response.json();
                     displayTicketSearchResults(tickets);
                 } 
-                else {
-                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=ilike.%25${searchTerm}%25&select=*,tickets(*)`, {
-                        headers: {
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                else if (searchTerm.length >= 3) {
+                    // Búsqueda por cédula
+                    const response = await fetch(
+                        `${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=ilike.%25${searchTerm}%25` +
+                        `&select=*,tickets(ticket_number,status,is_winner)` +
+                        `&status=eq.VERIFICADO`,
+                        {
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
                         }
-                    });
+                    );
                     
                     const transactions = await response.json();
                     displayTransactionSearchResults(transactions);
+                }
+                else {
+                    document.getElementById('ticketSearchResults').innerHTML = '';
                 }
             } catch (error) {
                 console.error("Error buscando boletos:", error);
@@ -1022,37 +1040,47 @@
             }
             
             let html = `
-                <table class="ticket-results-table">
-                    <thead>
-                        <tr>
-                            <th>Boleto</th>
-                            <th>Nombre</th>
-                            <th>CI</th>
-                            <th>Estado</th>
-                            <th>Ganador</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="table-container">
+                    <table class="ticket-results-table">
+                        <thead>
+                            <tr>
+                                <th>Boleto</th>
+                                <th>Comprador</th>
+                                <th>CI</th>
+                                <th>Teléfono</th>
+                                <th>Fecha Compra</th>
+                                <th>Referencia</th>
+                                <th>Estado</th>
+                                <th>Ganador</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
             
             tickets.forEach(ticket => {
                 const transaction = ticket.transactions;
+                const formattedDate = transaction?.date ? 
+                    new Date(transaction.date).toLocaleDateString() : 'N/A';
+                
                 html += `
                     <tr>
                         <td><strong>${formatTicketNumber(ticket.ticket_number)}</strong></td>
                         <td>${transaction?.name || 'N/A'}</td>
                         <td>${transaction?.id_number || 'N/A'}</td>
+                        <td>${transaction?.phone || 'N/A'}</td>
+                        <td>${formattedDate}</td>
+                        <td>${transaction?.reference || 'N/A'}</td>
                         <td>${ticket.status}</td>
                         <td>
                             ${ticket.is_winner 
                                 ? '<span style="color:#28a745;"><i class="fas fa-trophy"></i> Ganador</span>' 
-                                : '<button class="btn-verify" onclick="markAsWinner(${ticket.id})">Marcar ganador</button>'}
+                                : '<button class="btn-verify" onclick="markAsWinner('+ticket.id+')">Marcar ganador</button>'}
                         </td>
                     </tr>
                 `;
             });
             
-            html += `</tbody></table>`;
+            html += `</tbody></table></div>`;
             container.innerHTML = html;
         }
 
@@ -1069,26 +1097,34 @@
             }
             
             let html = `
-                <table class="ticket-results-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Nombre</th>
-                            <th>CI</th>
-                            <th>Boletos</th>
-                            <th>Ver Boletos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="table-container">
+                    <table class="ticket-results-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Comprador</th>
+                                <th>CI</th>
+                                <th>Teléfono</th>
+                                <th>Boletos</th>
+                                <th>Referencia</th>
+                                <th>Ver Boletos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
             
             transactions.forEach(transaction => {
+                const formattedDate = new Date(transaction.date).toLocaleDateString();
+                const ticketCount = transaction.tickets?.length || 0;
+                
                 html += `
                     <tr>
-                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${formattedDate}</td>
                         <td>${transaction.name}</td>
                         <td>${transaction.id_number}</td>
-                        <td>${transaction.tickets?.length || 0}</td>
+                        <td>${transaction.phone}</td>
+                        <td>${ticketCount}</td>
+                        <td>${transaction.reference}</td>
                         <td>
                             <button class="btn-verify" onclick="viewTickets(${transaction.id})">
                                 <i class="fas fa-eye"></i> Ver
@@ -1098,7 +1134,7 @@
                 `;
             });
             
-            html += `</tbody></table>`;
+            html += `</tbody></table></div>`;
             container.innerHTML = html;
         }
 
@@ -1168,7 +1204,7 @@
                         <td>
                             ${ticket.is_winner 
                                 ? '<span style="color:#28a745;"><i class="fas fa-trophy"></i> Ganador</span>' 
-                                : '<button class="btn-verify" onclick="markAsWinner(${ticket.id})">Marcar ganador</button>'}
+                                : '<button class="btn-verify" onclick="markAsWinner('+ticket.id+')">Marcar ganador</button>'}
                         </td>
                     </tr>
                 `;
@@ -1192,6 +1228,10 @@
 
         function setTicketFilter(filter) {
             currentTicketFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
             searchTickets();
         }
 
