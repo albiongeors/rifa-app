@@ -6,7 +6,6 @@
     <title>Panel de Administración - Rifa Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilos generales */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -73,7 +72,6 @@
             gap: 20px;
         }
         
-        /* Panel de configuración */
         .config-panel {
             background: linear-gradient(to right, #f8f9fa, #e9ecef);
             padding: 20px;
@@ -126,7 +124,6 @@
             outline: none;
         }
         
-        /* Estadísticas */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -162,7 +159,6 @@
             font-weight: 500;
         }
         
-        /* Controles */
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -200,7 +196,6 @@
             flex-wrap: wrap;
         }
         
-        /* Tabla */
         .table-container {
             overflow-x: auto;
             border-radius: 10px;
@@ -255,7 +250,6 @@
             background-color: #fffde7;
         }
         
-        /* Botones */
         button {
             background-color: #4361ee;
             color: white;
@@ -336,7 +330,6 @@
             font-size: 16px;
         }
         
-        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -413,7 +406,6 @@
             margin: 15px 0;
         }
         
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -423,7 +415,28 @@
             border-top: 1px solid #e9ecef;
         }
         
-        /* Responsive */
+        .ticket-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .ticket-results-table th, 
+        .ticket-results-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .ticket-results-table thead {
+            background: linear-gradient(to right, #3a0ca3, #4361ee);
+            color: white;
+        }
+
+        .ticket-results-table tbody tr:hover {
+            background-color: #e9f0ff;
+        }
+        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -550,12 +563,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Los datos se cargarán con JavaScript -->
                     <tr>
                         <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        
+        <div class="config-panel" style="margin-top: 30px;">
+            <h2><i class="fas fa-search"></i> Buscar Boletos</h2>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto o cédula..." onkeyup="searchTickets()">
+            </div>
+            <div id="ticketSearchResults" style="margin-top: 20px;"></div>
         </div>
         
         <div class="footer">
@@ -564,27 +585,22 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN
-        // ==========================================
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 10000,  // 10,000 boletos
+            totalTickets: 10000,
             pricePerTicket: 80,
             adminWhatsApp: "584127430912"
         };
-        // ==========================================
 
         let currentFilter = 'all';
         let currentSearch = '';
+        let currentTicketFilter = 'all';
 
-        // Función para formatear números de ticket
         function formatTicketNumber(number) {
             return String(number).padStart(5, '0');
         }
 
-        // Función para obtener TODOS los tickets existentes con paginación
         async function getAllExistingTickets() {
             const existingTickets = new Set();
             let page = 0;
@@ -619,7 +635,6 @@
                         existingTickets.add(ticket.ticket_number);
                     });
 
-                    // Si obtenemos menos tickets que el tamaño de página, es la última página
                     if (ticketsData.length < pageSize) {
                         hasMore = false;
                     } else {
@@ -633,25 +648,17 @@
             }
         }
 
-        // Función para generar tickets aleatorios sin repetir - CORREGIDA
         async function generateTickets(transactionId, quantity) {
             try {
-                // Obtener todos los tickets existentes
                 const existingTickets = await getAllExistingTickets();
-                
-                // Crear un array con todos los números posibles
                 const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
-                
-                // Filtrar solo los disponibles
                 const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
                 
-                // Verificar si hay suficientes tickets disponibles
                 if (availableTickets.length < quantity) {
                     alert(`Error: Solo quedan ${availableTickets.length} boletos disponibles`);
                     return false;
                 }
                 
-                // Seleccionar aleatoriamente
                 const selectedTickets = [];
                 while (selectedTickets.length < quantity) {
                     const randomIndex = Math.floor(Math.random() * availableTickets.length);
@@ -659,14 +666,12 @@
                     availableTickets.splice(randomIndex, 1);
                 }
                 
-                // Preparar datos para insertar
                 const ticketsToInsert = selectedTickets.map(ticketNumber => ({
                     transaction_id: transactionId,
                     ticket_number: ticketNumber,
                     status: "ACTIVO"
                 }));
                 
-                // Insertar en la base de datos
                 const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
                     method: 'POST',
                     headers: {
@@ -690,7 +695,6 @@
             }
         }
 
-        // Cargar configuración
         async function loadConfig() {
             try {
                 const response = await fetch('/config.json');
@@ -707,7 +711,6 @@
             }
         }
 
-        // Guardar configuración
         async function saveConfig() {
             const config = {
                 totalTickets: parseInt(document.getElementById('totalTickets').value),
@@ -716,27 +719,21 @@
                 prizeImage: document.getElementById('prizeImageUrl').value
             };
             
-            // En una implementación real, esto guardaría en una base de datos
             localStorage.setItem('rifaConfig', JSON.stringify(config));
             alert("Configuración guardada. Recuerda actualizar el archivo config.json en producción.");
-            
-            // Actualizar estadísticas
             loadTransactions();
         }
 
-        // Cargar transacciones
         async function loadTransactions() {
             try {
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
                 
-                // Aplicar filtros
                 if (currentFilter === 'pending') {
                     url += `&status=eq.PENDIENTE`;
                 } else if (currentFilter === 'verified') {
                     url += `&status=eq.VERIFICADO`;
                 }
                 
-                // Aplicar búsqueda
                 if (currentSearch) {
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
                 }
@@ -763,17 +760,13 @@
             }
         }
 
-        // Actualizar estadísticas
         async function updateStats(transactions) {
-            // Obtener tickets vendidos (verificados)
             const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
             const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
             
-            // Obtener total de tickets existentes
             try {
                 const existingTickets = await getAllExistingTickets();
                 const availableTickets = CONFIG.totalTickets - existingTickets.size;
-                
                 document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
             } catch (error) {
                 console.error("Error calculando tickets disponibles:", error);
@@ -790,7 +783,6 @@
             document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
         }
 
-        // Renderizar transacciones
         function renderTransactions(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
@@ -843,11 +835,9 @@
             });
         }
 
-        // Eliminar transacción
         async function deleteTransaction(transactionId) {
             if (confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) {
                 try {
-                    // 1. Eliminar transacción
                     const deleteRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
                         method: 'DELETE',
                         headers: {
@@ -857,7 +847,6 @@
                     });
                     
                     if (deleteRes.ok) {
-                        // 2. Eliminar tickets asociados
                         await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
                             method: 'DELETE',
                             headers: {
@@ -878,18 +867,15 @@
             }
         }
 
-        // Verificar pago
         async function verifyPayment(transactionId, ticketQuantity, phone) {
             if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
                 try {
-                    // 1. Generar tickets
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     
                     if (!tickets) {
                         return;
                     }
                     
-                    // 2. Actualizar estado de transacción
                     const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
                         method: 'PATCH',
                         headers: {
@@ -901,7 +887,6 @@
                     });
                     
                     if (response.ok) {
-                        // Mostrar modal con tickets
                         showTicketsModal(tickets, phone, transactionId);
                         loadTransactions();
                     } else {
@@ -914,12 +899,10 @@
             }
         }
 
-        // Mostrar modal con tickets
         function showTicketsModal(tickets, phone, transactionId) {
             const modal = document.createElement('div');
             modal.className = 'modal';
             
-            // Formatear números de tickets
             const formattedTickets = tickets.map(t => 
                 formatTicketNumber(t.ticket_number)
             );
@@ -949,7 +932,6 @@
             document.body.appendChild(modal);
         }
 
-        // Copiar números de tickets
         function copyTicketNumbers() {
             const textarea = document.getElementById('ticketNumbers');
             textarea.select();
@@ -957,9 +939,7 @@
             alert('¡Números copiados al portapapeles!');
         }
 
-        // Enviar tickets por WhatsApp
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
-            // Limpiar y formatear el teléfono
             const cleanedPhone = phone.replace(/[^0-9]/g, '');
             const formattedPhone = cleanedPhone.startsWith('58') ? cleanedPhone : '58' + cleanedPhone;
             
@@ -974,7 +954,6 @@
             window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
         }
 
-        // Establecer filtro
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -984,25 +963,244 @@
             loadTransactions();
         }
 
-        // Buscar transacciones
         function searchTransactions() {
             currentSearch = document.getElementById('searchInput').value;
             loadTransactions();
         }
+        
+        async function searchTickets() {
+            const searchTerm = document.getElementById('ticketSearchInput').value.trim();
+            if (searchTerm.length < 3) {
+                document.getElementById('ticketSearchResults').innerHTML = '';
+                return;
+            }
+            
+            try {
+                if (/^\d+$/.test(searchTerm)) {
+                    const ticketNumber = parseInt(searchTerm);
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}&select=*,transactions(*)`, {
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    });
+                    
+                    const tickets = await response.json();
+                    displayTicketSearchResults(tickets);
+                } 
+                else {
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=ilike.%25${searchTerm}%25&select=*,tickets(*)`, {
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    });
+                    
+                    const transactions = await response.json();
+                    displayTransactionSearchResults(transactions);
+                }
+            } catch (error) {
+                console.error("Error buscando boletos:", error);
+                document.getElementById('ticketSearchResults').innerHTML = `
+                    <p style="color:#dc3545; padding:15px; text-align:center;">
+                        <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
+                    </p>
+                `;
+            }
+        }
 
-        // Inicialización
+        function displayTicketSearchResults(tickets) {
+            const container = document.getElementById('ticketSearchResults');
+            
+            if (!tickets || tickets.length === 0) {
+                container.innerHTML = `
+                    <p style="padding:15px; text-align:center; color:#6c757d;">
+                        <i class="fas fa-info-circle"></i> No se encontraron boletos
+                    </p>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="ticket-results-table">
+                    <thead>
+                        <tr>
+                            <th>Boleto</th>
+                            <th>Nombre</th>
+                            <th>CI</th>
+                            <th>Estado</th>
+                            <th>Ganador</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            tickets.forEach(ticket => {
+                const transaction = ticket.transactions;
+                html += `
+                    <tr>
+                        <td><strong>${formatTicketNumber(ticket.ticket_number)}</strong></td>
+                        <td>${transaction?.name || 'N/A'}</td>
+                        <td>${transaction?.id_number || 'N/A'}</td>
+                        <td>${ticket.status}</td>
+                        <td>
+                            ${ticket.is_winner 
+                                ? '<span style="color:#28a745;"><i class="fas fa-trophy"></i> Ganador</span>' 
+                                : '<button class="btn-verify" onclick="markAsWinner(${ticket.id})">Marcar ganador</button>'}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        function displayTransactionSearchResults(transactions) {
+            const container = document.getElementById('ticketSearchResults');
+            
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = `
+                    <p style="padding:15px; text-align:center; color:#6c757d;">
+                        <i class="fas fa-info-circle"></i> No se encontraron transacciones
+                    </p>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="ticket-results-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>CI</th>
+                            <th>Boletos</th>
+                            <th>Ver Boletos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            transactions.forEach(transaction => {
+                html += `
+                    <tr>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.name}</td>
+                        <td>${transaction.id_number}</td>
+                        <td>${transaction.tickets?.length || 0}</td>
+                        <td>
+                            <button class="btn-verify" onclick="viewTickets(${transaction.id})">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        async function markAsWinner(ticketId) {
+            if (confirm("¿Marcar este boleto como ganador?")) {
+                try {
+                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?id=eq.${ticketId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ is_winner: true })
+                    });
+                    
+                    alert("¡Boleto marcado como ganador!");
+                    searchTickets();
+                } catch (error) {
+                    console.error("Error marcando como ganador:", error);
+                    alert("Error al marcar como ganador");
+                }
+            }
+        }
+
+        async function viewTickets(transactionId) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const tickets = await response.json();
+                displayTicketsModal(tickets);
+            } catch (error) {
+                console.error("Error obteniendo boletos:", error);
+                alert("Error al obtener boletos");
+            }
+        }
+
+        function displayTicketsModal(tickets) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            let html = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-ticket-alt"></i> Boletos</h2>
+                    <div style="max-height:400px; overflow-y:auto;">
+                        <table style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Estado</th>
+                                    <th>Ganador</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            tickets.forEach(ticket => {
+                html += `
+                    <tr>
+                        <td>${formatTicketNumber(ticket.ticket_number)}</td>
+                        <td>${ticket.status}</td>
+                        <td>
+                            ${ticket.is_winner 
+                                ? '<span style="color:#28a745;"><i class="fas fa-trophy"></i> Ganador</span>' 
+                                : '<button class="btn-verify" onclick="markAsWinner(${ticket.id})">Marcar ganador</button>'}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-buttons">
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+        }
+
+        function setTicketFilter(filter) {
+            currentTicketFilter = filter;
+            searchTickets();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadConfig();
             loadTransactions();
-            
-            // Recargar cada 2 minutos
             setInterval(loadTransactions, 120000);
-            
-            // Mostrar mensaje de bienvenida
-            setTimeout(() => {
-                console.log("Panel de administración cargado correctamente");
-            }, 1000);
         });
     </script>
 </body>
 </html>
+
