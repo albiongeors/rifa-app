@@ -494,15 +494,15 @@
                 </div>
                 <div class="config-item">
                     <label>Precio por Boleto (Bs.)</label>
-                    <input type="number" id="ticketPrice" value="70">
+                    <input type="number" id="ticketPrice" value="80">
                 </div>
                 <div class="config-item">
                     <label>Fecha del Sorteo</label>
-                    <input type="text" id="raffleDate" placeholder="Fecha por definir">
+                    <input type="text" id="raffleDate" value="15 de Diciembre 2025">
                 </div>
                 <div class="config-item">
                     <label>URL Imagen Premio</label>
-                    <input type="text" id="prizeImageUrl" value="https://i.ibb.co/Kx3fHcx9/RIFA-IMAGEN.png">
+                    <input type="text" id="prizeImageUrl" value="https://iili.io/FvJJVdG.jpg">
                 </div>
             </div>
             <button class="btn-save" onclick="saveConfig()">
@@ -589,7 +589,7 @@
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
-            pricePerTicket: 70,
+            pricePerTicket: 80,
             adminWhatsApp: "584127430912"
         };
 
@@ -803,7 +803,7 @@
                 row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
                 
                 const date = new Date(transaction.date);
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})`;
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 
                 row.innerHTML = `
                     <td>${formattedDate}</td>
@@ -947,7 +947,7 @@
                 `*TUS TICKETS PARA LA RIFA PREMIUM GANA CON YAIR*\n\n` +
                 `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
                 `${ticketNumbers}\n\n` +
-                `¡Mucha suerte en el sorteo! 🍀\n\n` +
+                `¡Mucha suerte en el sorteo del 15 de Diciembre! 🍀\n\n` +
                 `Atentamente,\nEquipo de Rifa Premium`
             );
             
@@ -1203,3 +1203,4 @@
     </script>
 </body>
 </html>
+
