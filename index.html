@@ -547,7 +547,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: translateX(-100%);
             animation: shine 2s infinite;
         }
@@ -823,8 +823,13 @@
             
             <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
             
+            <!-- NOTA DE COMPRA MÍNIMA -->
+            <p style="text-align: center; color: #3a0ca3; font-weight: 500; margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i> Mínimo de compra: 2 boletos
+            </p>
+            
             <div class="ticket-selection">
-                <div class="ticket-option" data-quantity="1"><span>1</span></div>
+                <!-- SE ELIMINÓ LA OPCIÓN DE 1 BOLETO -->
                 <div class="ticket-option" data-quantity="2"><span>2</span></div>
                 <div class="ticket-option" data-quantity="5"><span>5</span></div>
                 <div class="ticket-option" data-quantity="10"><span>10</span></div>
@@ -835,7 +840,8 @@
             </div>
             
             <div class="ticket-input-container">
-                <input type="number" id="ticketQuantityInput" min="1" value="1" required>
+                <!-- SE ESTABLECIÓ MÍNIMO DE 2 BOLETOS -->
+                <input type="number" id="ticketQuantityInput" min="2" value="2" required>
             </div>
             <p style="text-align:center; color: var(--light-text);">Precio por boleto: <strong id="ticketPrice" style="color: var(--primary-dark);">Bs. 0</strong></p>
             <div class="amount-display">Total: <strong id="totalAmount">0</strong> Bs.</div>
@@ -1030,6 +1036,9 @@
                 });
             });
             
+            // Seleccionar automáticamente 2 tickets al inicio
+            document.querySelector('.ticket-option[data-quantity="2"]').classList.add('selected');
+            
             updateStepIndicators();
         }
 
@@ -1075,7 +1084,14 @@
         }
 
         function updateTicketUI() {
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
+            let ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
+            
+            // Forzar mínimo de 2 boletos
+            if (ticketQuantity < 2) {
+                ticketQuantity = 2;
+                document.getElementById('ticketQuantityInput').value = 2;
+            }
+            
             const total = ticketQuantity * CONFIG.pricePerTicket;
             document.getElementById('totalAmount').textContent = total;
             document.getElementById('paymentAmount').textContent = total;
@@ -1092,7 +1108,7 @@
         }
 
         async function saveData() {
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
             const data = {
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
@@ -1122,7 +1138,7 @@
         }
 
         function openWhatsApp() {
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 1;
+            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
             const phone = document.getElementById('phone').value;
@@ -1160,8 +1176,9 @@
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
             const availableTickets = CONFIG.totalTickets - soldTickets;
             
-            if (ticketQuantity < 1) {
-                alert("La cantidad de boletos debe ser al menos 1");
+            // Validar mínimo de 2 boletos
+            if (ticketQuantity < 2) {
+                alert("La cantidad mínima de boletos es 2");
                 return false;
             }
             
@@ -1285,15 +1302,15 @@
             document.getElementById('phone').value = '';
             document.getElementById('email').value = '';
             document.getElementById('referenceNumber').value = '';
-            document.getElementById('ticketQuantityInput').value = '1';
+            document.getElementById('ticketQuantityInput').value = '2';
             updateTicketUI();
             goToStep(1);
         });
 
         document.getElementById('ticketQuantityInput').addEventListener('input', updateTicketUI);
         document.getElementById('ticketQuantityInput').addEventListener('change', function() {
-            if (this.value < 1) {
-                this.value = 1;
+            if (this.value < 2) {
+                this.value = 2;
             }
             updateTicketUI();
         });
@@ -1327,3 +1344,4 @@
     </script>
 </body>
 </html>
+
