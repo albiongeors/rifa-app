@@ -713,7 +713,9 @@
         }
 
         function cleanPhone(phone) {
+            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
+            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -971,7 +973,7 @@
                 row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
                 
                 const date = new Date(transaction.date);
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})`;
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 
                 // Verificar si es duplicado
                 const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
@@ -1222,24 +1224,6 @@
             }
             
             try {
-                // Buscar por número de boleto exacto
-                const ticketNumber = parseInt(searchTerm);
-                if (!isNaN(ticketNumber)) {
-                    const ticketResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}&select=*,transactions(*)`, {
-                        headers: {
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                        }
-                    });
-                    
-                    const tickets = await ticketResponse.json();
-                    if (tickets.length > 0) {
-                        displayTicketSearchResults(tickets);
-                        return;
-                    }
-                }
-                
-                // Buscar por cédula, teléfono o referencia
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(id_number.ilike.%25${searchTerm}%25,phone.ilike.%25${searchTerm}%25,reference.ilike.%25${searchTerm}%25)&select=*,tickets(ticket_number)`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
@@ -1257,55 +1241,6 @@
                     </p>
                 `;
             }
-        }
-
-        function displayTicketSearchResults(tickets) {
-            const container = document.getElementById('ticketSearchResults');
-            
-            if (!tickets || tickets.length === 0) {
-                container.innerHTML = `
-                    <p style="padding:15px; text-align:center; color:#6c757d;">
-                        <i class="fas fa-info-circle"></i> No se encontraron boletos
-                    </p>
-                `;
-                return;
-            }
-            
-            let html = `
-                <table class="ticket-results-table">
-                    <thead>
-                        <tr>
-                            <th>Número de Boleto</th>
-                            <th>Transacción</th>
-                            <th>Nombre</th>
-                            <th>CI</th>
-                            <th>Estado</th>
-                            <th>Ver</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            tickets.forEach(ticket => {
-                const transaction = ticket.transactions;
-                html += `
-                    <tr>
-                        <td><strong>${formatTicketNumber(ticket.ticket_number)}</strong></td>
-                        <td>#${transaction.id}</td>
-                        <td>${transaction.name}</td>
-                        <td>${transaction.id_number}</td>
-                        <td>${transaction.status}</td>
-                        <td>
-                            <button class="btn-verify" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
-                                <i class="fas fa-eye"></i> Detalles
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            html += `</tbody></table>`;
-            container.innerHTML = html;
         }
 
         function displayTransactionSearchResults(transactions) {
@@ -1371,6 +1306,5 @@
     </script>
 </body>
 </html>
-
 
 
