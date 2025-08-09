@@ -868,7 +868,17 @@
             <label>Cédula de identidad</label>
             <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
             <label>Teléfono</label>
-            <input type="tel" id="phone" placeholder="Ej: 04141234567" required>
+            <div style="display: flex; gap: 10px;">
+                <select id="phonePrefix" style="flex: 1; padding: 16px 20px; border-radius: 15px; border: 1px solid #e2e8f0; font-size: 16px;">
+                    <option value="0412">0412</option>
+                    <option value="0414">0414</option>
+                    <option value="0424">0424</option>
+                    <option value="0426">0426</option>
+                    <option value="0416">0416</option>
+                    <option value="0422">0422</option>
+                </select>
+                <input type="text" id="phoneSuffix" placeholder="1234567" required style="flex: 2; padding: 16px 20px; border-radius: 15px; border: 1px solid #e2e8f0; font-size: 16px;">
+            </div>
             <label>Correo electrónico</label>
             <input type="email" id="email" placeholder="Ej: usuario@ejemplo.com" required>
             <button id="continueToPayment" class="btn">
@@ -891,12 +901,23 @@
             <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
             <div style="margin-bottom:25px;">
                 <select id="paymentMethod" required>
-                    <option value="bank">Transferencia Bancaria</option>
+                    <!-- PAGO MÓVIL AHORA ES LA PRIMERA OPCIÓN -->
                     <option value="mobile">Pago Móvil</option>
+                    <option value="bank">Transferencia Bancaria</option>
+                    <!-- NUEVO MÉTODO ZINLI -->
+                    <option value="zinli">Zinli</option>
                 </select>
             </div>
 
-            <div id="bankDetails" class="payment-details">
+            <div id="mobileDetails" class="payment-details">
+                <h3>Datos para Pago Móvil</h3>
+                <p><strong>Banco:</strong> <span id="mobileBank">Banco de Venezuela</span></p>
+                <p><strong>Teléfono:</strong> <span id="mobilePhone">0412-0479871</span></p>
+                <p><strong>Cédula:</strong> <span id="mobileId">V-25441167</span></p>
+                <p><strong>Monto:</strong> <span id="mobileAmount">0</span> Bs.</p>
+            </div>
+
+            <div id="bankDetails" class="payment-details" style="display:none;">
                 <h3>Datos para transferencia</h3>
                 <p><strong>Banco:</strong> <span id="bankName">Banco de Venezuela</span></p>
                 <p><strong>Titular:</strong> <span id="accountHolder">YAIR TROYA</span></p>
@@ -905,12 +926,11 @@
                 <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
 
-            <div id="mobileDetails" class="payment-details" style="display:none;">
-                <h3>Datos para Pago Móvil</h3>
-                <p><strong>Banco:</strong> <span id="mobileBank">Banco de Venezuela</span></p>
-                <p><strong>Teléfono:</strong> <span id="mobilePhone">0412-0479871</span></p>
-                <p><strong>Cédula:</strong> <span id="mobileId">V-25441167</span></p>
-                <p><strong>Monto:</strong> <span id="mobileAmount">0</span> Bs.</p>
+            <!-- NUEVA SECCIÓN PARA ZINLI -->
+            <div id="zinliDetails" class="payment-details" style="display:none;">
+                <h3>Datos para Pago con Zinli</h3>
+                <p><strong>Correo:</strong> ganaconyair@gmail.com</p>
+                <p><strong>Monto:</strong> <span id="zinliAmount">0</span> Bs.</p>
             </div>
 
             <div style="margin:25px 0;">
@@ -1040,6 +1060,11 @@
             document.querySelector('.ticket-option[data-quantity="2"]').classList.add('selected');
             
             updateStepIndicators();
+
+            // Evento para el sufijo del teléfono: solo números y máximo 7 caracteres
+            document.getElementById('phoneSuffix').addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '').substring(0, 7);
+            });
         }
 
         function updateStepIndicators() {
@@ -1096,6 +1121,7 @@
             document.getElementById('totalAmount').textContent = total;
             document.getElementById('paymentAmount').textContent = total;
             document.getElementById('mobileAmount').textContent = total;
+            document.getElementById('zinliAmount').textContent = total;
             
             document.querySelectorAll('.ticket-option').forEach(option => {
                 const optionQuantity = parseInt(option.getAttribute('data-quantity'));
@@ -1109,13 +1135,24 @@
 
         async function saveData() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
+            const phonePrefix = document.getElementById('phonePrefix').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
+            const reference = document.getElementById('referenceNumber').value;
+            
+            // Verificar si la referencia ya existe
+            const refExists = await checkReferenceExists(reference);
+            if (refExists) {
+                alert("¡Esta referencia ya ha sido utilizada! Por favor usa un número diferente.");
+                return { success: false };
+            }
+
             const data = {
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
-                phone: document.getElementById('phone').value,
+                phone: phonePrefix + phoneSuffix,
                 email: document.getElementById('email').value,
                 tickets: ticketQuantity,
-                reference: document.getElementById('referenceNumber').value,
+                reference: reference,
                 status: "PENDIENTE"
             };
 
@@ -1137,23 +1174,52 @@
             }
         }
 
+        async function checkReferenceExists(reference) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const data = await response.json();
+                return data.length > 0;
+            } catch (error) {
+                console.error("Error verificando referencia:", error);
+                return false;
+            }
+        }
+
         function openWhatsApp() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const phone = document.getElementById('phone').value;
+            const phonePrefix = document.getElementById('phonePrefix').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const email = document.getElementById('email').value;
             const reference = document.getElementById('referenceNumber').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
             const amount = ticketQuantity * CONFIG.pricePerTicket;
+            
+            let methodText = "";
+            if (paymentMethod === 'mobile') {
+                methodText = "Pago Móvil";
+            } else if (paymentMethod === 'bank') {
+                methodText = "Transferencia Bancaria";
+            } else if (paymentMethod === 'zinli') {
+                methodText = "Zinli";
+            }
             
             const formattedPhone = CONFIG.adminWhatsApp.replace(/[^0-9]/g, '');
             const message = encodeURIComponent(
                 `*NUEVO PAGO REPORTADO - RIFA PREMIUM*\n\n` +
                 `*Nombre:* ${name}\n` +
                 `*Cédula:* ${id}\n` +
-                `*Teléfono:* ${phone}\n` +
+                `*Teléfono:* ${phonePrefix}${phoneSuffix}\n` +
                 `*Email:* ${email}\n` +
                 `*Boletos:* ${ticketQuantity}\n` +
+                `*Método de Pago:* ${methodText}\n` +
                 `*Referencia:* ${reference}\n` +
                 `*Monto:* ${amount} Bs.\n\n` +
                 `Adjunto comprobante de pago`
@@ -1282,10 +1348,10 @@
         document.getElementById('continueToPayment').addEventListener('click', () => {
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const phone = document.getElementById('phone').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const email = document.getElementById('email').value;
             
-            if (!name || !id || !phone || !email) {
+            if (!name || !id || !phoneSuffix || !email) {
                 alert("Por favor completa todos los campos");
                 return;
             }
@@ -1299,7 +1365,7 @@
         document.getElementById('returnHome').addEventListener('click', () => {
             document.getElementById('fullName').value = '';
             document.getElementById('idNumber').value = '';
-            document.getElementById('phone').value = '';
+            document.getElementById('phoneSuffix').value = '';
             document.getElementById('email').value = '';
             document.getElementById('referenceNumber').value = '';
             document.getElementById('ticketQuantityInput').value = '2';
@@ -1318,16 +1384,17 @@
         document.getElementById('paymentMethod').addEventListener('change', function() {
             document.getElementById('bankDetails').style.display = this.value === 'bank' ? 'block' : 'none';
             document.getElementById('mobileDetails').style.display = this.value === 'mobile' ? 'block' : 'none';
+            document.getElementById('zinliDetails').style.display = this.value === 'zinli' ? 'block' : 'none';
         });
 
         document.getElementById('whatsappBtn').addEventListener('click', async () => {
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const phone = document.getElementById('phone').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const email = document.getElementById('email').value;
             const reference = document.getElementById('referenceNumber').value;
             
-            if (!name || !id || !phone || !email || !reference) {
+            if (!name || !id || !phoneSuffix || !email || !reference) {
                 alert("Por favor completa todos los campos");
                 return;
             }
@@ -1336,14 +1403,19 @@
                 return;
             }
             
+            const saveResult = await saveData();
+            if (!saveResult.success) {
+                return;
+            }
+            
             openWhatsApp();
-            await saveData();
             document.getElementById('reportReference').textContent = reference;
             goToStep(5);
         });
     </script>
 </body>
 </html>
+
 
 
 
