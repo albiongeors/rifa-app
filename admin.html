@@ -574,6 +574,35 @@
             margin-bottom: 8px;
         }
         
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4361ee;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 18px;
+            color: #3a0ca3;
+            font-weight: 500;
+        }
+        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -705,7 +734,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
+                        <td colspan="10" style="text-align:center; padding:30px;">
+                            <div class="loading-container">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div class="loading-text">Cargando transacciones...</div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -869,6 +903,8 @@
         async function loadConfig() {
             try {
                 const response = await fetch('/config.json');
+                if (!response.ok) throw new Error('Config not found');
+                
                 const config = await response.json();
                 CONFIG.totalTickets = config.totalTickets;
                 CONFIG.pricePerTicket = config.pricePerTicket;
@@ -879,6 +915,7 @@
                 document.getElementById('prizeImageUrl').value = config.prizeImage;
             } catch (error) {
                 console.log("Usando configuración por defecto");
+                // Mantenemos los valores por defecto
             }
         }
 
@@ -909,12 +946,28 @@
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
                 }
                 
+                // Mostrar indicador de carga
+                document.querySelector("#transactionsTable tbody").innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align:center; padding:30px;">
+                            <div class="loading-container">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div class="loading-text">Cargando transacciones...</div>
+                        </td>
+                    </tr>
+                `;
+                
                 const response = await fetch(url, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                }
                 
                 const transactions = await response.json();
                 
@@ -928,7 +981,7 @@
                 document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
                         <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
-                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
+                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones: ${error.message}
                         </td>
                     </tr>
                 `;
@@ -1264,7 +1317,7 @@
         async function searchTickets() {
             const searchTerm = document.getElementById('ticketSearchInput').value.trim();
             const resultsContainer = document.getElementById('ticketSearchResults');
-            resultsContainer.innerHTML = '<p style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Buscando boletos...</p>';
+            resultsContainer.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div><div class="loading-text">Buscando boletos...</div></div>';
             
             if (!searchTerm) {
                 resultsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#dc3545;">Por favor ingresa un término de búsqueda</p>';
@@ -1282,6 +1335,10 @@
                         }
                     });
                     
+                    if (!ticketResponse.ok) {
+                        throw new Error('Error en la respuesta de tickets');
+                    }
+                    
                     const tickets = await ticketResponse.json();
                     if (tickets.length > 0) {
                         displayTicketSearchResults(tickets);
@@ -1297,6 +1354,10 @@
                     }
                 });
                 
+                if (!idResponse.ok) {
+                    throw new Error('Error en la respuesta por cédula');
+                }
+                
                 const idTransactions = await idResponse.json();
                 if (idTransactions.length > 0) {
                     displayTransactionSearchResults(idTransactions, "Resultados por cédula");
@@ -1311,6 +1372,10 @@
                     }
                 });
                 
+                if (!phoneResponse.ok) {
+                    throw new Error('Error en la respuesta por teléfono');
+                }
+                
                 const phoneTransactions = await phoneResponse.json();
                 if (phoneTransactions.length > 0) {
                     displayTransactionSearchResults(phoneTransactions, "Resultados por teléfono");
@@ -1324,6 +1389,10 @@
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
+                
+                if (!refResponse.ok) {
+                    throw new Error('Error en la respuesta por referencia');
+                }
                 
                 const refTransactions = await refResponse.json();
                 if (refTransactions.length > 0) {
@@ -1468,3 +1537,4 @@
     </script>
 </body>
 </html>
+
