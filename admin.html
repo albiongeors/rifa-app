@@ -608,6 +608,13 @@
             border-radius: var(--border-radius);
             padding: 20px;
             position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .duplicate-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
 
         .duplicate-card h4 {
@@ -825,19 +832,19 @@
             <h3><i class="fas fa-chart-pie"></i> Resumen</h3>
             <div class="stat-item">
                 <span>Ventas Totales:</span>
-                <span class="stat-value">Bs. 2,450,000</span>
+                <span class="stat-value" id="summaryTotalSales">Bs. 0</span>
             </div>
             <div class="stat-item">
                 <span>Boletos Vendidos:</span>
-                <span class="stat-value">35,000</span>
+                <span class="stat-value" id="summaryTotalTickets">0</span>
             </div>
             <div class="stat-item">
                 <span>Clientes Activos:</span>
-                <span class="stat-value">8,420</span>
+                <span class="stat-value" id="summaryActiveClients">0</span>
             </div>
             <div class="stat-item">
                 <span>Verificados Hoy:</span>
-                <span class="stat-value">142</span>
+                <span class="stat-value" id="summaryTodayVerified">0</span>
             </div>
         </div>
     </div>
@@ -866,7 +873,7 @@
                 <div class="stat-value" id="totalSales">Bs. 0</div>
                 <div class="stat-label">VENTAS TOTALES</div>
                 <div class="stat-change up">
-                    <i class="fas fa-arrow-up"></i> 12.5% desde ayer
+                    <i class="fas fa-arrow-up"></i> <span id="salesChange">0%</span> desde ayer
                 </div>
             </div>
             <div class="stat-card">
@@ -874,7 +881,7 @@
                 <div class="stat-value" id="pendingTransactions">0</div>
                 <div class="stat-label">PENDIENTES</div>
                 <div class="stat-change down">
-                    <i class="fas fa-arrow-down"></i> 8.3% desde ayer
+                    <i class="fas fa-arrow-down"></i> <span id="pendingChange">0%</span> desde ayer
                 </div>
             </div>
             <div class="stat-card">
@@ -882,7 +889,7 @@
                 <div class="stat-value" id="verifiedTransactions">0</div>
                 <div class="stat-label">VERIFICADOS</div>
                 <div class="stat-change up">
-                    <i class="fas fa-arrow-up"></i> 5.2% desde ayer
+                    <i class="fas fa-arrow-up"></i> <span id="verifiedChange">0%</span> desde ayer
                 </div>
             </div>
             <div class="stat-card">
@@ -890,7 +897,7 @@
                 <div class="stat-value" id="totalTickets">0</div>
                 <div class="stat-label">BOLETOS VENDIDOS</div>
                 <div class="stat-change up">
-                    <i class="fas fa-arrow-up"></i> 4.7% desde ayer
+                    <i class="fas fa-arrow-up"></i> <span id="ticketsChange">0%</span> desde ayer
                 </div>
             </div>
         </div>
@@ -1011,6 +1018,7 @@
         // Configuración de Supabase
         const SUPABASE_URL = 'https://iqigjulbvmkokorecjie.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c';
+        const TICKET_PRICE = 70; // Precio por boleto
 
         // Variables globales
         let transactions = [];
@@ -1042,6 +1050,14 @@
         const verifiedTransactionsElement = document.getElementById('verifiedTransactions');
         const totalTicketsElement = document.getElementById('totalTickets');
         const duplicatesGrid = document.getElementById('duplicatesGrid');
+        const summaryTotalSales = document.getElementById('summaryTotalSales');
+        const summaryTotalTickets = document.getElementById('summaryTotalTickets');
+        const summaryActiveClients = document.getElementById('summaryActiveClients');
+        const summaryTodayVerified = document.getElementById('summaryTodayVerified');
+        const salesChange = document.getElementById('salesChange');
+        const pendingChange = document.getElementById('pendingChange');
+        const verifiedChange = document.getElementById('verifiedChange');
+        const ticketsChange = document.getElementById('ticketsChange');
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
@@ -1081,15 +1097,19 @@
 
         function setDefaultDates() {
             const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-            startDateFilter.value = formattedDate;
-            endDateFilter.value = formattedDate;
-            currentFilters.startDate = formattedDate;
-            currentFilters.endDate = formattedDate;
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            
+            startDateFilter.value = yesterday.toISOString().split('T')[0];
+            endDateFilter.value = today.toISOString().split('T')[0];
+            
+            currentFilters.startDate = startDateFilter.value;
+            currentFilters.endDate = endDateFilter.value;
         }
 
         async function fetchTransactions() {
             try {
+                const loader = showLoader();
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/transactions?select=*,tickets(ticket_number,status)`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -1110,9 +1130,29 @@
                 // Renderizar tabla
                 renderTable();
                 setupPagination();
+                
+                hideLoader(loader);
             } catch (error) {
                 console.error("Error obteniendo transacciones:", error);
                 alert("Error obteniendo transacciones. Ver consola para más detalles.");
+            }
+        }
+
+        function showLoader() {
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            loader.style.position = 'fixed';
+            loader.style.top = '50%';
+            loader.style.left = '50%';
+            loader.style.transform = 'translate(-50%, -50%)';
+            loader.style.zIndex = '1000';
+            document.body.appendChild(loader);
+            return loader;
+        }
+
+        function hideLoader(loader) {
+            if (loader) {
+                loader.remove();
             }
         }
 
@@ -1121,19 +1161,50 @@
             let pending = 0;
             let verified = 0;
             let totalTickets = 0;
+            let activeClients = new Set();
+            let todayVerified = 0;
+
+            const today = new Date().toISOString().split('T')[0];
 
             transactions.forEach(transaction => {
-                const amount = transaction.tickets * 70; // Precio por boleto: 70 Bs.
+                // Calcular ventas
+                const amount = transaction.tickets * TICKET_PRICE;
                 totalSales += amount;
                 totalTickets += transaction.tickets;
+                
+                // Contar estados
                 if (transaction.status === 'PENDIENTE') pending++;
                 if (transaction.status === 'VERIFICADO') verified++;
+                
+                // Clientes activos
+                if (transaction.id_number) {
+                    activeClients.add(transaction.id_number);
+                }
+                
+                // Verificados hoy
+                const transactionDate = new Date(transaction.date).toISOString().split('T')[0];
+                if (transaction.status === 'VERIFICADO' && transactionDate === today) {
+                    todayVerified++;
+                }
             });
 
+            // Actualizar estadísticas principales
             totalSalesElement.textContent = `Bs. ${totalSales.toLocaleString()}`;
             pendingTransactionsElement.textContent = pending;
             verifiedTransactionsElement.textContent = verified;
-            totalTicketsElement.textContent = totalTickets;
+            totalTicketsElement.textContent = totalTickets.toLocaleString();
+            
+            // Actualizar resumen en sidebar
+            summaryTotalSales.textContent = `Bs. ${totalSales.toLocaleString()}`;
+            summaryTotalTickets.textContent = totalTickets.toLocaleString();
+            summaryActiveClients.textContent = activeClients.size;
+            summaryTodayVerified.textContent = todayVerified;
+            
+            // Calcular cambios porcentuales (simulado)
+            salesChange.textContent = '12.5%';
+            pendingChange.textContent = '8.3%';
+            verifiedChange.textContent = '5.2%';
+            ticketsChange.textContent = '4.7%';
         }
 
         function findDuplicates() {
@@ -1195,7 +1266,7 @@
                 duplicateCard.className = 'duplicate-card';
                 
                 const title = document.createElement('h4');
-                title.innerHTML = `<i class="${types[type].icon}"></i> ${types[type].title}`;
+                title.innerHTML = `<i class="${types[type].icon}"></i> ${types[type].title} (${trans.length})`;
                 duplicateCard.appendChild(title);
 
                 trans.forEach(t => {
@@ -1203,6 +1274,19 @@
                     duplicateItem.className = 'duplicate-item';
                     duplicateItem.innerHTML = `<strong>${key}</strong> - ${t.name} (${new Date(t.date).toLocaleDateString()})`;
                     duplicateCard.appendChild(duplicateItem);
+                });
+
+                // Hacer que el duplicado sea clickeable
+                duplicateCard.addEventListener('click', () => {
+                    // Buscar transacciones con este valor
+                    searchInput.value = key;
+                    applyFilters();
+                    
+                    // Desplazarse a la tabla
+                    document.querySelector('.table-container').scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 });
 
                 duplicatesGrid.appendChild(duplicateCard);
@@ -1224,6 +1308,7 @@
             statusFilter.value = 'all';
             setDefaultDates();
             applyFilters();
+            searchInput.value = '';
         }
 
         function filterTransactions() {
@@ -1309,10 +1394,7 @@
 
             paginatedTransactions.forEach(transaction => {
                 const row = document.createElement('tr');
-                if (transaction.duplicate) {
-                    row.classList.add('duplicate');
-                }
-
+                
                 // Formatear fecha
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
@@ -1326,7 +1408,7 @@
                     <td><strong>${transaction.name}</strong></td>
                     <td>${transaction.id_number}</td>
                     <td>
-                        <a href="#" class="whatsapp-link">
+                        <a href="https://wa.me/${transaction.phone.replace(/\D/g, '')}" class="whatsapp-link" target="_blank">
                             <i class="fab fa-whatsapp"></i> ${transaction.phone}
                         </a>
                     </td>
@@ -1477,10 +1559,10 @@
                 filterTransactions();
                 renderTable();
                 calculateStats();
-                alert('Transacción verificada exitosamente');
+                showNotification('Transacción verificada exitosamente', 'success');
             } catch (error) {
                 console.error("Error verificando transacción:", error);
-                alert("Error verificando transacción. Ver consola para más detalles.");
+                showNotification('Error verificando transacción', 'error');
             }
         }
 
@@ -1508,16 +1590,71 @@
                 renderTable();
                 setupPagination();
                 calculateStats();
-                alert('Transacción eliminada exitosamente');
+                showNotification('Transacción eliminada exitosamente', 'success');
             } catch (error) {
                 console.error("Error eliminando transacción:", error);
-                alert("Error eliminando transacción. Ver consola para más detalles.");
+                showNotification('Error eliminando transacción', 'error');
             }
         }
 
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '15px 25px';
+            notification.style.borderRadius = 'var(--border-radius)';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = 'var(--shadow)';
+            notification.style.color = 'white';
+            notification.style.fontWeight = '500';
+            notification.style.transition = 'all 0.3s ease';
+            
+            if (type === 'success') {
+                notification.style.background = 'var(--success-color)';
+            } else {
+                notification.style.background = 'var(--danger-color)';
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Auto-eliminar después de 3 segundos
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 3000);
+        }
+
         function exportToExcel() {
-            // Implementar exportación a Excel
-            alert('Exportar a Excel aún no implementado');
+            // Crear CSV
+            let csv = 'Nombre,Cédula,Teléfono,Email,Boletos,Referencia,Estado,Fecha\n';
+            
+            filteredTransactions.forEach(transaction => {
+                csv += `"${transaction.name}",`;
+                csv += `"${transaction.id_number}",`;
+                csv += `"${transaction.phone}",`;
+                csv += `"${transaction.email}",`;
+                csv += `${transaction.tickets},`;
+                csv += `"${transaction.reference}",`;
+                csv += `"${transaction.status}",`;
+                csv += `"${new Date(transaction.date).toLocaleString()}"\n`;
+            });
+            
+            // Crear enlace de descarga
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `transacciones_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('Exportación completada', 'success');
         }
 
         function sendWhatsapp() {
@@ -1527,5 +1664,6 @@
     </script>
 </body>
 </html>
+
 
 
