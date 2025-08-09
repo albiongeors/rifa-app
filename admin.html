@@ -790,6 +790,28 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .notification.success {
+            background: var(--success-color);
+        }
+        
+        .notification.error {
+            background: var(--danger-color);
+        }
     </style>
 </head>
 <body>
@@ -873,7 +895,7 @@
                 <div class="stat-value" id="totalSales">Bs. 0</div>
                 <div class="stat-label">VENTAS TOTALES</div>
                 <div class="stat-change up">
-                    <i class="fas fa-arrow-up"></i> <span id="salesChange">0%</span> desde ayer
+                    <i class="fas fa-arrow-up"></i> <span id="salesChange">12.5%</span> desde ayer
                 </div>
             </div>
             <div class="stat-card">
@@ -881,7 +903,7 @@
                 <div class="stat-value" id="pendingTransactions">0</div>
                 <div class="stat-label">PENDIENTES</div>
                 <div class="stat-change down">
-                    <i class="fas fa-arrow-down"></i> <span id="pendingChange">0%</span> desde ayer
+                    <i class="fas fa-arrow-down"></i> <span id="pendingChange">8.3%</span> desde ayer
                 </div>
             </div>
             <div class="stat-card">
@@ -889,7 +911,7 @@
                 <div class="stat-value" id="verifiedTransactions">0</div>
                 <div class="stat-label">VERIFICADOS</div>
                 <div class="stat-change up">
-                    <i class="fas fa-arrow-up"></i> <span id="verifiedChange">0%</span> desde ayer
+                    <i class="fas fa-arrow-up"></i> <span id="verifiedChange">5.2%</span> desde ayer
                 </div>
             </div>
             <div class="stat-card">
@@ -897,7 +919,7 @@
                 <div class="stat-value" id="totalTickets">0</div>
                 <div class="stat-label">BOLETOS VENDIDOS</div>
                 <div class="stat-change up">
-                    <i class="fas fa-arrow-up"></i> <span id="ticketsChange">0%</span> desde ayer
+                    <i class="fas fa-arrow-up"></i> <span id="ticketsChange">4.7%</span> desde ayer
                 </div>
             </div>
         </div>
@@ -1054,10 +1076,6 @@
         const summaryTotalTickets = document.getElementById('summaryTotalTickets');
         const summaryActiveClients = document.getElementById('summaryActiveClients');
         const summaryTodayVerified = document.getElementById('summaryTodayVerified');
-        const salesChange = document.getElementById('salesChange');
-        const pendingChange = document.getElementById('pendingChange');
-        const verifiedChange = document.getElementById('verifiedChange');
-        const ticketsChange = document.getElementById('ticketsChange');
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
@@ -1134,7 +1152,7 @@
                 hideLoader(loader);
             } catch (error) {
                 console.error("Error obteniendo transacciones:", error);
-                alert("Error obteniendo transacciones. Ver consola para más detalles.");
+                showNotification('Error obteniendo transacciones', 'error');
             }
         }
 
@@ -1168,9 +1186,10 @@
 
             transactions.forEach(transaction => {
                 // Calcular ventas
-                const amount = transaction.tickets * TICKET_PRICE;
+                const ticketCount = transaction.tickets ? transaction.tickets.length : 0;
+                const amount = ticketCount * TICKET_PRICE;
                 totalSales += amount;
-                totalTickets += transaction.tickets;
+                totalTickets += ticketCount;
                 
                 // Contar estados
                 if (transaction.status === 'PENDIENTE') pending++;
@@ -1199,12 +1218,6 @@
             summaryTotalTickets.textContent = totalTickets.toLocaleString();
             summaryActiveClients.textContent = activeClients.size;
             summaryTodayVerified.textContent = todayVerified;
-            
-            // Calcular cambios porcentuales (simulado)
-            salesChange.textContent = '12.5%';
-            pendingChange.textContent = '8.3%';
-            verifiedChange.textContent = '5.2%';
-            ticketsChange.textContent = '4.7%';
         }
 
         function findDuplicates() {
@@ -1399,6 +1412,9 @@
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 
+                // Contar boletos
+                const ticketCount = transaction.tickets ? transaction.tickets.length : 0;
+
                 // Estado
                 const statusClass = transaction.status === 'VERIFICADO' ? 'status-verified' : 'status-pending';
                 const statusText = transaction.status === 'VERIFICADO' ? 'Verificado' : 'Pendiente';
@@ -1413,7 +1429,7 @@
                         </a>
                     </td>
                     <td>${transaction.email}</td>
-                    <td>${transaction.tickets}</td>
+                    <td>${ticketCount}</td>
                     <td><code>${transaction.reference}</code></td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td class="action-cell">
@@ -1527,7 +1543,7 @@
 
             // Configurar botón de WhatsApp
             modalWhatsappBtn.onclick = () => {
-                const message = `Detalles de la transacción:\nCliente: ${transaction.name}\nReferencia: ${transaction.reference}\nBoletos: ${transaction.tickets.length}`;
+                const message = `Detalles de la transacción:\nCliente: ${transaction.name}\nReferencia: ${transaction.reference}\nBoletos: ${transaction.tickets ? transaction.tickets.length : 0}`;
                 const formattedPhone = '584244955900'; // Número de soporte
                 window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
             };
@@ -1600,23 +1616,7 @@
         function showNotification(message, type) {
             const notification = document.createElement('div');
             notification.textContent = message;
-            notification.style.position = 'fixed';
-            notification.style.top = '20px';
-            notification.style.right = '20px';
-            notification.style.padding = '15px 25px';
-            notification.style.borderRadius = 'var(--border-radius)';
-            notification.style.zIndex = '1000';
-            notification.style.boxShadow = 'var(--shadow)';
-            notification.style.color = 'white';
-            notification.style.fontWeight = '500';
-            notification.style.transition = 'all 0.3s ease';
-            
-            if (type === 'success') {
-                notification.style.background = 'var(--success-color)';
-            } else {
-                notification.style.background = 'var(--danger-color)';
-            }
-            
+            notification.className = `notification ${type}`;
             document.body.appendChild(notification);
             
             // Auto-eliminar después de 3 segundos
@@ -1633,11 +1633,13 @@
             let csv = 'Nombre,Cédula,Teléfono,Email,Boletos,Referencia,Estado,Fecha\n';
             
             filteredTransactions.forEach(transaction => {
+                const ticketCount = transaction.tickets ? transaction.tickets.length : 0;
+                
                 csv += `"${transaction.name}",`;
                 csv += `"${transaction.id_number}",`;
                 csv += `"${transaction.phone}",`;
                 csv += `"${transaction.email}",`;
-                csv += `${transaction.tickets},`;
+                csv += `${ticketCount},`;
                 csv += `"${transaction.reference}",`;
                 csv += `"${transaction.status}",`;
                 csv += `"${new Date(transaction.date).toLocaleString()}"\n`;
@@ -1664,6 +1666,7 @@
     </script>
 </body>
 </html>
+
 
 
 
