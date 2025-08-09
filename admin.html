@@ -241,6 +241,11 @@
         tbody tr:hover {
             background-color: #e9f0ff;
         }
+
+        .duplicate-row {
+            background-color: #fff5f5 !important;
+            border-left: 4px solid #dc3545;
+        }
         
         .verified td {
             background-color: #e8f5e9;
@@ -310,6 +315,14 @@
         .btn-delete:hover {
             background-color: #bd2130;
         }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+        }
         
         .filter-btn {
             background: #e9ecef;
@@ -349,9 +362,11 @@
             padding: 30px;
             border-radius: 15px;
             width: 90%;
-            max-width: 500px;
+            max-width: 800px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
             animation: modalIn 0.4s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         @keyframes modalIn {
@@ -435,6 +450,28 @@
 
         .ticket-results-table tbody tr:hover {
             background-color: #e9f0ff;
+        }
+
+        .ticket-modal-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .ticket-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .ticket-item {
+            padding: 10px;
+            background: #e9f0ff;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #4361ee;
         }
         
         @media (max-width: 768px) {
@@ -543,6 +580,7 @@
                 <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
                 <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
                 <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
+                <button class="filter-btn" onclick="setFilter('duplicates')">Duplicados</button>
             </div>
         </div>
         
@@ -559,12 +597,14 @@
                         <th>Referencia</th>
                         <th>Estado</th>
                         <th>Acciones</th>
+                        <th>Tickets</th>
+                        <th>WhatsApp</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
+                        <td colspan="12" style="text-align:center; padding:30px;">Cargando transacciones...</td>
                     </tr>
                 </tbody>
             </table>
@@ -574,7 +614,7 @@
             <h2><i class="fas fa-search"></i> Buscar Boletos</h2>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto o cédula..." onkeyup="searchTickets()">
+                <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto, cédula, teléfono o referencia..." onkeyup="searchTickets()">
             </div>
             <div id="ticketSearchResults" style="margin-top: 20px;"></div>
         </div>
@@ -596,6 +636,9 @@
         let currentFilter = 'all';
         let currentSearch = '';
         let currentTicketFilter = 'all';
+        let duplicateReferences = new Set();
+        let duplicatePhones = new Set();
+        let duplicateIdNumbers = new Set();
 
         function formatTicketNumber(number) {
             return String(number).padStart(5, '0');
@@ -746,13 +789,41 @@
                 });
                 
                 const transactions = await response.json();
+                
+                // Detectar duplicados
+                duplicateReferences.clear();
+                duplicatePhones.clear();
+                duplicateIdNumbers.clear();
+                
+                const references = {};
+                const phones = {};
+                const idNumbers = {};
+                
+                transactions.forEach(transaction => {
+                    references[transaction.reference] = (references[transaction.reference] || 0) + 1;
+                    phones[transaction.phone] = (phones[transaction.phone] || 0) + 1;
+                    idNumbers[transaction.id_number] = (idNumbers[transaction.id_number] || 0) + 1;
+                });
+                
+                Object.keys(references).forEach(ref => {
+                    if (references[ref] > 1) duplicateReferences.add(ref);
+                });
+                
+                Object.keys(phones).forEach(phone => {
+                    if (phones[phone] > 1) duplicatePhones.add(phone);
+                });
+                
+                Object.keys(idNumbers).forEach(id => {
+                    if (idNumbers[id] > 1) duplicateIdNumbers.add(id);
+                });
+                
                 renderTransactions(transactions);
                 updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
+                        <td colspan="12" style="text-align:center; padding:30px; color:#dc3545;">
                             <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
                         </td>
                     </tr>
@@ -790,7 +861,7 @@
             if (transactions.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px;">
+                        <td colspan="12" style="text-align:center; padding:30px;">
                             <i class="fas fa-info-circle"></i> No se encontraron transacciones
                         </td>
                     </tr>
@@ -798,9 +869,28 @@
                 return;
             }
 
-            transactions.forEach(transaction => {
+            // Filtrar duplicados si es necesario
+            let filteredTransactions = transactions;
+            if (currentFilter === 'duplicates') {
+                filteredTransactions = transactions.filter(t => 
+                    duplicateReferences.has(t.reference) || 
+                    duplicatePhones.has(t.phone) || 
+                    duplicateIdNumbers.has(t.id_number)
+                );
+            }
+
+            filteredTransactions.forEach(transaction => {
                 const row = document.createElement("tr");
                 row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
+                
+                // Marcar como duplicado si es necesario
+                if (duplicateReferences.has(transaction.reference) {
+                    row.classList.add("duplicate-row");
+                } else if (duplicatePhones.has(transaction.phone)) {
+                    row.classList.add("duplicate-row");
+                } else if (duplicateIdNumbers.has(transaction.id_number)) {
+                    row.classList.add("duplicate-row");
+                }
                 
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
@@ -818,12 +908,22 @@
                     </td>
                     <td>
                         ${transaction.status !== "VERIFICADO" ? 
-                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}', '${transaction.name}', '${transaction.id_number}')">
                                 <i class="fas fa-check-circle"></i> Verificar
                             </button>` : 
                             `<button class="btn-verified">
                                 <i class="fas fa-check-double"></i> Verificado
                             </button>`}
+                    </td>
+                    <td>
+                        <button class="btn-verify" onclick="viewTicketsByTransaction(${transaction.id}, '${transaction.name}')">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn-whatsapp" onclick="openWhatsApp('${transaction.phone}')">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
                     </td>
                     <td>
                         <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">
@@ -833,6 +933,12 @@
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        function openWhatsApp(phone) {
+            const cleanedPhone = phone.replace(/[^0-9]/g, '');
+            const formattedPhone = cleanedPhone.startsWith('58') ? cleanedPhone : '58' + cleanedPhone;
+            window.open(`https://wa.me/${formattedPhone}`, '_blank');
         }
 
         async function deleteTransaction(transactionId) {
@@ -867,8 +973,10 @@
             }
         }
 
-        async function verifyPayment(transactionId, ticketQuantity, phone) {
-            if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
+        async function verifyPayment(transactionId, ticketQuantity, phone, name, idNumber) {
+            const confirmation = confirm(`¿Confirmas que el pago ha sido verificado?\n\nNombre: ${name}\nCédula: ${idNumber}\nTeléfono: ${phone}\nBoletos: ${ticketQuantity}`);
+            
+            if (confirmation) {
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     
@@ -976,6 +1084,7 @@
             }
             
             try {
+                // Buscar por número de ticket
                 if (/^\d+$/.test(searchTerm)) {
                     const ticketNumber = parseInt(searchTerm);
                     const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}&select=*,transactions(*)`, {
@@ -988,13 +1097,17 @@
                     const tickets = await response.json();
                     displayTicketSearchResults(tickets);
                 } 
+                // Buscar por referencia, teléfono o cédula
                 else {
-                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=ilike.%25${searchTerm}%25&select=*,tickets(*)`, {
-                        headers: {
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    const response = await fetch(
+                        `${CONFIG.supabaseUrl}/rest/v1/transactions?or=(id_number.ilike.%25${searchTerm}%25,phone.ilike.%25${searchTerm}%25,reference.ilike.%25${searchTerm}%25)&select=*,tickets(ticket_number,status)`, 
+                        {
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
                         }
-                    });
+                    );
                     
                     const transactions = await response.json();
                     displayTransactionSearchResults(transactions);
@@ -1028,6 +1141,7 @@
                             <th>Boleto</th>
                             <th>Nombre</th>
                             <th>CI</th>
+                            <th>Teléfono</th>
                             <th>Estado</th>
                             <th>Ganador</th>
                         </tr>
@@ -1042,6 +1156,7 @@
                         <td><strong>${formatTicketNumber(ticket.ticket_number)}</strong></td>
                         <td>${transaction?.name || 'N/A'}</td>
                         <td>${transaction?.id_number || 'N/A'}</td>
+                        <td>${transaction?.phone || 'N/A'}</td>
                         <td>${ticket.status}</td>
                         <td>
                             ${ticket.is_winner 
@@ -1075,6 +1190,7 @@
                             <th>Fecha</th>
                             <th>Nombre</th>
                             <th>CI</th>
+                            <th>Teléfono</th>
                             <th>Boletos</th>
                             <th>Ver Boletos</th>
                         </tr>
@@ -1088,6 +1204,7 @@
                         <td>${new Date(transaction.date).toLocaleDateString()}</td>
                         <td>${transaction.name}</td>
                         <td>${transaction.id_number}</td>
+                        <td>${transaction.phone}</td>
                         <td>${transaction.tickets?.length || 0}</td>
                         <td>
                             <button class="btn-verify" onclick="viewTickets(${transaction.id})">
@@ -1141,42 +1258,45 @@
             }
         }
 
-        function displayTicketsModal(tickets) {
+        async function viewTicketsByTransaction(transactionId, name) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const tickets = await response.json();
+                displayTicketsModal(tickets, name);
+            } catch (error) {
+                console.error("Error obteniendo boletos:", error);
+                alert("Error al obtener boletos");
+            }
+        }
+
+        function displayTicketsModal(tickets, name = '') {
             const modal = document.createElement('div');
             modal.className = 'modal';
             
             let html = `
                 <div class="modal-content">
-                    <h2><i class="fas fa-ticket-alt"></i> Boletos</h2>
-                    <div style="max-height:400px; overflow-y:auto;">
-                        <table style="width:100%;">
-                            <thead>
-                                <tr>
-                                    <th>Número</th>
-                                    <th>Estado</th>
-                                    <th>Ganador</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <h2><i class="fas fa-ticket-alt"></i> Boletos ${name ? `de ${name}` : ''}</h2>
+                    <div class="ticket-modal-content">
+                        <p>Total de boletos: <strong>${tickets.length}</strong></p>
+                        <div class="ticket-grid">
             `;
             
             tickets.forEach(ticket => {
                 html += `
-                    <tr>
-                        <td>${formatTicketNumber(ticket.ticket_number)}</td>
-                        <td>${ticket.status}</td>
-                        <td>
-                            ${ticket.is_winner 
-                                ? '<span style="color:#28a745;"><i class="fas fa-trophy"></i> Ganador</span>' 
-                                : '<button class="btn-verify" onclick="markAsWinner(${ticket.id})">Marcar ganador</button>'}
-                        </td>
-                    </tr>
+                    <div class="ticket-item">
+                        ${formatTicketNumber(ticket.ticket_number)}
+                    </div>
                 `;
             });
             
             html += `
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
                     <div class="modal-buttons">
                         <button onclick="this.closest('.modal').remove()">
@@ -1203,5 +1323,6 @@
     </script>
 </body>
 </html>
+
 
 
