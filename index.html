@@ -13,8 +13,6 @@
             --primary-light: #4cc9f0;
             --accent-color: #f72585;
             --success-color: #2ecc71;
-            --warning-color: #ff9800;
-            --error-color: #f44336;
             --light-bg: #f8f9fa;
             --dark-text: #2d3748;
             --light-text: #718096;
@@ -314,15 +312,7 @@
         }
         
         .error-message {
-            color: var(--error-color);
-            margin: 5px 0 15px;
-            display: none;
-            font-weight: 500;
-            text-align: center;
-        }
-        
-        .warning-message {
-            color: var(--warning-color);
+            color: #f94144;
             margin: 5px 0 15px;
             display: none;
             font-weight: 500;
@@ -334,7 +324,7 @@
             justify-content: center;
             margin: 20px 0;
             position: relative;
-            height: 300px;
+            height: 300px; /* Altura fija para el contenedor de la imagen */
             align-items: center;
         }
         
@@ -344,9 +334,9 @@
             border-radius: 18px;
             border: 3px solid var(--primary-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            object-fit: contain;
-            height: 100%;
-            background: white;
+            object-fit: contain; /* Cambiado de cover a contain */
+            height: 100%; /* Ocupa todo el alto del contenedor */
+            background: white; /* Fondo blanco para la imagen */
         }
         
         .ticket-selection {
@@ -777,6 +767,7 @@
             transform: scale(1.2);
         }
         
+        /* Nuevos estilos para selector de país */
         .phone-input-container {
             display: flex;
             gap: 10px;
@@ -804,30 +795,6 @@
         
         .phone-input input {
             width: 100%;
-        }
-        
-        .duplicate-alert {
-            background: #fff8e1;
-            border-left: 4px solid #ff9800;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .duplicate-alert i {
-            color: #ff9800;
-            font-size: 20px;
-        }
-        
-        .verification-panel {
-            background: #e8f5e9;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border-left: 4px solid #4caf50;
         }
     </style>
 </head>
@@ -888,18 +855,24 @@
             
             <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
             
+            <!-- NOTA DE COMPRA MÍNIMA -->
             <p style="text-align: center; color: #3a0ca3; font-weight: 500; margin-bottom: 20px;">
                 <i class="fas fa-info-circle"></i> Mínimo de compra: 2 boletos
             </p>
             
             <div class="ticket-selection">
+                <!-- SE ELIMINÓ LA OPCIÓN DE 1 BOLETO -->
                 <div class="ticket-option" data-quantity="2"><span>2</span></div>
                 <div class="ticket-option" data-quantity="5"><span>5</span></div>
                 <div class="ticket-option" data-quantity="10"><span>10</span></div>
-                <极
+                <div class="ticket-option" data-quantity="20"><span>20</span></div>
+                <div class="ticket-option" data-quantity="30"><span>30</span></div>
+                <div class="ticket-option" data-quantity="40"><span>40</span></div>
+                <div class="ticket-option" data-quantity="50"><span>50</span></div>
             </div>
             
             <div class="ticket-input-container">
+                <!-- SE ESTABLECIÓ MÍNIMO DE 2 BOLETOS -->
                 <input type="number" id="ticketQuantityInput" min="2" value="2" required>
             </div>
             <p style="text-align:center; color: var(--light-text);">Precio por boleto: <strong id="ticketPrice" style="color: var(--primary-dark);">Bs. 0</strong></p>
@@ -927,6 +900,8 @@
             <label>Cédula de identidad</label>
             <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
             
+            <!-- NUEVO CAMPO DE TELÉFONO CON PAÍS -->
+            <label>Teléfono</label>
             <div class="phone-input-container">
                 <div class="country-selector">
                     <select id="countryCode" required>
@@ -983,8 +958,10 @@
             <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
             <div style="margin-bottom:25px;">
                 <select id="paymentMethod" required>
+                    <!-- PAGO MÓVIL AHORA ES LA PRIMERA OPCIÓN -->
                     <option value="mobile">Pago Móvil</option>
                     <option value="bank">Transferencia Bancaria</option>
+                    <!-- NUEVO MÉTODO ZINLI -->
                     <option value="zinli">Zinli</option>
                 </select>
             </div>
@@ -1006,6 +983,7 @@
                 <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
 
+            <!-- NUEVA SECCIÓN PARA ZINLI -->
             <div id="zinliDetails" class="payment-details" style="display:none;">
                 <h3>Datos para Pago con Zinli</h3>
                 <p><strong>Correo:</strong> ganaconyair@gmail.com</p>
@@ -1014,15 +992,8 @@
 
             <div style="margin:25px 0;">
                 <label>Número de referencia</label>
-                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required oninput="checkReference(this.value)">
+                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required>
                 <div id="referenceError" class="error-message"></div>
-                <div id="referenceWarning" class="warning-message"></div>
-            </div>
-
-            <div class="verification-panel">
-                <h3><i class="fas fa-shield-alt"></i> Verificación de Pago</h3>
-                <p>Por favor asegúrate de que el monto transferido sea exactamente el monto total mostrado arriba.</p>
-                <p>Usa una referencia única que no hayas usado antes.</p>
             </div>
 
             <button id="whatsappBtn" class="btn btn-whatsapp">
@@ -1047,7 +1018,9 @@
                 <div style="background: white; padding:20px; border-radius:15px; margin:20px auto; font-size:22px; font-weight:bold; max-width: 300px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border: 2px dashed var(--success-color);">
                     <span id="reportReference"></span>
                 </div>
-                <button id="returnHome" class="btn" style="max-width: 250极
+                <button id="returnHome" class="btn" style="max-width: 250px; margin: 30px auto 10px;">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </button>
             </div>
         </div>
         
@@ -1076,7 +1049,7 @@
         const CONFIG = {
             adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7极
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
             pricePerTicket: 70,
@@ -1097,14 +1070,11 @@
                 bank: "Banco de Venezuela",
                 phone: "0412-0479871",
                 id: "V-25441167"
-            },
-            maxTicketsPerUser: 100
+            }
         };
 
         let currentStep = 1;
         let soldTickets = 0;
-        let userTicketCount = 0;
-        let referenceCheckTimeout = null;
 
         async function init() {
             document.getElementById('prizeImage').src = CONFIG.prizeImage;
@@ -1220,63 +1190,11 @@
             });
         }
 
-        async function checkReference(reference) {
-            clearTimeout(referenceCheckTimeout);
-            
-            if (!reference || reference.length < 3) {
-                document.getElementById('referenceError').style.display = 'none';
-                document.getElementById('referenceWarning').style.display = 'none';
-                return;
-            }
-            
-            referenceCheckTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}`, {
-                        headers: {
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                        }
-                    });
-                    
-                    if (!response.ok) throw new Error('Error en la respuesta');
-                    
-                    const data = await response.json();
-                    if (data.length > 0) {
-                        document.getElementById('referenceError').textContent = "⚠️ Esta referencia ya ha sido utilizada";
-                        document.getElementById('referenceError').style.display = 'block';
-                        document.getElementById('referenceWarning').style.display = 'none';
-                    } else {
-                        document.getElementById('referenceError').style.display = 'none';
-                        
-                        // Mostrar advertencia para referencias cortas
-                        if (reference.length < 8) {
-                            document.getElementById('referenceWarning').textContent = "⚠️ Referencia muy corta, usa una más larga";
-                            document.getElementById('referenceWarning').style.display = 'block';
-                        } else {
-                            document.getElementById('referenceWarning').style.display = 'none';
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error verificando referencia:", error);
-                    document.getElementById('referenceError').style.display = 'none';
-                    document.getElementById('referenceWarning').style.display = 'none';
-                }
-            }, 500);
-        }
-
         async function saveData() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
             const countryCode = document.getElementById('countryCode').value;
             const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
             const reference = document.getElementById('referenceNumber').value;
-            
-            // Verificar límite de boletos por usuario
-            const idNumber = document.getElementById('idNumber').value;
-            const userTickets = await getUserTicketCount(idNumber);
-            if (userTickets + ticketQuantity > CONFIG.maxTicketsPerUser) {
-                alert(`¡Límite excedido! Ya tienes ${userTickets} boletos. Máximo permitido: ${CONFIG.maxTicketsPerUser}`);
-                return { success: false };
-            }
             
             // Verificar si la referencia ya existe
             const refExists = await checkReferenceExists(reference);
@@ -1287,7 +1205,7 @@
 
             const data = {
                 name: document.getElementById('fullName').value,
-                id_number: idNumber,
+                id_number: document.getElementById('idNumber').value,
                 phone: `+${countryCode}${phoneNumber}`,
                 email: document.getElementById('email').value,
                 tickets: ticketQuantity,
@@ -1327,27 +1245,6 @@
             } catch (error) {
                 console.error("Error verificando referencia:", error);
                 return false;
-            }
-        }
-        
-        async function getUserTicketCount(idNumber) {
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=eq.${idNumber}&select=tickets,status`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                if (!response.ok) return 0;
-                
-                const transactions = await response.json();
-                return transactions
-                    .filter(t => t.status === 'VERIFICADO')
-                    .reduce((sum, t) => sum + t.tickets, 0);
-            } catch (error) {
-                console.error("Error obteniendo boletos del usuario:", error);
-                return 0;
             }
         }
 
@@ -1452,7 +1349,7 @@
             if (transactions.length === 0) {
                 container.innerHTML = `
                     <p style="margin-top:20px;">
-                        <i class="fas fa-info-circle"></极> No se encontraron boletos para esta cédula
+                        <i class="fas fa-info-circle"></i> No se encontraron boletos para esta cédula
                     </p>
                 `;
                 return;
@@ -1506,7 +1403,7 @@
             }
         });
         
-        document.getElementById('continueToPayment').addEventListener('click', async () => {
+        document.getElementById('continueToPayment').addEventListener('click', () => {
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
             const phoneNumber = document.getElementById('phoneNumber').value;
@@ -1522,16 +1419,6 @@
                 return;
             }
             
-            // Verificar límite de boletos
-            const userTickets = await getUserTicketCount(id);
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
-            
-            if (userTickets + ticketQuantity > CONFIG.maxTicketsPerUser) {
-                alert(`¡Límite excedido! Ya tienes ${userTickets} boletos. Máximo permitido: ${CONFIG.maxTicketsPerUser}`);
-                return;
-            }
-            
-            userTicketCount = userTickets;
             goToStep(4);
         });
         
@@ -1584,13 +1471,6 @@
                 return;
             }
             
-            // Verificar referencia duplicada
-            const refExists = await checkReferenceExists(reference);
-            if (refExists) {
-                alert("¡Esta referencia ya ha sido utilizada! Por favor usa un número diferente.");
-                return;
-            }
-            
             const saveResult = await saveData();
             if (!saveResult.success) {
                 return;
@@ -1603,5 +1483,8 @@
     </script>
 </body>
 </html>
+
+
+
 
 

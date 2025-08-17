@@ -77,7 +77,8 @@
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 30px;
-            box-shadow: 0 3极
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #4361ee;
         }
         
         .config-panel h2 {
@@ -136,7 +137,8 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 20px;
             text-align: center;
-            transition: transform 0.3s, box-shadow 0.3极
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid #4361ee;
         }
         
         .stat-card:hover {
@@ -246,17 +248,6 @@
         
         .pending td {
             background-color: #fffde7;
-        }
-        
-        .suspicious td {
-            background-color: #ffebee;
-            animation: pulseWarning 1.5s infinite;
-        }
-        
-        @keyframes pulseWarning {
-            0% { background-color: #ffebee; }
-            50% { background-color: #ffcdd2; }
-            100% { background-color: #ffebee; }
         }
         
         button {
@@ -550,104 +541,6 @@
             color: #ff9800;
         }
         
-        .risk-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .risk-low {
-            background: #e8f5e9;
-            color: #28a745;
-        }
-        
-        .risk-medium {
-            background: #fffde7;
-            color: #ff9800;
-        }
-        
-        .risk-high {
-            background: #ffebee;
-            color: #f44336;
-        }
-        
-        .quick-verify-panel {
-            background: #e3f2fd;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-left: 4px solid #2196f3;
-        }
-        
-        .quick-verify-panel h3 {
-            margin-top: 0;
-            color: #0d47a1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .verify-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 15px;
-            align-items: end;
-        }
-        
-        .verify-item {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .verify-item label {
-            font-weight: 500;
-            margin-bottom: 5px;
-            color: #0d47a1;
-        }
-        
-        .verify-item input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #bbdefb;
-            font-size: 16px;
-        }
-        
-        .proof-section {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px dashed #e0e0e0;
-        }
-        
-        .proof-section h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .proof-url-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .proof-url-input input {
-            flex: 1;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            font-size: 16px;
-        }
-        
-        .amount-column {
-            text-align: right;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -668,10 +561,6 @@
             
             .ticket-summary {
                 flex-direction: column;
-            }
-            
-            .verify-grid {
-                grid-template-columns: 1fr;
             }
         }
         
@@ -702,23 +591,6 @@
             <button class="btn-refresh" onclick="location.reload()">
                 <i class="fas fa-sync-alt"></i> Actualizar Datos
             </button>
-        </div>
-        
-        <div class="quick-verify-panel">
-            <h3><i class="fas fa-bolt"></i> Verificación Rápida</h3>
-            <div class="verify-grid">
-                <div class="verify-item">
-                    <label>Referencia de Pago</label>
-                    <input type="text" id="quickRef" placeholder="Número de referencia">
-                </div>
-                <div class="verify-item">
-                    <label>Monto Recibido (Bs.)</label>
-                    <input type="number" id="quickAmount" placeholder="Monto transferido">
-                </div>
-                <button onclick="quickVerify()">
-                    <i class="fas fa-check-double"></i> Verificar
-                </button>
-            </div>
         </div>
         
         <div class="config-panel">
@@ -779,7 +651,6 @@
                 <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
                 <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
                 <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
-                <button class="filter-btn" onclick="setFilter('suspicious')">Sospechosos</button>
             </div>
         </div>
         
@@ -791,18 +662,17 @@
                         <th>Nombre</th>
                         <th>CI</th>
                         <th>Teléfono</th>
+                        <th>Email</th>
                         <th>Boletos</th>
-                        <th>Monto</th>
                         <th>Referencia</th>
                         <th>Estado</th>
-                        <th>Riesgo</th>
                         <th>Acciones</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="11" style="text-align:center; padding:30px;">Cargando transacciones...</td>
+                        <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
                     </tr>
                 </tbody>
             </table>
@@ -814,17 +684,6 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto, cédula, teléfono o referencia..." onkeyup="searchTickets()">
             </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <div class="search-container" style="flex: 1;">
-                    <i class="fas fa-trophy"></i>
-                    <input type="text" id="winningTicketSearch" placeholder="Buscar boleto ganador (ej: 00001)">
-                </div>
-                <button onclick="searchWinningTicket()" style="margin-top: 0;">
-                    <i class="fas fa-crown"></i> Buscar Ganador
-                </button>
-            </div>
-            
             <div id="ticketSearchResults" style="margin-top: 20px;"></div>
         </div>
         
@@ -844,6 +703,7 @@
 
         let currentFilter = 'all';
         let currentSearch = '';
+        let currentTicketFilter = 'all';
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
@@ -853,7 +713,9 @@
         }
 
         function cleanPhone(phone) {
+            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
+            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -891,12 +753,559 @@
                     const ticketsData = await response.json();
                     
                     if (ticketsData.length === 0) {
-                        has极
+                        hasMore = false;
+                        break;
                     }
+
+                    ticketsData.forEach(ticket => {
+                        existingTickets.add(ticket.ticket_number);
+                    });
+
+                    if (ticketsData.length < pageSize) {
+                        hasMore = false;
+                    } else {
+                        page++;
+                    }
+                }
+                return existingTickets;
+            } catch (error) {
+                console.error("Error obteniendo tickets existentes:", error);
+                throw error;
+            }
+        }
+
+        async function generateTickets(transactionId, quantity) {
+            try {
+                const existingTickets = await getAllExistingTickets();
+                const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
+                const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
+                
+                if (availableTickets.length < quantity) {
+                    alert(`Error: Solo quedan ${availableTickets.length} boletos disponibles`);
+                    return false;
+                }
+                
+                const selectedTickets = [];
+                while (selectedTickets.length < quantity) {
+                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
+                    selectedTickets.push(availableTickets[randomIndex]);
+                    availableTickets.splice(randomIndex, 1);
+                }
+                
+                const ticketsToInsert = selectedTickets.map(ticketNumber => ({
+                    transaction_id: transactionId,
+                    ticket_number: ticketNumber,
+                    status: "ACTIVO"
+                }));
+                
+                const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(ticketsToInsert)
+                });
+                
+                if (!insertRes.ok) {
+                    const errorDetail = await insertRes.json();
+                    throw new Error(`Error insertando tickets: ${insertRes.status} - ${JSON.stringify(errorDetail)}`);
+                }
+                
+                return ticketsToInsert;
+            } catch (error) {
+                console.error("Error generando tickets:", error);
+                alert(`Error generando tickets: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                CONFIG.totalTickets = config.totalTickets;
+                CONFIG.pricePerTicket = config.pricePerTicket;
+                
+                document.getElementById('totalTickets').value = config.totalTickets;
+                document.getElementById('ticketPrice').value = config.pricePerTicket;
+                document.getElementById('raffleDate').value = config.raffleDate;
+                document.getElementById('prizeImageUrl').value = config.prizeImage;
+            } catch (error) {
+                console.log("Usando configuración por defecto");
+            }
+        }
+
+        async function saveConfig() {
+            const config = {
+                totalTickets: parseInt(document.getElementById('totalTickets').value),
+                pricePerTicket: parseInt(document.getElementById('ticketPrice').value),
+                raffleDate: document.getElementById('raffleDate').value,
+                prizeImage: document.getElementById('prizeImageUrl').value
+            };
+            
+            localStorage.setItem('rifaConfig', JSON.stringify(config));
+            alert("Configuración guardada. Recuerda actualizar el archivo config.json en producción.");
+            loadTransactions();
+        }
+
+        async function loadTransactions() {
+            try {
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
+                
+                if (currentFilter === 'pending') {
+                    url += `&status=eq.PENDIENTE`;
+                } else if (currentFilter === 'verified') {
+                    url += `&status=eq.VERIFICADO`;
+                }
+                
+                if (currentSearch) {
+                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const transactions = await response.json();
+                
+                // Buscar duplicados
+                findDuplicates(transactions);
+                
+                renderTransactions(transactions);
+                updateStats(transactions);
+            } catch (error) {
+                console.error("Error cargando transacciones:", error);
+                document.querySelector("#transactionsTable tbody").innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
+                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function findDuplicates(transactions) {
+            const references = {};
+            const phones = {};
+            const ids = {};
+            
+            duplicateReferences = new Set();
+            duplicatePhones = new Set();
+            duplicateIds = new Set();
+            
+            transactions.forEach(transaction => {
+                // Referencias
+                if (transaction.reference) {
+                    if (references[transaction.reference]) {
+                        duplicateReferences.add(transaction.reference);
+                    } else {
+                        references[transaction.reference] = 1;
+                    }
+                }
+                
+                // Teléfonos
+                if (transaction.phone) {
+                    const cleanPhone = transaction.phone.replace(/\D/g, '');
+                    if (phones[cleanPhone]) {
+                        duplicatePhones.add(cleanPhone);
+                    } else {
+                        phones[cleanPhone] = 1;
+                    }
+                }
+                
+                // Cédulas
+                if (transaction.id_number) {
+                    if (ids[transaction.id_number]) {
+                        duplicateIds.add(transaction.id_number);
+                    } else {
+                        ids[transaction.id_number] = 1;
+                    }
+                }
+            });
+        }
+
+        async function updateStats(transactions) {
+            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
+            
+            try {
+                const existingTickets = await getAllExistingTickets();
+                const availableTickets = CONFIG.totalTickets - existingTickets.size;
+                document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
+            } catch (error) {
+                console.error("Error calculando tickets disponibles:", error);
+                document.getElementById('availableTickets').textContent = "Error";
+            }
+            
+            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+            const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+            const verifiedCount = verifiedTransactions.length;
+            
+            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('verifiedCount').textContent = verifiedCount;
+            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
+        }
+
+        function renderTransactions(transactions) {
+            const tbody = document.querySelector("#transactionsTable tbody");
+            tbody.innerHTML = "";
+
+            if (transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align:center; padding:30px;">
+                            <i class="fas fa-info-circle"></i> No se encontraron transacciones
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            transactions.forEach(transaction => {
+                const row = document.createElement("tr");
+                row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
+                
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
+                // Verificar si es duplicado
+                const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
+                const isDuplicateRef = duplicateReferences.has(transaction.reference);
+                const isDuplicatePhone = duplicatePhones.has(cleanPhone);
+                const isDuplicateId = duplicateIds.has(transaction.id_number);
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td><strong>${transaction.name}</strong></td>
+                    <td class="${isDuplicateId ? 'duplicate' : ''}">${transaction.id_number}</td>
+                    <td class="${isDuplicatePhone ? 'duplicate' : ''}">
+                        <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
+                            <i class="fab fa-whatsapp"></i> ${transaction.phone}
+                        </a>
+                    </td>
+                    <td>${transaction.email || 'N/A'}</td>
+                    <td>${transaction.tickets}</td>
+                    <td class="${isDuplicateRef ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
+                    <td>
+                        <span class="status-badge">${transaction.status}</span>
+                    </td>
+                    <td>
+                        ${transaction.status !== "VERIFICADO" ? 
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                                <i class="fas fa-check-circle"></i> Verificar
+                            </button>` : 
+                            `<button class="btn-verified" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
+                                <i class="fas fa-ticket-alt"></i> Ver Tickets
+                            </button>`}
+                    </td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function deleteTransaction(transactionId) {
+            if (confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) {
+                try {
+                    const deleteRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    });
+                    
+                    if (deleteRes.ok) {
+                        await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        });
+                        
+                        alert("Transacción eliminada correctamente");
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error eliminando transacción:", error);
+                    alert("Ocurrió un error al eliminar la transacción");
                 }
             }
         }
+
+        async function verifyPayment(transactionId, ticketQuantity, phone) {
+            if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
+                try {
+                    const tickets = await generateTickets(transactionId, ticketQuantity);
+                    
+                    if (!tickets) {
+                        return;
+                    }
+                    
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ status: 'VERIFICADO' })
+                    });
+                    
+                    if (response.ok) {
+                        showTicketsModal(tickets, phone, transactionId);
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error verificando pago:", error);
+                    alert("Ocurrió un error al verificar el pago");
+                }
+            }
+        }
+
+        function showTicketsModal(tickets, phone, transactionId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const formattedTickets = tickets.map(t => 
+                formatTicketNumber(t.ticket_number)
+            );
+            
+            const ticketNumbers = formattedTickets.join(', ');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-ticket-alt"></i> Tickets Generados</h2>
+                    <p>Se han generado <strong>${tickets.length} tickets</strong> para la transacción <code>#${transactionId}</code>:</p>
+                    <textarea id="ticketNumbers">${ticketNumbers}</textarea>
+                    <p>Puedes copiar los números o enviarlos directamente por WhatsApp al cliente.</p>
+                    <div class="modal-buttons">
+                        <button onclick="copyTicketNumbers()">
+                            <i class="fas fa-copy"></i> Copiar Números
+                        </button>
+                        <button class="btn-whatsapp" onclick="sendTicketsByWhatsApp('${phone}', '${ticketNumbers}')">
+                            <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                        </button>
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        async function viewTransactionTickets(transactionId, name) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const tickets = await response.json();
+                displayTicketsModal(tickets, name);
+            } catch (error) {
+                console.error("Error obteniendo boletos:", error);
+                alert("Error al obtener boletos");
+            }
+        }
+        
+        function displayTicketsModal(tickets, name) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const formattedTickets = tickets.map(t => 
+                formatTicketNumber(t.ticket_number)
+            );
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="ticket-header">
+                        <h2><i class="fas fa-ticket-alt"></i> Boletos de ${name}</h2>
+                        <div>Total: <strong>${tickets.length}</strong></div>
+                    </div>
+                    
+                    <div class="ticket-summary">
+                        <div class="ticket-summary-item">
+                            <h3>Transacción</h3>
+                            <p>#${tickets[0].transaction_id}</p>
+                        </div>
+                        <div class="ticket-summary-item">
+                            <h3>Boletos</h3>
+                            <p class="ticket-count">${tickets.length}</p>
+                        </div>
+                        <div class="ticket-summary-item">
+                            <h3>Estado</h3>
+                            <p><span class="status verified">VERIFICADO</span></p>
+                        </div>
+                    </div>
+                    
+                    <h3>Números de Boletos:</h3>
+                    <div class="ticket-list">
+                        ${formattedTickets.map(t => `<span class="ticket-number">${t}</span>`).join('')}
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button onclick="copyTicketNumbers()">
+                            <i class="fas fa-copy"></i> Copiar Números
+                        </button>
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function copyTicketNumbers() {
+            const textarea = document.getElementById('ticketNumbers');
+            if (textarea) {
+                textarea.select();
+                document.execCommand('copy');
+                alert('¡Números copiados al portapapeles!');
+            }
+        }
+
+        function sendTicketsByWhatsApp(phone, ticketNumbers) {
+            const cleanedPhone = phone.replace(/[^0-9]/g, '');
+            const formattedPhone = cleanedPhone.startsWith('58') ? cleanedPhone : '58' + cleanedPhone;
+            
+            const message = encodeURIComponent(
+                `*TUS TICKETS PARA LA RIFA PREMIUM GANA CON YAIR*\n\n` +
+                `¡Gracias por tu compra! Aquí están los números de tus tickets 17agosto:\n\n` +
+                `${ticketNumbers}\n\n` +
+                `¡Mucha suerte en el sorteo y para el bingo del 17 de agosto ! 🍀\n\n` +
+                `Atentamente,\nEquipo de Rifa Premium`
+            );
+            
+            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadTransactions();
+        }
+
+        function searchTransactions() {
+            currentSearch = document.getElementById('searchInput').value;
+            loadTransactions();
+        }
+        
+        async function searchTickets() {
+            const searchTerm = document.getElementById('ticketSearchInput').value.trim();
+            if (searchTerm.length < 3) {
+                document.getElementById('ticketSearchResults').innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(id_number.ilike.%25${searchTerm}%25,phone.ilike.%25${searchTerm}%25,reference.ilike.%25${searchTerm}%25)&select=*,tickets(ticket_number)`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const transactions = await response.json();
+                displayTransactionSearchResults(transactions);
+            } catch (error) {
+                console.error("Error buscando boletos:", error);
+                document.getElementById('ticketSearchResults').innerHTML = `
+                    <p style="color:#dc3545; padding:15px; text-align:center;">
+                        <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
+                    </p>
+                `;
+            }
+        }
+
+        function displayTransactionSearchResults(transactions) {
+            const container = document.getElementById('ticketSearchResults');
+            
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = `
+                    <p style="padding:15px; text-align:center; color:#6c757d;">
+                        <i class="fas fa-info-circle"></i> No se encontraron transacciones
+                    </p>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="ticket-results-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>CI</th>
+                            <th>Teléfono</th>
+                            <th>Boletos</th>
+                            <th>Ver Boletos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
+                html += `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${transaction.name}</td>
+                        <td>${transaction.id_number}</td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
+                                <i class="fab fa-whatsapp"></i> ${transaction.phone}
+                            </a>
+                        </td>
+                        <td>${transaction.tickets.length || 0}</td>
+                        <td>
+                            <button class="btn-verify" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadTransactions();
+            setInterval(loadTransactions, 120000);
+        });
     </script>
 </body>
 </html>
+
+
 
