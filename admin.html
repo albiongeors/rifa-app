@@ -250,6 +250,17 @@
             background-color: #fffde7;
         }
         
+        .suspicious td {
+            background-color: #ffebee;
+            animation: pulseWarning 1.5s infinite;
+        }
+        
+        @keyframes pulseWarning {
+            0% { background-color: #ffebee; }
+            50% { background-color: #ffcdd2; }
+            100% { background-color: #ffebee; }
+        }
+        
         button {
             background-color: #4361ee;
             color: white;
@@ -541,6 +552,98 @@
             color: #ff9800;
         }
         
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .risk-low {
+            background: #e8f5e9;
+            color: #28a745;
+        }
+        
+        .risk-medium {
+            background: #fffde7;
+            color: #ff9800;
+        }
+        
+        .risk-high {
+            background: #ffebee;
+            color: #f44336;
+        }
+        
+        .quick-verify-panel {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .quick-verify-panel h3 {
+            margin-top: 0;
+            color: #0d47a1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .verify-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .verify-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .verify-item label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #0d47a1;
+        }
+        
+        .verify-item input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #bbdefb;
+            font-size: 16px;
+        }
+        
+        .proof-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #e0e0e0;
+        }
+        
+        .proof-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .proof-url-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .proof-url-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 16px;
+        }
+        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -561,6 +664,10 @@
             
             .ticket-summary {
                 flex-direction: column;
+            }
+            
+            .verify-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -591,6 +698,23 @@
             <button class="btn-refresh" onclick="location.reload()">
                 <i class="fas fa-sync-alt"></i> Actualizar Datos
             </button>
+        </div>
+        
+        <div class="quick-verify-panel">
+            <h3><i class="fas fa-bolt"></i> Verificación Rápida</h3>
+            <div class="verify-grid">
+                <div class="verify-item">
+                    <label>Referencia de Pago</label>
+                    <input type="text" id="quickRef" placeholder="Número de referencia">
+                </div>
+                <div class="verify-item">
+                    <label>Monto Recibido (Bs.)</label>
+                    <input type="number" id="quickAmount" placeholder="Monto transferido">
+                </div>
+                <button onclick="quickVerify()">
+                    <i class="fas fa-check-double"></i> Verificar
+                </button>
+            </div>
         </div>
         
         <div class="config-panel">
@@ -651,6 +775,7 @@
                 <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
                 <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
                 <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
+                <button class="filter-btn" onclick="setFilter('suspicious')">Sospechosos</button>
             </div>
         </div>
         
@@ -662,10 +787,10 @@
                         <th>Nombre</th>
                         <th>CI</th>
                         <th>Teléfono</th>
-                        <th>Email</th>
                         <th>Boletos</th>
                         <th>Referencia</th>
                         <th>Estado</th>
+                        <th>Riesgo</th>
                         <th>Acciones</th>
                         <th>Eliminar</th>
                     </tr>
@@ -703,7 +828,6 @@
 
         let currentFilter = 'all';
         let currentSearch = '';
-        let currentTicketFilter = 'all';
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
@@ -713,9 +837,7 @@
         }
 
         function cleanPhone(phone) {
-            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
-            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -858,6 +980,8 @@
                     url += `&status=eq.PENDIENTE`;
                 } else if (currentFilter === 'verified') {
                     url += `&status=eq.VERIFICADO`;
+                } else if (currentFilter === 'suspicious') {
+                    url += `&duplicate_score=gt.20`;
                 }
                 
                 if (currentSearch) {
@@ -875,6 +999,11 @@
                 
                 // Buscar duplicados
                 findDuplicates(transactions);
+                
+                // Calcular puntaje de riesgo
+                transactions.forEach(transaction => {
+                    transaction.duplicate_score = calculateRiskScore(transaction);
+                });
                 
                 renderTransactions(transactions);
                 updateStats(transactions);
@@ -930,6 +1059,32 @@
             });
         }
 
+        function calculateRiskScore(transaction) {
+            let score = 0;
+            
+            // Referencias duplicadas
+            if (duplicateReferences.has(transaction.reference)) score += 30;
+            
+            // Teléfonos duplicados
+            const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
+            if (duplicatePhones.has(cleanPhone)) score += 20;
+            
+            // Cédulas duplicadas
+            if (duplicateIds.has(transaction.id_number)) score += 25;
+            
+            // Cantidad de boletos
+            if (transaction.tickets > 50) score += 10;
+            if (transaction.tickets > 100) score += 20;
+            
+            return score;
+        }
+
+        function getRiskLevel(score) {
+            if (score === 0) return { level: 'BAJO', class: 'risk-low' };
+            if (score <= 20) return { level: 'MEDIO', class: 'risk-medium' };
+            return { level: 'ALTO', class: 'risk-high' };
+        }
+
         async function updateStats(transactions) {
             const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
             const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
@@ -972,6 +1127,11 @@
                 const row = document.createElement("tr");
                 row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
                 
+                // Marcar transacciones sospechosas
+                if (transaction.duplicate_score > 20) {
+                    row.classList.add("suspicious");
+                }
+                
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 
@@ -980,6 +1140,9 @@
                 const isDuplicateRef = duplicateReferences.has(transaction.reference);
                 const isDuplicatePhone = duplicatePhones.has(cleanPhone);
                 const isDuplicateId = duplicateIds.has(transaction.id_number);
+                
+                // Calcular nivel de riesgo
+                const risk = getRiskLevel(transaction.duplicate_score);
                 
                 row.innerHTML = `
                     <td>${formattedDate}</td>
@@ -990,15 +1153,17 @@
                             <i class="fab fa-whatsapp"></i> ${transaction.phone}
                         </a>
                     </td>
-                    <td>${transaction.email || 'N/A'}</td>
                     <td>${transaction.tickets}</td>
                     <td class="${isDuplicateRef ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
                     <td>
                         <span class="status-badge">${transaction.status}</span>
                     </td>
                     <td>
+                        <span class="risk-badge ${risk.class}">${risk.level}</span>
+                    </td>
+                    <td>
                         ${transaction.status !== "VERIFICADO" ? 
-                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}', ${transaction.duplicate_score})">
                                 <i class="fas fa-check-circle"></i> Verificar
                             </button>` : 
                             `<button class="btn-verified" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
@@ -1047,7 +1212,7 @@
             }
         }
 
-        async function verifyPayment(transactionId, ticketQuantity, phone) {
+        async function verifyPayment(transactionId, ticketQuantity, phone, riskScore) {
             if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
@@ -1067,7 +1232,7 @@
                     });
                     
                     if (response.ok) {
-                        showTicketsModal(tickets, phone, transactionId);
+                        showTicketsModal(tickets, phone, transactionId, riskScore);
                         loadTransactions();
                     } else {
                         throw new Error("Error en la respuesta");
@@ -1079,7 +1244,7 @@
             }
         }
 
-        function showTicketsModal(tickets, phone, transactionId) {
+        function showTicketsModal(tickets, phone, transactionId, riskScore) {
             const modal = document.createElement('div');
             modal.className = 'modal';
             
@@ -1094,6 +1259,18 @@
                     <h2><i class="fas fa-ticket-alt"></i> Tickets Generados</h2>
                     <p>Se han generado <strong>${tickets.length} tickets</strong> para la transacción <code>#${transactionId}</code>:</p>
                     <textarea id="ticketNumbers">${ticketNumbers}</textarea>
+                    
+                    <div class="proof-section">
+                        <h3><i class="fas fa-file-invoice"></i> Comprobante de Pago</h3>
+                        <div class="proof-url-input">
+                            <input type="text" id="proofUrl" placeholder="URL del comprobante (opcional)">
+                            <button onclick="saveProofUrl(${transactionId})">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                        </div>
+                        <p>Puedes subir el comprobante a un servicio como Imgur y pegar la URL aquí</p>
+                    </div>
+                    
                     <p>Puedes copiar los números o enviarlos directamente por WhatsApp al cliente.</p>
                     <div class="modal-buttons">
                         <button onclick="copyTicketNumbers()">
@@ -1112,6 +1289,28 @@
             document.body.appendChild(modal);
         }
         
+        async function saveProofUrl(transactionId) {
+            const proofUrl = document.getElementById('proofUrl').value;
+            if (!proofUrl) return;
+            
+            try {
+                await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify({ payment_proof_url: proofUrl })
+                });
+                
+                alert("URL de comprobante guardada correctamente");
+            } catch (error) {
+                console.error("Error guardando URL de comprobante:", error);
+                alert("Error al guardar la URL");
+            }
+        }
+        
         async function viewTransactionTickets(transactionId, name) {
             try {
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
@@ -1122,14 +1321,14 @@
                 });
                 
                 const tickets = await response.json();
-                displayTicketsModal(tickets, name);
+                displayTicketsModal(tickets, name, transactionId);
             } catch (error) {
                 console.error("Error obteniendo boletos:", error);
                 alert("Error al obtener boletos");
             }
         }
         
-        function displayTicketsModal(tickets, name) {
+        function displayTicketsModal(tickets, name, transactionId) {
             const modal = document.createElement('div');
             modal.className = 'modal';
             
@@ -1147,7 +1346,7 @@
                     <div class="ticket-summary">
                         <div class="ticket-summary-item">
                             <h3>Transacción</h3>
-                            <p>#${tickets[0].transaction_id}</p>
+                            <p>#${transactionId}</p>
                         </div>
                         <div class="ticket-summary-item">
                             <h3>Boletos</h3>
@@ -1193,9 +1392,9 @@
             
             const message = encodeURIComponent(
                 `*TUS TICKETS PARA LA RIFA PREMIUM GANA CON YAIR*\n\n` +
-                `¡Gracias por tu compra! Aquí están los números de tus tickets 17agosto:\n\n` +
+                `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
                 `${ticketNumbers}\n\n` +
-                `¡Mucha suerte en el sorteo y para el bingo del 17 de agosto ! 🍀\n\n` +
+                `¡Mucha suerte en el sorteo! 🍀\n\n` +
                 `Atentamente,\nEquipo de Rifa Premium`
             );
             
@@ -1297,6 +1496,51 @@
             html += `</tbody></table>`;
             container.innerHTML = html;
         }
+        
+        async function quickVerify() {
+            const ref = document.getElementById('quickRef').value.trim();
+            const amount = parseFloat(document.getElementById('quickAmount').value);
+            
+            if (!ref || !amount) {
+                alert("Por favor completa ambos campos");
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${ref}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const transactions = await response.json();
+                if (transactions.length === 0) {
+                    alert("No se encontró transacción con esta referencia");
+                    return;
+                }
+                
+                const transaction = transactions[0];
+                const expectedAmount = transaction.tickets * CONFIG.pricePerTicket;
+                const amountDiff = Math.abs(expectedAmount - amount);
+                
+                if (amountDiff > 50) {
+                    if (!confirm(`⚠️ Diferencia de Bs. ${amountDiff} detectada\n¿Deseas verificar de todas formas?`)) {
+                        return;
+                    }
+                }
+                
+                await verifyPayment(transaction.id, transaction.tickets, transaction.phone, transaction.duplicate_score);
+                alert(`✅ Transacción #${transaction.id} verificada`);
+                
+                // Limpiar campos
+                document.getElementById('quickRef').value = '';
+                document.getElementById('quickAmount').value = '';
+            } catch (error) {
+                console.error("Error en verificación rápida:", error);
+                alert("Ocurrió un error al verificar la transacción");
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadConfig();
@@ -1306,6 +1550,3 @@
     </script>
 </body>
 </html>
-
-
-
