@@ -541,73 +541,6 @@
             color: #ff9800;
         }
         
-        /* Nuevos estilos para mejoras */
-        .risk-high {
-            background-color: #ffebee !important;
-            border-left: 4px solid #f44336 !important;
-        }
-        .risk-medium {
-            background-color: #fff8e1 !important;
-            border-left: 4px solid #ffc107 !important;
-        }
-        .winner-ticket {
-            background-color: #e8f5e9 !important;
-            border: 2px solid #4caf50 !important;
-            animation: pulse 2s infinite;
-        }
-        .receipt-link {
-            color: #2196f3;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .ticket-limit-warning {
-            color: #f44336;
-            font-weight: bold;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-        }
-        .quick-verify-panel {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .certificate-container {
-            background: white;
-            padding: 30px;
-            text-align: center;
-            border: 20px solid #3a0ca3;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .certificate-title {
-            font-size: 36px;
-            color: #3a0ca3;
-            margin-bottom: 20px;
-        }
-        .certificate-details {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        .certificate-qr {
-            width: 150px;
-            height: 150px;
-            margin: 20px auto;
-            background: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #333;
-        }
-        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -685,17 +618,6 @@
             </button>
         </div>
         
-        <div class="quick-verify-panel">
-            <div class="search-container">
-                <i class="fas fa-search"></i>
-                <input type="text" id="quickVerifyInput" placeholder="Buscar referencia para verificación rápida...">
-            </div>
-            <button class="btn" onclick="quickVerifyPayment()">
-                <i class="fas fa-check-circle"></i> Verificar Rápido
-            </button>
-            <div id="quickVerifyResult" style="margin-top: 10px;"></div>
-        </div>
-        
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-value" id="totalSales">0</div>
@@ -742,10 +664,7 @@
                         <th>Teléfono</th>
                         <th>Email</th>
                         <th>Boletos</th>
-                        <th>Monto</th>
                         <th>Referencia</th>
-                        <th>Comprobante</th>
-                        <th>Riesgo</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                         <th>Eliminar</th>
@@ -753,19 +672,19 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="13" style="text-align:center; padding:30px;">Cargando transacciones...</td>
+                        <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
         <div class="config-panel" style="margin-top: 30px;">
-            <h2><i class="fas fa-trophy"></i> Búsqueda de Ganadores</h2>
+            <h2><i class="fas fa-search"></i> Buscar Boletos</h2>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="winnerSearchInput" placeholder="Buscar por número de boleto ganador..." onkeyup="searchWinners()">
+                <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto, cédula, teléfono o referencia..." onkeyup="searchTickets()">
             </div>
-            <div id="winnerSearchResults" style="margin-top: 20px;"></div>
+            <div id="ticketSearchResults" style="margin-top: 20px;"></div>
         </div>
         
         <div class="footer">
@@ -784,6 +703,7 @@
 
         let currentFilter = 'all';
         let currentSearch = '';
+        let currentTicketFilter = 'all';
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
@@ -962,7 +882,7 @@
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
-                        <td colspan="13" style="text-align:center; padding:30px; color:#dc3545;">
+                        <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
                             <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
                         </td>
                     </tr>
@@ -1040,7 +960,7 @@
             if (transactions.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="13" style="text-align:center; padding:30px;">
+                        <td colspan="10" style="text-align:center; padding:30px;">
                             <i class="fas fa-info-circle"></i> No se encontraron transacciones
                         </td>
                     </tr>
@@ -1055,40 +975,24 @@
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 
-                // Calcular riesgo
-                const riskScore = calculateRiskScore(transaction);
-                
-                // Clase de riesgo
-                if (riskScore >= 7) row.classList.add("risk-high");
-                else if (riskScore >= 4) row.classList.add("risk-medium");
-                
-                // Mostrar alerta de límite
-                const ticketLimitWarning = transaction.tickets > 500 ? 
-                    '<i class="fas fa-exclamation-triangle ticket-limit-warning" title="¡Sobrepasa límite de 500 boletos!"></i>' : '';
-                
-                // Comprobante
-                const receiptLink = transaction.receipt_url ? 
-                    `<a href="${transaction.receipt_url}" target="_blank" class="receipt-link">Ver</a>` : 
-                    '<button class="btn" onclick="uploadReceipt(${transaction.id})">Subir</button>';
+                // Verificar si es duplicado
+                const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
+                const isDuplicateRef = duplicateReferences.has(transaction.reference);
+                const isDuplicatePhone = duplicatePhones.has(cleanPhone);
+                const isDuplicateId = duplicateIds.has(transaction.id_number);
                 
                 row.innerHTML = `
                     <td>${formattedDate}</td>
                     <td><strong>${transaction.name}</strong></td>
-                    <td class="${duplicateIds.has(transaction.id_number) ? 'duplicate' : ''}">${transaction.id_number}</td>
-                    <td class="${duplicatePhones.has(cleanPhone(transaction.phone)) ? 'duplicate' : ''}">
+                    <td class="${isDuplicateId ? 'duplicate' : ''}">${transaction.id_number}</td>
+                    <td class="${isDuplicatePhone ? 'duplicate' : ''}">
                         <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
                             <i class="fab fa-whatsapp"></i> ${transaction.phone}
                         </a>
                     </td>
                     <td>${transaction.email || 'N/A'}</td>
                     <td>${transaction.tickets}</td>
-                    <td>Bs. ${transaction.tickets * CONFIG.pricePerTicket}</td>
-                    <td class="${duplicateReferences.has(transaction.reference) ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
-                    <td>${receiptLink}</td>
-                    <td>
-                        ${riskScore}/10
-                        ${ticketLimitWarning}
-                    </td>
+                    <td class="${isDuplicateRef ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
                     <td>
                         <span class="status-badge">${transaction.status}</span>
                     </td>
@@ -1109,25 +1013,6 @@
                 `;
                 tbody.appendChild(row);
             });
-        }
-
-        function calculateRiskScore(transaction) {
-            let score = 0;
-            
-            // 1. Verificar duplicados
-            if (duplicateReferences.has(transaction.reference)) score += 3;
-            if (duplicatePhones.has(cleanPhone(transaction.phone))) score += 3;
-            if (duplicateIds.has(transaction.id_number)) score += 3;
-            
-            // 2. Referencia muy corta
-            if (transaction.reference && transaction.reference.length < 6) score += 2;
-            
-            // 3. Boletos por encima del límite
-            if (transaction.tickets > 500) score += 4;
-            
-            // 4. Monto inusual (no aplica aquí porque no tenemos monto pagado, solo asumimos que pago el monto exacto)
-            
-            return Math.min(score, 10);
         }
 
         async function deleteTransaction(transactionId) {
@@ -1310,7 +1195,7 @@
                 `*TUS TICKETS PARA LA RIFA PREMIUM GANA CON YAIR*\n\n` +
                 `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
                 `${ticketNumbers}\n\n` +
-                `¡Mucha suerte en el sorteo! 🍀\n\n` +
+                `¡Mucha suerte en el sorteo ! 🍀\n\n` +
                 `Atentamente,\nEquipo de Rifa Premium`
             );
             
@@ -1331,15 +1216,15 @@
             loadTransactions();
         }
         
-        async function quickVerifyPayment() {
-            const reference = document.getElementById('quickVerifyInput').value;
-            if (!reference) {
-                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:#f44336;">Ingresa una referencia</p>';
+        async function searchTickets() {
+            const searchTerm = document.getElementById('ticketSearchInput').value.trim();
+            if (searchTerm.length < 3) {
+                document.getElementById('ticketSearchResults').innerHTML = '';
                 return;
             }
             
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(id_number.ilike.%25${searchTerm}%25,phone.ilike.%25${searchTerm}%25,reference.ilike.%25${searchTerm}%25)&select=*,tickets(ticket_number)`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
@@ -1347,118 +1232,10 @@
                 });
                 
                 const transactions = await response.json();
-                if (transactions.length === 0) {
-                    document.getElementById('quickVerifyResult').innerHTML = '<p>No se encontró la transacción</p>';
-                    return;
-                }
-                
-                const transaction = transactions[0];
-                const riskScore = calculateRiskScore(transaction);
-                
-                let resultHTML = `
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                        <h3>Detalles de Transacción</h3>
-                        <p><strong>Nombre:</strong> ${transaction.name}</p>
-                        <p><strong>Monto:</strong> Bs. ${transaction.tickets * CONFIG.pricePerTicket}</p>
-                        <p><strong>Boletos:</strong> ${transaction.tickets}</p>
-                        <p><strong>Riesgo:</strong> ${riskScore}/10</p>
-                        <button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
-                            <i class="fas fa-check-circle"></i> Verificar Pago
-                        </button>
-                    </div>
-                `;
-                
-                document.getElementById('quickVerifyResult').innerHTML = resultHTML;
+                displayTransactionSearchResults(transactions);
             } catch (error) {
-                console.error("Error en verificación rápida:", error);
-                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:#f44336;">Error al verificar</p>';
-            }
-        }
-        
-        async function markAsWinner(ticketNumber) {
-            if (confirm(`¿Marcar boleto ${formatTicketNumber(ticketNumber)} como ganador?`)) {
-                try {
-                    // Actualizar el boleto como ganador en la base de datos
-                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                        },
-                        body: JSON.stringify({ is_winner: true })
-                    });
-                    
-                    if (response.ok) {
-                        alert(`¡Boleto ${formatTicketNumber(ticketNumber)} marcado como ganador!`);
-                        searchWinners();
-                    } else {
-                        throw new Error("Error en la respuesta");
-                    }
-                } catch (error) {
-                    console.error("Error marcando ganador:", error);
-                    alert("Ocurrió un error al marcar el ganador");
-                }
-            }
-        }
-        
-        function generateCertificate(winner) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="certificate-container">
-                        <div class="certificate-title">CERTIFICADO DE GANADOR</div>
-                        <div class="certificate-details">
-                            <p>El presente certificado acredita que</p>
-                            <h2>${winner.name}</h2>
-                            <p>con cédula ${winner.id_number}</p>
-                            <p>es el ganador oficial de la Rifa Premium</p>
-                            <p>con el boleto número:</p>
-                            <h1>${formatTicketNumber(winner.ticket_number)}</h1>
-                        </div>
-                        <div class="certificate-qr">CÓDIGO QR DE VALIDACIÓN</div>
-                        <p>Fecha de emisión: ${new Date().toLocaleDateString()}</p>
-                    </div>
-                    <div class="modal-buttons">
-                        <button onclick="printCertificate()">
-                            <i class="fas fa-print"></i> Imprimir Certificado
-                        </button>
-                        <button onclick="this.closest('.modal').remove()">
-                            <i class="fas fa-times"></i> Cerrar
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-        }
-        
-        function printCertificate() {
-            window.print();
-        }
-        
-        async function searchWinners() {
-            const ticketNumber = document.getElementById('winnerSearchInput').value;
-            if (!ticketNumber) {
-                document.getElementById('winnerSearchResults').innerHTML = '';
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=*,transactions(name,id_number,phone)&ticket_number=eq.${ticketNumber}`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                const tickets = await response.json();
-                displayWinnerResults(tickets);
-            } catch (error) {
-                console.error("Error buscando ganadores:", error);
-                document.getElementById('winnerSearchResults').innerHTML = `
+                console.error("Error buscando boletos:", error);
+                document.getElementById('ticketSearchResults').innerHTML = `
                     <p style="color:#dc3545; padding:15px; text-align:center;">
                         <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
                     </p>
@@ -1466,88 +1243,59 @@
             }
         }
 
-        function displayWinnerResults(tickets) {
-            const container = document.getElementById('winnerSearchResults');
+        function displayTransactionSearchResults(transactions) {
+            const container = document.getElementById('ticketSearchResults');
             
-            if (!tickets || tickets.length === 0) {
+            if (!transactions || transactions.length === 0) {
                 container.innerHTML = `
                     <p style="padding:15px; text-align:center; color:#6c757d;">
-                        <i class="fas fa-info-circle"></i> No se encontró el boleto
+                        <i class="fas fa-info-circle"></i> No se encontraron transacciones
                     </p>
                 `;
                 return;
             }
             
-            const ticket = tickets[0];
-            const transaction = ticket.transactions;
-            const formattedNumber = formatTicketNumber(ticket.ticket_number);
-            
             let html = `
-                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                    <h3 style="text-align:center; margin-bottom:20px;">Boleto #${formattedNumber}</h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <h4>Información del Boleto</h4>
-                            <p><strong>Estado:</strong> ${ticket.status}</p>
-                            <p><strong>Fecha de compra:</strong> ${new Date(ticket.created_at).toLocaleDateString()}</p>
-                        </div>
-                        
-                        <div>
-                            <h4>Información del Comprador</h4>
-                            <p><strong>Nombre:</strong> ${transaction.name}</p>
-                            <p><strong>Cédula:</strong> ${transaction.id_number}</p>
-                            <p><strong>Teléfono:</strong> ${transaction.phone}</p>
-                        </div>
-                    </div>
+                <table class="ticket-results-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>CI</th>
+                            <th>Teléfono</th>
+                            <th>Boletos</th>
+                            <th>Ver Boletos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
             `;
             
-            if (ticket.is_winner) {
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
                 html += `
-                    <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
-                        <h3><i class="fas fa-trophy"></i> ¡BOLETO GANADOR!</h3>
-                        <button class="btn" onclick="generateCertificate({
-                            name: '${transaction.name}',
-                            id_number: '${transaction.id_number}',
-                            ticket_number: ${ticket.ticket_number}
-                        })" style="margin-top:10px;">
-                            <i class="fas fa-certificate"></i> Generar Certificado
-                        </button>
-                    </div>
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${transaction.name}</td>
+                        <td>${transaction.id_number}</td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
+                                <i class="fab fa-whatsapp"></i> ${transaction.phone}
+                            </a>
+                        </td>
+                        <td>${transaction.tickets.length || 0}</td>
+                        <td>
+                            <button class="btn-verify" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
                 `;
-            } else {
-                html += `
-                    <div style="text-align:center; margin-top:20px;">
-                        <button class="btn-verify" onclick="markAsWinner(${ticket.ticket_number})">
-                            <i class="fas fa-trophy"></i> Marcar como Ganador
-                        </button>
-                    </div>
-                `;
-            }
+            });
             
-            html += `</div>`;
+            html += `</tbody></table>`;
             container.innerHTML = html;
-        }
-        
-        async function uploadReceipt(transactionId) {
-            const receiptUrl = prompt("Ingrese la URL del comprobante de pago:");
-            if (receiptUrl) {
-                try {
-                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                        },
-                        body: JSON.stringify({ receipt_url: receiptUrl })
-                    });
-                    loadTransactions();
-                } catch (error) {
-                    console.error("Error guardando comprobante:", error);
-                    alert("Error al guardar el comprobante");
-                }
-            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1558,6 +1306,5 @@
     </script>
 </body>
 </html>
-
 
 
