@@ -1054,7 +1054,7 @@
             totalTickets: 10000,
             pricePerTicket: 70,
             raffleDate: "",
-            prizeImage: "https://iili.io/FvJJVdG.jpg",
+            prizeImage: "https://i.ibb.co/Kx3fHcx9/RIFA-IMAGEN.png",
             prizes: [
                 "1er Premio: <strong>Combo Hogar + Mercado para un mes</strong>",
                 "2do Premio: <strong>300 dólares</strong>",
@@ -1150,19 +1150,18 @@
                     .filter(t => t.status === 'VERIFICADO')
                     .reduce((sum, t) => sum + t.tickets, 0);
                 
-                // Calcular porcentaje VENDIDO (no disponible)
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
                 
-                // Actualizar UI
                 document.getElementById('soldPercentage').textContent = `${soldPercentage}%`;
                 document.getElementById('availablePercentage').textContent = `${availablePercentage}%`;
-                document.getElementById('progressBar').style.width = `${soldPercentage}%`;
+                
+                const progress = (soldTickets / CONFIG.totalTickets) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
             } catch (error) {
                 console.error("Error obteniendo boletos vendidos:", error);
                 document.getElementById('soldPercentage').textContent = "0%";
                 document.getElementById('availablePercentage').textContent = "100%";
-                document.getElementById('progressBar').style.width = "0%";
             }
         }
 
@@ -1484,3 +1483,8 @@
     </script>
 </body>
 </html>
+
+
+
+
+
