@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Rifa Premium</title>
+    <title>Panel Admin Premium - Rifa Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -12,10 +12,26 @@
             padding: 0;
         }
         
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a0ca3;
+            --primary-light: #4cc9f0;
+            --accent-color: #f72585;
+            --success-color: #2ecc71;
+            --warning-color: #ff9800;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-text: #2d3748;
+            --light-text: #718096;
+            --border-radius: 10px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a2a6c, #3a0ca3, #4361ee);
-            color: #333;
+            color: var(--dark-text);
             margin: 0;
             padding: 20px;
             min-height: 100vh;
@@ -75,16 +91,16 @@
         .config-panel {
             background: linear-gradient(to right, #f8f9fa, #e9ecef);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             margin-bottom: 30px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #4361ee;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
         }
         
         .config-panel h2 {
             margin-top: 0;
             margin-bottom: 20px;
-            color: #3a0ca3;
+            color: var(--primary-dark);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -112,14 +128,14 @@
         .config-item input {
             width: 100%;
             padding: 12px 15px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             border: 1px solid #ced4da;
             font-size: 16px;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
         
         .config-item input:focus {
-            border-color: #4361ee;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
             outline: none;
         }
@@ -133,12 +149,12 @@
         
         .stat-card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
             padding: 20px;
             text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border-top: 4px solid #4361ee;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary-color);
         }
         
         .stat-card:hover {
@@ -149,12 +165,12 @@
         .stat-value {
             font-size: 32px;
             font-weight: 700;
-            color: #3a0ca3;
+            color: var(--primary-dark);
             margin: 10px 0;
         }
         
         .stat-label {
-            color: #6c757d;
+            color: var(--light-text);
             font-size: 16px;
             font-weight: 500;
         }
@@ -176,7 +192,7 @@
             width: 100%;
             padding: 14px 20px 14px 50px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 16px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
@@ -198,15 +214,15 @@
         
         .table-container {
             overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             margin-bottom: 30px;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 1200px;
         }
         
         th, td {
@@ -215,7 +231,7 @@
         }
         
         thead {
-            background: linear-gradient(to right, #3a0ca3, #4361ee);
+            background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
             color: white;
         }
         
@@ -251,15 +267,15 @@
         }
         
         button {
-            background-color: #4361ee;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             padding: 10px 16px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 15px;
             font-weight: 500;
-            transition: all 0.3s;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -267,7 +283,7 @@
         }
         
         button:hover {
-            background-color: #3a0ca3;
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -285,7 +301,7 @@
         }
         
         .btn-verify {
-            background-color: #28a745;
+            background-color: var(--success-color);
         }
         
         .btn-verify:hover {
@@ -304,7 +320,7 @@
         }
         
         .btn-delete {
-            background-color: #dc3545;
+            background-color: var(--danger-color);
         }
         
         .btn-delete:hover {
@@ -319,13 +335,13 @@
         }
         
         .filter-btn.active {
-            background: #4361ee;
+            background: var(--primary-color);
             color: white;
-            border-color: #4361ee;
+            border-color: var(--primary-color);
         }
         
         .btn-save {
-            background: #28a745;
+            background: var(--success-color);
             padding: 12px 25px;
             font-size: 16px;
         }
@@ -362,7 +378,7 @@
         }
         
         .modal h2 {
-            color: #3a0ca3;
+            color: var(--primary-dark);
             margin-bottom: 20px;
             font-size: 26px;
             display: flex;
@@ -403,7 +419,7 @@
             width: 100%;
             height: 150px;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             border: 1px solid #ddd;
             font-family: monospace;
             font-size: 16px;
@@ -414,7 +430,7 @@
         .footer {
             text-align: center;
             margin-top: 30px;
-            color: #6c757d;
+            color: var(--light-text);
             font-size: 14px;
             padding: 20px;
             border-top: 1px solid #e9ecef;
@@ -434,7 +450,7 @@
         }
 
         .ticket-results-table thead {
-            background: linear-gradient(to right, #3a0ca3, #4361ee);
+            background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
             color: white;
         }
 
@@ -451,12 +467,12 @@
             overflow-y: auto;
             padding: 10px;
             border: 1px solid #eee;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
         }
         
         .ticket-number {
             background: #f0f4ff;
-            border: 1px solid #4361ee;
+            border: 1px solid var(--primary-color);
             border-radius: 4px;
             padding: 5px 10px;
             font-weight: bold;
@@ -478,7 +494,7 @@
         
         .duplicate {
             background-color: #ffebee !important;
-            border: 1px solid #f44336;
+            border: 1px solid var(--danger-color);
         }
         
         .ticket-header {
@@ -496,15 +512,15 @@
         
         .ticket-summary-item {
             background: #f8f9fa;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             padding: 15px;
             flex: 1;
             min-width: 200px;
-            border-left: 4px solid #4361ee;
+            border-left: 4px solid var(--primary-color);
         }
         
         .ticket-summary-item h3 {
-            color: #3a0ca3;
+            color: var(--primary-dark);
             margin-bottom: 10px;
             font-size: 16px;
         }
@@ -516,11 +532,11 @@
         }
         
         .ticket-summary-item .ticket-count {
-            color: #3a0ca3;
+            color: var(--primary-dark);
         }
         
         .ticket-summary-item .amount {
-            color: #28a745;
+            color: var(--success-color);
         }
         
         .ticket-summary-item .status {
@@ -533,12 +549,194 @@
         
         .ticket-summary-item .verified {
             background: #e8f5e9;
-            color: #28a745;
+            color: var(--success-color);
         }
         
         .ticket-summary-item .pending {
             background: #fffde7;
-            color: #ff9800;
+            color: var(--warning-color);
+        }
+        
+        /* Nuevos estilos para mejoras de eficiencia */
+        .risk-high {
+            background-color: #ffebee !important;
+            border-left: 4px solid var(--danger-color) !important;
+        }
+        .risk-medium {
+            background-color: #fff8e1 !important;
+            border-left: 4px solid var(--warning-color) !important;
+        }
+        .winner-ticket {
+            background-color: #e8f5e9 !important;
+            border: 2px solid var(--success-color) !important;
+            animation: pulse 2s infinite;
+        }
+        .receipt-link {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .ticket-limit-warning {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        .quick-verify-panel {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .certificate-container {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border: 20px solid var(--primary-dark);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .certificate-title {
+            font-size: 36px;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+        }
+        .certificate-details {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .certificate-qr {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* Mejoras de eficiencia */
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .advanced-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+        
+        .performance-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .metric {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            color: var(--light-text);
+            font-size: 14px;
+        }
+        
+        .tag-select {
+            padding: 8px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            background: white;
+        }
+        
+        .tag-sospechoso {
+            background-color: #fff8e1 !important;
+        }
+        
+        .tag-recurrente {
+            background-color: #e6f7ff !important;
+        }
+        
+        .tag-prioritario {
+            background-color: #f0f9eb !important;
+        }
+        
+        .export-actions {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .action-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .badge-success {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+        }
+        
+        .badge-warning {
+            background-color: #fff8e1;
+            color: var(--warning-color);
+        }
+        
+        .badge-danger {
+            background-color: #ffebee;
+            color: var(--danger-color);
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            background: white;
+            width: 100%;
+            z-index: 100;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f0f4ff;
         }
         
         @media (max-width: 768px) {
@@ -587,7 +785,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Premium</h1>
+            <h1><i class="fas fa-crown"></i> Panel Admin Premium - Rifa Premium</h1>
             <button class="btn-refresh" onclick="location.reload()">
                 <i class="fas fa-sync-alt"></i> Actualizar Datos
             </button>
@@ -618,39 +816,86 @@
             </button>
         </div>
         
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="totalSales">0</div>
-                <div class="stat-label">VENTAS TOTALES</div>
+        <div class="performance-dashboard">
+            <div class="metric">
+                <div class="metric-value" id="avgVerificationTime">12 min</div>
+                <div class="metric-label">Tiempo promedio de verificación</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="pendingCount">0</div>
-                <div class="stat-label">PENDIENTES</div>
+            <div class="metric">
+                <div class="metric-value" id="ticketsPerHour">42</div>
+                <div class="metric-label">Boletos/hora</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="verifiedCount">0</div>
-                <div class="stat-label">VERIFICADOS</div>
+            <div class="metric">
+                <div class="metric-value" id="conversionRate">78%</div>
+                <div class="metric-label">Tasa de conversión</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="soldTickets">0</div>
-                <div class="stat-label">BOLETOS VENDIDOS</div>
+            <div class="metric">
+                <div class="metric-value" id="pendingCount">24</div>
+                <div class="metric-label">Pendientes</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="availableTickets">0</div>
-                <div class="stat-label">BOLETOS DISPONIBLES</div>
+        </div>
+        
+        <div class="quick-verify-panel">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="quickVerifyInput" placeholder="Buscar referencia para verificación rápida...">
+                <div class="search-suggestions" id="quickSuggestions"></div>
+            </div>
+            <button class="btn" onclick="quickVerifyPayment()">
+                <i class="fas fa-check-circle"></i> Verificar Rápido
+            </button>
+            <div id="quickVerifyResult" style="margin-top: 10px;"></div>
+        </div>
+        
+        <div class="advanced-filters">
+            <div>
+                <label>Monto mínimo:</label>
+                <input type="number" id="minAmount" placeholder="Bs.">
+            </div>
+            <div>
+                <label>Monto máximo:</label>
+                <input type="number" id="maxAmount" placeholder="Bs.">
+            </div>
+            <div>
+                <label>Fecha desde:</label>
+                <input type="date" id="startDate">
+            </div>
+            <div>
+                <label>Fecha hasta:</label>
+                <input type="date" id="endDate">
+            </div>
+            <button id="applyFilters" class="btn">Aplicar Filtros</button>
+        </div>
+        
+        <div class="bulk-actions">
+            <button id="selectAllBtn" class="btn">
+                <i class="fas fa-check-square"></i> Seleccionar todos
+            </button>
+            <button id="bulkVerifyBtn" class="btn btn-verify">
+                <i class="fas fa-check-double"></i> Verificar seleccionados
+            </button>
+            <div class="export-actions">
+                <button id="exportCSV" class="btn">
+                    <i class="fas fa-file-csv"></i> Exportar CSV
+                </button>
+                <button id="exportExcel" class="btn">
+                    <i class="fas fa-file-excel"></i> Exportar Excel
+                </button>
             </div>
         </div>
         
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o referencia..." onkeyup="searchTransactions()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o referencia...">
+                <div class="search-suggestions" id="searchSuggestions"></div>
             </div>
             
             <div class="filters">
                 <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
                 <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
                 <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
+                <button class="filter-btn" onclick="setFilter('suspicious')">Sospechosos</button>
             </div>
         </div>
         
@@ -658,33 +903,36 @@
             <table id="transactionsTable">
                 <thead>
                     <tr>
+                        <th width="30px"></th>
                         <th>Fecha</th>
                         <th>Nombre</th>
                         <th>CI</th>
                         <th>Teléfono</th>
                         <th>Email</th>
                         <th>Boletos</th>
+                        <th>Monto</th>
                         <th>Referencia</th>
+                        <th>Comprobante</th>
+                        <th>Riesgo</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
+                        <td colspan="13" style="text-align:center; padding:30px;">Cargando transacciones...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
         <div class="config-panel" style="margin-top: 30px;">
-            <h2><i class="fas fa-search"></i> Buscar Boletos</h2>
+            <h2><i class="fas fa-trophy"></i> Búsqueda de Ganadores</h2>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto, cédula, teléfono o referencia..." onkeyup="searchTickets()">
+                <input type="text" id="winnerSearchInput" placeholder="Buscar por número de boleto ganador...">
             </div>
-            <div id="ticketSearchResults" style="margin-top: 20px;"></div>
+            <div id="winnerSearchResults" style="margin-top: 20px;"></div>
         </div>
         
         <div class="footer">
@@ -703,19 +951,19 @@
 
         let currentFilter = 'all';
         let currentSearch = '';
-        let currentTicketFilter = 'all';
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
+        let selectedTransactions = new Set();
+        let allTransactions = [];
+        let suggestions = [];
 
         function formatTicketNumber(number) {
             return String(number).padStart(5, '0');
         }
 
         function cleanPhone(phone) {
-            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
-            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -858,6 +1106,8 @@
                     url += `&status=eq.PENDIENTE`;
                 } else if (currentFilter === 'verified') {
                     url += `&status=eq.VERIFICADO`;
+                } else if (currentFilter === 'suspicious') {
+                    url += `&or=(reference.neq.null,id_number.neq.null)`;
                 }
                 
                 if (currentSearch) {
@@ -871,18 +1121,19 @@
                     }
                 });
                 
-                const transactions = await response.json();
+                allTransactions = await response.json();
                 
                 // Buscar duplicados
-                findDuplicates(transactions);
+                findDuplicates(allTransactions);
                 
-                renderTransactions(transactions);
-                updateStats(transactions);
+                renderTransactions(allTransactions);
+                updateStats(allTransactions);
+                loadSearchSuggestions();
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
+                        <td colspan="13" style="text-align:center; padding:30px; color:var(--danger-color);">
                             <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
                         </td>
                     </tr>
@@ -960,7 +1211,7 @@
             if (transactions.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px;">
+                        <td colspan="13" style="text-align:center; padding:30px;">
                             <i class="fas fa-info-circle"></i> No se encontraron transacciones
                         </td>
                     </tr>
@@ -975,24 +1226,43 @@
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 
-                // Verificar si es duplicado
-                const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
-                const isDuplicateRef = duplicateReferences.has(transaction.reference);
-                const isDuplicatePhone = duplicatePhones.has(cleanPhone);
-                const isDuplicateId = duplicateIds.has(transaction.id_number);
+                // Calcular riesgo
+                const riskScore = calculateRiskScore(transaction);
+                
+                // Clase de riesgo
+                if (riskScore >= 7) row.classList.add("risk-high");
+                else if (riskScore >= 4) row.classList.add("risk-medium");
+                
+                // Mostrar alerta de límite
+                const ticketLimitWarning = transaction.tickets > 500 ? 
+                    '<i class="fas fa-exclamation-triangle ticket-limit-warning" title="¡Sobrepasa límite de 500 boletos!"></i>' : '';
+                
+                // Comprobante
+                const receiptLink = transaction.receipt_url ? 
+                    `<a href="javascript:void(0);" onclick="showReceiptPreview('${transaction.receipt_url}')" class="receipt-link">Ver</a>` : 
+                    '<button class="btn" onclick="uploadReceipt('+transaction.id+')">Subir</button>';
                 
                 row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="transaction-check" data-id="${transaction.id}" onchange="toggleTransactionSelection(${transaction.id})">
+                    </td>
                     <td>${formattedDate}</td>
                     <td><strong>${transaction.name}</strong></td>
-                    <td class="${isDuplicateId ? 'duplicate' : ''}">${transaction.id_number}</td>
-                    <td class="${isDuplicatePhone ? 'duplicate' : ''}">
+                    <td class="${duplicateIds.has(transaction.id_number) ? 'duplicate' : ''}">${transaction.id_number}</td>
+                    <td class="${duplicatePhones.has(cleanPhone(transaction.phone)) ? 'duplicate' : ''}">
                         <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
                             <i class="fab fa-whatsapp"></i> ${transaction.phone}
                         </a>
                     </td>
                     <td>${transaction.email || 'N/A'}</td>
                     <td>${transaction.tickets}</td>
-                    <td class="${isDuplicateRef ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
+                    <td>Bs. ${transaction.tickets * CONFIG.pricePerTicket}</td>
+                    <td class="${duplicateReferences.has(transaction.reference) ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
+                    <td>${receiptLink}</td>
+                    <td>
+                        ${riskScore}/10
+                        ${ticketLimitWarning}
+                    </td>
                     <td>
                         <span class="status-badge">${transaction.status}</span>
                     </td>
@@ -1004,15 +1274,35 @@
                             `<button class="btn-verified" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
                                 <i class="fas fa-ticket-alt"></i> Ver Tickets
                             </button>`}
-                    </td>
-                    <td>
-                        <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                        <select class="tag-select" data-id="${transaction.id}" onchange="updateTag(this)">
+                            <option value="">- Etiqueta -</option>
+                            <option value="sospechoso" ${transaction.tag === 'sospechoso' ? 'selected' : ''}>Sospechoso</option>
+                            <option value="recurrente" ${transaction.tag === 'recurrente' ? 'selected' : ''}>Recurrente</option>
+                            <option value="prioritario" ${transaction.tag === 'prioritario' ? 'selected' : ''}>Prioritario</option>
+                        </select>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        function calculateRiskScore(transaction) {
+            let score = 0;
+            
+            // 1. Verificar duplicados
+            if (duplicateReferences.has(transaction.reference)) score += 3;
+            if (duplicatePhones.has(cleanPhone(transaction.phone))) score += 3;
+            if (duplicateIds.has(transaction.id_number)) score += 3;
+            
+            // 2. Referencia muy corta
+            if (transaction.reference && transaction.reference.length < 6) score += 2;
+            
+            // 3. Boletos por encima del límite
+            if (transaction.tickets > 500) score += 4;
+            
+            // 4. Monto inusual (no aplica aquí porque no tenemos monto pagado, solo asumimos que pago el monto exacto)
+            
+            return Math.min(score, 10);
         }
 
         async function deleteTransaction(transactionId) {
@@ -1195,7 +1485,7 @@
                 `*TUS TICKETS PARA LA RIFA PREMIUM GANA CON YAIR*\n\n` +
                 `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
                 `${ticketNumbers}\n\n` +
-                `¡Mucha suerte en el sorteo ! 🍀\n\n` +
+                `¡Mucha suerte en el sorteo! 🍀\n\n` +
                 `Atentamente,\nEquipo de Rifa Premium`
             );
             
@@ -1216,15 +1506,15 @@
             loadTransactions();
         }
         
-        async function searchTickets() {
-            const searchTerm = document.getElementById('ticketSearchInput').value.trim();
-            if (searchTerm.length < 3) {
-                document.getElementById('ticketSearchResults').innerHTML = '';
+        async function quickVerifyPayment() {
+            const reference = document.getElementById('quickVerifyInput').value;
+            if (!reference) {
+                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:var(--danger-color);">Ingresa una referencia</p>';
                 return;
             }
             
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(id_number.ilike.%25${searchTerm}%25,phone.ilike.%25${searchTerm}%25,reference.ilike.%25${searchTerm}%25)&select=*,tickets(ticket_number)`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
@@ -1232,70 +1522,401 @@
                 });
                 
                 const transactions = await response.json();
-                displayTransactionSearchResults(transactions);
+                if (transactions.length === 0) {
+                    document.getElementById('quickVerifyResult').innerHTML = '<p>No se encontró la transacción</p>';
+                    return;
+                }
+                
+                const transaction = transactions[0];
+                const riskScore = calculateRiskScore(transaction);
+                
+                let resultHTML = `
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3>Detalles de Transacción</h3>
+                        <p><strong>Nombre:</strong> ${transaction.name}</p>
+                        <p><strong>Monto:</strong> Bs. ${transaction.tickets * CONFIG.pricePerTicket}</p>
+                        <p><strong>Boletos:</strong> ${transaction.tickets}</p>
+                        <p><strong>Riesgo:</strong> ${riskScore}/10</p>
+                        <button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                            <i class="fas fa-check-circle"></i> Verificar Pago
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('quickVerifyResult').innerHTML = resultHTML;
             } catch (error) {
-                console.error("Error buscando boletos:", error);
-                document.getElementById('ticketSearchResults').innerHTML = `
-                    <p style="color:#dc3545; padding:15px; text-align:center;">
+                console.error("Error en verificación rápida:", error);
+                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:var(--danger-color);">Error al verificar</p>';
+            }
+        }
+        
+        async function markAsWinner(ticketNumber) {
+            if (confirm(`¿Marcar boleto ${formatTicketNumber(ticketNumber)} como ganador?`)) {
+                try {
+                    // Actualizar el boleto como ganador en la base de datos
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ is_winner: true })
+                    });
+                    
+                    if (response.ok) {
+                        alert(`¡Boleto ${formatTicketNumber(ticketNumber)} marcado como ganador!`);
+                        searchWinners();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error marcando ganador:", error);
+                    alert("Ocurrió un error al marcar el ganador");
+                }
+            }
+        }
+        
+        function generateCertificate(winner) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="certificate-container">
+                        <div class="certificate-title">CERTIFICADO DE GANADOR</div>
+                        <div class="certificate-details">
+                            <p>El presente certificado acredita que</p>
+                            <h2>${winner.name}</h2>
+                            <p>con cédula ${winner.id_number}</p>
+                            <p>es el ganador oficial de la Rifa Premium</p>
+                            <p>con el boleto número:</p>
+                            <h1>${formatTicketNumber(winner.ticket_number)}</h1>
+                        </div>
+                        <div class="certificate-qr">CÓDIGO QR DE VALIDACIÓN</div>
+                        <p>Fecha de emisión: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    <div class="modal-buttons">
+                        <button onclick="printCertificate()">
+                            <i class="fas fa-print"></i> Imprimir Certificado
+                        </button>
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function printCertificate() {
+            window.print();
+        }
+        
+        async function searchWinners() {
+            const ticketNumber = document.getElementById('winnerSearchInput').value;
+            if (!ticketNumber) {
+                document.getElementById('winnerSearchResults').innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=*,transactions(name,id_number,phone)&ticket_number=eq.${ticketNumber}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const tickets = await response.json();
+                displayWinnerResults(tickets);
+            } catch (error) {
+                console.error("Error buscando ganadores:", error);
+                document.getElementById('winnerSearchResults').innerHTML = `
+                    <p style="color:var(--danger-color); padding:15px; text-align:center;">
                         <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
                     </p>
                 `;
             }
         }
 
-        function displayTransactionSearchResults(transactions) {
-            const container = document.getElementById('ticketSearchResults');
+        function displayWinnerResults(tickets) {
+            const container = document.getElementById('winnerSearchResults');
             
-            if (!transactions || transactions.length === 0) {
+            if (!tickets || tickets.length === 0) {
                 container.innerHTML = `
-                    <p style="padding:15px; text-align:center; color:#6c757d;">
-                        <i class="fas fa-info-circle"></i> No se encontraron transacciones
+                    <p style="padding:15px; text-align:center; color:var(--light-text);">
+                        <i class="fas fa-info-circle"></i> No se encontró el boleto
                     </p>
                 `;
                 return;
             }
             
+            const ticket = tickets[0];
+            const transaction = ticket.transactions;
+            const formattedNumber = formatTicketNumber(ticket.ticket_number);
+            
             let html = `
-                <table class="ticket-results-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Nombre</th>
-                            <th>CI</th>
-                            <th>Teléfono</th>
-                            <th>Boletos</th>
-                            <th>Ver Boletos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    <h3 style="text-align:center; margin-bottom:20px;">Boleto #${formattedNumber}</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4>Información del Boleto</h4>
+                            <p><strong>Estado:</strong> ${ticket.status}</p>
+                            <p><strong>Fecha de compra:</strong> ${new Date(ticket.created_at).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <div>
+                            <h4>Información del Comprador</h4>
+                            <p><strong>Nombre:</strong> ${transaction.name}</p>
+                            <p><strong>Cédula:</strong> ${transaction.id_number}</p>
+                            <p><strong>Teléfono:</strong> ${transaction.phone}</p>
+                        </div>
+                    </div>
             `;
             
-            transactions.forEach(transaction => {
-                const date = new Date(transaction.date);
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-                
+            if (ticket.is_winner) {
                 html += `
-                    <tr>
-                        <td>${formattedDate}</td>
-                        <td>${transaction.name}</td>
-                        <td>${transaction.id_number}</td>
-                        <td>
-                            <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
-                                <i class="fab fa-whatsapp"></i> ${transaction.phone}
-                            </a>
-                        </td>
-                        <td>${transaction.tickets.length || 0}</td>
-                        <td>
-                            <button class="btn-verify" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
-                                <i class="fas fa-eye"></i> Ver
-                            </button>
-                        </td>
-                    </tr>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                        <h3><i class="fas fa-trophy"></i> ¡BOLETO GANADOR!</h3>
+                        <button class="btn" onclick="generateCertificate({
+                            name: '${transaction.name}',
+                            id_number: '${transaction.id_number}',
+                            ticket_number: ${ticket.ticket_number}
+                        })" style="margin-top:10px;">
+                            <i class="fas fa-certificate"></i> Generar Certificado
+                        </button>
+                    </div>
                 `;
+            } else {
+                html += `
+                    <div style="text-align:center; margin-top:20px;">
+                        <button class="btn-verify" onclick="markAsWinner(${ticket.ticket_number})">
+                            <i class="fas fa-trophy"></i> Marcar como Ganador
+                        </button>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+        
+        async function uploadReceipt(transactionId) {
+            const receiptUrl = prompt("Ingrese la URL del comprobante de pago:");
+            if (receiptUrl) {
+                try {
+                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ receipt_url: receiptUrl })
+                    });
+                    loadTransactions();
+                } catch (error) {
+                    console.error("Error guardando comprobante:", error);
+                    alert("Error al guardar el comprobante");
+                }
+            }
+        }
+        
+        function showReceiptPreview(url) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-file-invoice"></i> Comprobante de Pago</h2>
+                    <img src="${url}" alt="Comprobante" style="width:100%; max-height:70vh; object-fit:contain;">
+                    <div class="modal-buttons">
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        async function updateTag(select) {
+            const transactionId = select.dataset.id;
+            const tag = select.value;
+            
+            await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': CONFIG.supabaseKey
+                },
+                body: JSON.stringify({ tag })
             });
             
-            html += `</tbody></table>`;
-            container.innerHTML = html;
+            // Actualizar fila visualmente
+            const row = select.closest('tr');
+            row.classList.remove('tag-sospechoso', 'tag-recurrente', 'tag-prioritario');
+            if (tag) row.classList.add(`tag-${tag}`);
+        }
+        
+        function toggleTransactionSelection(id) {
+            if (selectedTransactions.has(id)) {
+                selectedTransactions.delete(id);
+            } else {
+                selectedTransactions.add(id);
+            }
+            updateBulkActions();
+        }
+        
+        function updateBulkActions() {
+            const count = selectedTransactions.size;
+            document.getElementById('bulkVerifyBtn').innerHTML = `<i class="fas fa-check-double"></i> Verificar seleccionados (${count})`;
+        }
+        
+        document.getElementById('selectAllBtn').addEventListener('click', () => {
+            document.querySelectorAll('.transaction-check').forEach(checkbox => {
+                checkbox.checked = true;
+                const id = parseInt(checkbox.dataset.id);
+                selectedTransactions.add(id);
+            });
+            updateBulkActions();
+        });
+        
+        document.getElementById('bulkVerifyBtn').addEventListener('click', async () => {
+            if (selectedTransactions.size === 0) return;
+            
+            if (confirm(`¿Verificar ${selectedTransactions.size} transacciones?`)) {
+                const verifyPromises = [];
+                
+                for (const id of selectedTransactions) {
+                    verifyPromises.push(
+                        fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${id}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': CONFIG.supabaseKey
+                            },
+                            body: JSON.stringify({ status: 'VERIFICADO' })
+                        })
+                    );
+                }
+                
+                await Promise.all(verifyPromises);
+                alert(`¡${selectedTransactions.size} transacciones verificadas!`);
+                selectedTransactions.clear();
+                loadTransactions();
+            }
+        });
+        
+        document.getElementById('exportCSV').addEventListener('click', async () => {
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`);
+            const data = await response.json();
+            
+            // Convertir a CSV
+            const headers = Object.keys(data[0]).join(",");
+            const rows = data.map(t => Object.values(t).join(",")).join("\n");
+            const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows;
+            
+            // Descargar
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "transacciones.csv");
+            document.body.appendChild(link);
+            link.click();
+        });
+        
+        async function loadSearchSuggestions() {
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=name,id_number,reference`);
+            const data = await response.json();
+            
+            const suggestionsSet = new Set();
+            data.forEach(t => {
+                if (t.name) suggestionsSet.add(t.name);
+                if (t.id_number) suggestionsSet.add(t.id_number);
+                if (t.reference) suggestionsSet.add(t.reference);
+            });
+            
+            suggestions = Array.from(suggestionsSet);
+            
+            // Configurar búsqueda principal
+            const searchInput = document.getElementById('searchInput');
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            
+            searchInput.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                if (!value) {
+                    suggestionsContainer.style.display = 'none';
+                    return;
+                }
+                
+                const filtered = suggestions.filter(s => s.toLowerCase().includes(value));
+                suggestionsContainer.innerHTML = '';
+                
+                if (filtered.length === 0) {
+                    suggestionsContainer.style.display = 'none';
+                    return;
+                }
+                
+                filtered.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = s;
+                    div.onclick = () => {
+                        searchInput.value = s;
+                        suggestionsContainer.style.display = 'none';
+                        searchTransactions();
+                    };
+                    suggestionsContainer.appendChild(div);
+                });
+                
+                suggestionsContainer.style.display = 'block';
+            });
+            
+            // Configurar búsqueda rápida
+            const quickInput = document.getElementById('quickVerifyInput');
+            const quickSuggestions = document.getElementById('quickSuggestions');
+            
+            quickInput.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                if (!value) {
+                    quickSuggestions.style.display = 'none';
+                    return;
+                }
+                
+                const filtered = suggestions.filter(s => s.toLowerCase().includes(value));
+                quickSuggestions.innerHTML = '';
+                
+                if (filtered.length === 0) {
+                    quickSuggestions.style.display = 'none';
+                    return;
+                }
+                
+                filtered.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = s;
+                    div.onclick = () => {
+                        quickInput.value = s;
+                        quickSuggestions.style.display = 'none';
+                    };
+                    quickSuggestions.appendChild(div);
+                });
+                
+                quickSuggestions.style.display = 'block';
+            });
+            
+            // Ocultar sugerencias al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                }
+                if (!quickInput.contains(e.target)) {
+                    quickSuggestions.style.display = 'none';
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1306,5 +1927,3 @@
     </script>
 </body>
 </html>
-
-
