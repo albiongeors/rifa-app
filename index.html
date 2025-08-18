@@ -240,8 +240,6 @@
             padding: 20px;
             margin: 20px 0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
         }
         
         .progress-bar {
@@ -766,36 +764,6 @@
             background: var(--primary-color);
             transform: scale(1.2);
         }
-        
-        /* Nuevos estilos para selector de país */
-        .phone-input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .country-selector {
-            flex: 1;
-            position: relative;
-        }
-        
-        .country-selector select {
-            padding-right: 40px;
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-        
-        .phone-input {
-            flex: 2;
-        }
-        
-        .phone-input input {
-            width: 100%;
-        }
     </style>
 </head>
 <body>
@@ -899,43 +867,18 @@
             <input type="text" id="fullName" placeholder="Ej: María Rodríguez" required>
             <label>Cédula de identidad</label>
             <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
-            
-            <!-- NUEVO CAMPO DE TELÉFONO CON PAÍS -->
             <label>Teléfono</label>
-            <div class="phone-input-container">
-                <div class="country-selector">
-                    <select id="countryCode" required>
-                        <option value="58" data-country="VE" selected>🇻🇪 Venezuela (+58)</option>
-                        <option value="1" data-country="US">🇺🇸 USA (+1)</option>
-                        <option value="34" data-country="ES">🇪🇸 España (+34)</option>
-                        <option value="52" data-country="MX">🇲🇽 México (+52)</option>
-                        <option value="54" data-country="AR">🇦🇷 Argentina (+54)</option>
-                        <option value="55" data-country="BR">🇧🇷 Brasil (+55)</option>
-                        <option value="51" data-country="PE">🇵🇪 Perú (+51)</option>
-                        <option value="56" data-country="CL">🇨🇱 Chile (+56)</option>
-                        <option value="57" data-country="CO">🇨🇴 Colombia (+57)</option>
-                        <option value="593" data-country="EC">🇪🇨 Ecuador (+593)</option>
-                        <option value="507" data-country="PA">🇵🇦 Panamá (+507)</option>
-                        <option value="506" data-country="CR">🇨🇷 Costa Rica (+506)</option>
-                        <option value="502" data-country="GT">🇬🇹 Guatemala (+502)</option>
-                        <option value="503" data-country="SV">🇸🇻 El Salvador (+503)</option>
-                        <option value="504" data-country="HN">🇭🇳 Honduras (+504)</option>
-                        <option value="505" data-country="NI">🇳🇮 Nicaragua (+505)</option>
-                        <option value="591" data-country="BO">🇧🇴 Bolivia (+591)</option>
-                        <option value="595" data-country="PY">🇵🇾 Paraguay (+595)</option>
-                        <option value="598" data-country="UY">🇺🇾 Uruguay (+598)</option>
-                        <option value="53" data-country="CU">🇨🇺 Cuba (+53)</option>
-                        <option value="33" data-country="FR">🇫🇷 Francia (+33)</option>
-                        <option value="44" data-country="GB">🇬🇧 Reino Unido (+44)</option>
-                        <option value="49" data-country="DE">🇩🇪 Alemania (+49)</option>
-                        <option value="39" data-country="IT">🇮🇹 Italia (+39)</option>
-                    </select>
-                </div>
-                <div class="phone-input">
-                    <input type="tel" id="phoneNumber" placeholder="Número de teléfono" required>
-                </div>
+            <div style="display: flex; gap: 10px;">
+                <select id="phonePrefix" style="flex: 1; padding: 16px 20px; border-radius: 15px; border: 1px solid #e2e8f0; font-size: 16px;">
+                    <option value="0412">0412</option>
+                    <option value="0414">0414</option>
+                    <option value="0424">0424</option>
+                    <option value="0426">0426</option>
+                    <option value="0416">0416</option>
+                    <option value="0422">0422</option>
+                </select>
+                <input type="text" id="phoneSuffix" placeholder="1234567" required style="flex: 2; padding: 16px 20px; border-radius: 15px; border: 1px solid #e2e8f0; font-size: 16px;">
             </div>
-            
             <label>Correo electrónico</label>
             <input type="email" id="email" placeholder="Ej: usuario@ejemplo.com" required>
             <button id="continueToPayment" class="btn">
@@ -1054,7 +997,7 @@
             totalTickets: 10000,
             pricePerTicket: 70,
             raffleDate: "",
-            prizeImage: "https://iili.io/FvJJVdG.jpg",
+            prizeImage: "https://i.ibb.co/Kx3fHcx9/RIFA-IMAGEN.png",
             prizes: [
                 "1er Premio: <strong>Combo Hogar + Mercado para un mes</strong>",
                 "2do Premio: <strong>300 dólares</strong>",
@@ -1118,9 +1061,9 @@
             
             updateStepIndicators();
 
-            // Validación de número de teléfono (solo números)
-            document.getElementById('phoneNumber').addEventListener('input', function(e) {
-                this.value = this.value.replace(/\D/g, '');
+            // Evento para el sufijo del teléfono: solo números y máximo 7 caracteres
+            document.getElementById('phoneSuffix').addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '').substring(0, 7);
             });
         }
 
@@ -1150,18 +1093,18 @@
                     .filter(t => t.status === 'VERIFICADO')
                     .reduce((sum, t) => sum + t.tickets, 0);
                 
-                // Calcular porcentaje VENDIDO (no disponible)
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
                 
                 document.getElementById('soldPercentage').textContent = `${soldPercentage}%`;
                 document.getElementById('availablePercentage').textContent = `${availablePercentage}%`;
-                document.getElementById('progressBar').style.width = `${soldPercentage}%`;
+                
+                const progress = (soldTickets / CONFIG.totalTickets) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
             } catch (error) {
                 console.error("Error obteniendo boletos vendidos:", error);
                 document.getElementById('soldPercentage').textContent = "0%";
                 document.getElementById('availablePercentage').textContent = "100%";
-                document.getElementById('progressBar').style.width = "0%";
             }
         }
 
@@ -1192,8 +1135,8 @@
 
         async function saveData() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
-            const countryCode = document.getElementById('countryCode').value;
-            const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+            const phonePrefix = document.getElementById('phonePrefix').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const reference = document.getElementById('referenceNumber').value;
             
             // Verificar si la referencia ya existe
@@ -1206,7 +1149,7 @@
             const data = {
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
-                phone: `+${countryCode}${phoneNumber}`,
+                phone: phonePrefix + phoneSuffix,
                 email: document.getElementById('email').value,
                 tickets: ticketQuantity,
                 reference: reference,
@@ -1252,8 +1195,8 @@
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const countryCode = document.getElementById('countryCode').value;
-            const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+            const phonePrefix = document.getElementById('phonePrefix').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const email = document.getElementById('email').value;
             const reference = document.getElementById('referenceNumber').value;
             const paymentMethod = document.getElementById('paymentMethod').value;
@@ -1273,7 +1216,7 @@
                 `*NUEVO PAGO REPORTADO - RIFA PREMIUM*\n\n` +
                 `*Nombre:* ${name}\n` +
                 `*Cédula:* ${id}\n` +
-                `*Teléfono:* +${countryCode}${phoneNumber}\n` +
+                `*Teléfono:* ${phonePrefix}${phoneSuffix}\n` +
                 `*Email:* ${email}\n` +
                 `*Boletos:* ${ticketQuantity}\n` +
                 `*Método de Pago:* ${methodText}\n` +
@@ -1362,7 +1305,6 @@
                 html += `<div style="background:white; border-radius:15px; padding:20px; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">`;
                 html += `<p><strong>Fecha:</strong> ${new Date(transaction.date).toLocaleDateString()}</p>`;
                 html += `<p><strong>Referencia:</strong> ${transaction.reference}</p>`;
-                html += `<p><strong>Teléfono:</strong> ${transaction.phone}</p>`;
                 html += `<p><strong>Estado:</strong> ${transaction.status}</p>`;
                 
                 if (transaction.tickets && transaction.tickets.length > 0) {
@@ -1406,16 +1348,11 @@
         document.getElementById('continueToPayment').addEventListener('click', () => {
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const email = document.getElementById('email').value;
             
-            if (!name || !id || !phoneNumber || !email) {
+            if (!name || !id || !phoneSuffix || !email) {
                 alert("Por favor completa todos los campos");
-                return;
-            }
-            
-            if (phoneNumber.length < 7) {
-                alert("Por favor ingresa un número de teléfono válido");
                 return;
             }
             
@@ -1428,7 +1365,7 @@
         document.getElementById('returnHome').addEventListener('click', () => {
             document.getElementById('fullName').value = '';
             document.getElementById('idNumber').value = '';
-            document.getElementById('phoneNumber').value = '';
+            document.getElementById('phoneSuffix').value = '';
             document.getElementById('email').value = '';
             document.getElementById('referenceNumber').value = '';
             document.getElementById('ticketQuantityInput').value = '2';
@@ -1453,17 +1390,12 @@
         document.getElementById('whatsappBtn').addEventListener('click', async () => {
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
+            const phoneSuffix = document.getElementById('phoneSuffix').value;
             const email = document.getElementById('email').value;
             const reference = document.getElementById('referenceNumber').value;
             
-            if (!name || !id || !phoneNumber || !email || !reference) {
+            if (!name || !id || !phoneSuffix || !email || !reference) {
                 alert("Por favor completa todos los campos");
-                return;
-            }
-            
-            if (phoneNumber.length < 7) {
-                alert("Por favor ingresa un número de teléfono válido");
                 return;
             }
             
@@ -1483,6 +1415,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
