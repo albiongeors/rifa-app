@@ -2,7 +2,6 @@
   "totalTickets": 10000,
   "pricePerTicket": 70,
   "raffleDate": "",
-  "prizeImage": "https://iili.io/FvJJVdG.jpg"
+  "prizeImage": "https://iili.io/FvJJVdG.jpg",
+  "salesPercentage": 0
 }
-
-
