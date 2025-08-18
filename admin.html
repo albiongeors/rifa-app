@@ -3,41 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin Premium - Rifa Premium</title>
+    <title>Panel de Administración - Rifa Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --primary-dark: #3a0ca3;
-            --primary-light: #4cc9f0;
-            --accent-color: #f72585;
-            --success-color: #2ecc71;
-            --warning-color: #ff9800;
-            --danger-color: #dc3545;
-            --light-bg: #f8f9fa;
-            --dark-text: #2d3748;
-            --light-text: #718096;
-            --border-radius: 10px;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a2a6c, #3a0ca3, #4361ee);
-            color: var(--dark-text);
-            min-height: 100vh;
+            color: #333;
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
         }
         
-        .admin-container {
+        .container {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
@@ -48,7 +32,7 @@
             overflow: hidden;
         }
         
-        .admin-container::before {
+        .container::before {
             content: "";
             position: absolute;
             top: 0;
@@ -58,18 +42,9 @@
             background: linear-gradient(to right, #3a0ca3, #4361ee, #4cc9f0);
         }
         
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
         h1 {
             color: #3a0ca3;
-            margin-bottom: 10px;
+            margin-bottom: 25px;
             font-size: 32px;
             display: flex;
             align-items: center;
@@ -88,100 +63,100 @@
             font-size: 24px;
         }
         
-        .dashboard-stats {
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .config-panel {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #4361ee;
+        }
+        
+        .config-panel h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #3a0ca3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .config-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .config-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .config-item label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .config-item input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .config-item input:focus {
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         
         .stat-card {
             background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
             text-align: center;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #e9ecef;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid #4361ee;
         }
         
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
         
         .stat-value {
             font-size: 32px;
             font-weight: 700;
-            color: var(--primary-dark);
+            color: #3a0ca3;
             margin: 10px 0;
         }
         
         .stat-label {
-            color: var(--light-text);
+            color: #6c757d;
             font-size: 16px;
             font-weight: 500;
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(67, 97, 238, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 24px;
-            color: var(--primary-color);
-        }
-        
-        .chart-container {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-            border: 1px solid #e9ecef;
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .chart-header h2 {
-            color: var(--primary-dark);
-        }
-        
-        .chart-card {
-            height: 300px;
-            position: relative;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .section-header h2 {
-            color: var(--primary-dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .controls {
@@ -189,11 +164,6 @@
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 25px;
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            border: 1px solid #e9ecef;
         }
         
         .search-container {
@@ -206,7 +176,7 @@
             width: 100%;
             padding: 14px 20px 14px 50px;
             border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             font-size: 16px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
@@ -228,17 +198,15 @@
         
         .table-container {
             overflow-x: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             margin-bottom: 30px;
-            background: white;
-            border: 1px solid #e9ecef;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px;
+            min-width: 1000px;
         }
         
         th, td {
@@ -247,7 +215,7 @@
         }
         
         thead {
-            background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
+            background: linear-gradient(to right, #3a0ca3, #4361ee);
             color: white;
         }
         
@@ -283,15 +251,15 @@
         }
         
         button {
-            background-color: var(--primary-color);
+            background-color: #4361ee;
             color: white;
             border: none;
             padding: 10px 16px;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             cursor: pointer;
             font-size: 15px;
             font-weight: 500;
-            transition: var(--transition);
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -299,7 +267,7 @@
         }
         
         button:hover {
-            background-color: var(--primary-dark);
+            background-color: #3a0ca3;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -317,7 +285,7 @@
         }
         
         .btn-verify {
-            background-color: var(--success-color);
+            background-color: #28a745;
         }
         
         .btn-verify:hover {
@@ -336,7 +304,7 @@
         }
         
         .btn-delete {
-            background-color: var(--danger-color);
+            background-color: #dc3545;
         }
         
         .btn-delete:hover {
@@ -351,13 +319,13 @@
         }
         
         .filter-btn.active {
-            background: var(--primary-color);
+            background: #4361ee;
             color: white;
-            border-color: var(--primary-color);
+            border-color: #4361ee;
         }
         
         .btn-save {
-            background: var(--success-color);
+            background: #28a745;
             padding: 12px 25px;
             font-size: 16px;
         }
@@ -394,7 +362,7 @@
         }
         
         .modal h2 {
-            color: var(--primary-dark);
+            color: #3a0ca3;
             margin-bottom: 20px;
             font-size: 26px;
             display: flex;
@@ -435,7 +403,7 @@
             width: 100%;
             height: 150px;
             padding: 15px;
-            border-radius: var(--border-radius);
+            border-radius: 10px;
             border: 1px solid #ddd;
             font-family: monospace;
             font-size: 16px;
@@ -446,10 +414,32 @@
         .footer {
             text-align: center;
             margin-top: 30px;
-            color: var(--light-text);
+            color: #6c757d;
             font-size: 14px;
             padding: 20px;
             border-top: 1px solid #e9ecef;
+        }
+        
+        .ticket-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .ticket-results-table th, 
+        .ticket-results-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .ticket-results-table thead {
+            background: linear-gradient(to right, #3a0ca3, #4361ee);
+            color: white;
+        }
+
+        .ticket-results-table tbody tr:hover {
+            background-color: #e9f0ff;
         }
         
         .ticket-list {
@@ -461,12 +451,12 @@
             overflow-y: auto;
             padding: 10px;
             border: 1px solid #eee;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
         }
         
         .ticket-number {
             background: #f0f4ff;
-            border: 1px solid var(--primary-color);
+            border: 1px solid #4361ee;
             border-radius: 4px;
             padding: 5px 10px;
             font-weight: bold;
@@ -488,7 +478,7 @@
         
         .duplicate {
             background-color: #ffebee !important;
-            border: 1px solid var(--danger-color);
+            border: 1px solid #f44336;
         }
         
         .ticket-header {
@@ -506,15 +496,15 @@
         
         .ticket-summary-item {
             background: #f8f9fa;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             padding: 15px;
             flex: 1;
             min-width: 200px;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid #4361ee;
         }
         
         .ticket-summary-item h3 {
-            color: var(--primary-dark);
+            color: #3a0ca3;
             margin-bottom: 10px;
             font-size: 16px;
         }
@@ -526,11 +516,11 @@
         }
         
         .ticket-summary-item .ticket-count {
-            color: var(--primary-dark);
+            color: #3a0ca3;
         }
         
         .ticket-summary-item .amount {
-            color: var(--success-color);
+            color: #28a745;
         }
         
         .ticket-summary-item .status {
@@ -543,34 +533,35 @@
         
         .ticket-summary-item .verified {
             background: #e8f5e9;
-            color: var(--success-color);
+            color: #28a745;
         }
         
         .ticket-summary-item .pending {
             background: #fffde7;
-            color: var(--warning-color);
+            color: #ff9800;
         }
         
+        /* Nuevos estilos para mejoras */
         .risk-high {
             background-color: #ffebee !important;
-            border-left: 4px solid var(--danger-color) !important;
+            border-left: 4px solid #f44336 !important;
         }
         .risk-medium {
             background-color: #fff8e1 !important;
-            border-left: 4px solid var(--warning-color) !important;
+            border-left: 4px solid #ffc107 !important;
         }
         .winner-ticket {
             background-color: #e8f5e9 !important;
-            border: 2px solid var(--success-color) !important;
+            border: 2px solid #4caf50 !important;
             animation: pulse 2s infinite;
         }
         .receipt-link {
-            color: var(--primary-color);
+            color: #2196f3;
             cursor: pointer;
             text-decoration: underline;
         }
         .ticket-limit-warning {
-            color: var(--danger-color);
+            color: #f44336;
             font-weight: bold;
         }
         @keyframes pulse {
@@ -580,10 +571,10 @@
         }
         .quick-verify-panel {
             background: white;
-            border-radius: var(--border-radius);
+            border-radius: 10px;
             padding: 15px;
             margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
@@ -592,13 +583,13 @@
             background: white;
             padding: 30px;
             text-align: center;
-            border: 20px solid var(--primary-dark);
+            border: 20px solid #3a0ca3;
             max-width: 800px;
             margin: 0 auto;
         }
         .certificate-title {
             font-size: 36px;
-            color: var(--primary-dark);
+            color: #3a0ca3;
             margin-bottom: 20px;
         }
         .certificate-details {
@@ -617,90 +608,6 @@
             color: #333;
         }
         
-        .bulk-actions {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .advanced-filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-        }
-        
-        .table-row-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
-        .action-button {
-            padding: 6px 10px;
-            font-size: 13px;
-            border-radius: 6px;
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .pagination button {
-            padding: 8px 15px;
-            border-radius: 6px;
-            background: #e9ecef;
-            color: #495057;
-            border: 1px solid #dee2e6;
-        }
-        
-        .pagination button.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            padding: 30px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid var(--primary-color);
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -715,66 +622,69 @@
                 flex-direction: column;
             }
             
-            .bulk-actions {
-                flex-wrap: wrap;
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .ticket-summary {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                width: 100%;
+            }
+            
+            .filter-btn {
+                flex: 1;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <div class="container">
         <div class="header">
-            <div>
-                <h1><i class="fas fa-crown"></i> Panel Admin Premium - Rifa Premium</h1>
-                <p>Administración completa de transacciones, boletos y ganadores</p>
-            </div>
-            <div style="display: flex; gap: 15px; position: relative;">
-                <button class="btn-refresh" onclick="location.reload()">
-                    <i class="fas fa-sync-alt"></i> Actualizar
-                </button>
-                <button class="btn" id="notificationsBtn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge" id="notificationCount">3</span>
-                </button>
-            </div>
+            <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Premium</h1>
+            <button class="btn-refresh" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Actualizar Datos
+            </button>
         </div>
         
-        <!-- Dashboard Stats -->
-        <div class="dashboard-stats">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-ticket-alt"></i>
+        <div class="config-panel">
+            <h2><i class="fas fa-cog"></i> Configuración de la Rifa</h2>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label>Total de Boletos</label>
+                    <input type="number" id="totalTickets" value="10000">
                 </div>
-                <div class="stat-value" id="soldTickets">0</div>
-                <div class="stat-label">Boletos Vendidos</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-money-bill-wave"></i>
+                <div class="config-item">
+                    <label>Precio por Boleto (Bs.)</label>
+                    <input type="number" id="ticketPrice" value="80">
                 </div>
-                <div class="stat-value" id="totalSales">Bs. 0</div>
-                <div class="stat-label">Ventas Totales</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
+                <div class="config-item">
+                    <label>Fecha del Sorteo</label>
+                    <input type="text" id="raffleDate" value="15 de Diciembre 2025">
                 </div>
-                <div class="stat-value" id="verifiedCount">0</div>
-                <div class="stat-label">Trans. Verificadas</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
+                <div class="config-item">
+                    <label>URL Imagen Premio</label>
+                    <input type="text" id="prizeImageUrl" value="https://iili.io/FvJJVdG.jpg">
                 </div>
-                <div class="stat-value" id="pendingCount">0</div>
-                <div class="stat-label">Pendientes</div>
             </div>
+            <button class="btn-save" onclick="saveConfig()">
+                <i class="fas fa-save"></i> Guardar Configuración
+            </button>
         </div>
         
-        <!-- Quick Actions -->
         <div class="quick-verify-panel">
             <div class="search-container">
                 <i class="fas fa-search"></i>
@@ -786,58 +696,39 @@
             <div id="quickVerifyResult" style="margin-top: 10px;"></div>
         </div>
         
-        <div class="bulk-actions">
-            <button id="selectAllBtn" class="btn">
-                <i class="fas fa-check-square"></i> Seleccionar todos
-            </button>
-            <button id="bulkVerifyBtn" class="btn btn-verify">
-                <i class="fas fa-check-double"></i> Verificar seleccionados
-            </button>
-            <div>
-                <button id="exportCSV" class="btn">
-                    <i class="fas fa-file-csv"></i> Exportar CSV
-                </button>
-                <button id="exportExcel" class="btn">
-                    <i class="fas fa-file-excel"></i> Exportar Excel
-                </button>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalSales">0</div>
+                <div class="stat-label">VENTAS TOTALES</div>
             </div>
-        </div>
-        
-        <!-- Transactions Section -->
-        <div class="section-header">
-            <h2><i class="fas fa-exchange-alt"></i> Transacciones</h2>
-            <div class="filters">
-                <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
-                <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
-                <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
-                <button class="filter-btn" onclick="setFilter('suspicious')">Sospechosos</button>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">PENDIENTES</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="verifiedCount">0</div>
+                <div class="stat-label">VERIFICADOS</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="soldTickets">0</div>
+                <div class="stat-label">BOLETOS VENDIDOS</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="availableTickets">0</div>
+                <div class="stat-label">BOLETOS DISPONIBLES</div>
             </div>
         </div>
         
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o referencia..." oninput="searchTransactions()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o referencia..." onkeyup="searchTransactions()">
             </div>
             
-            <div class="advanced-filters">
-                <div>
-                    <label>Monto mínimo:</label>
-                    <input type="number" id="minAmount" placeholder="Bs.">
-                </div>
-                <div>
-                    <label>Monto máximo:</label>
-                    <input type="number" id="maxAmount" placeholder="Bs.">
-                </div>
-                <div>
-                    <label>Fecha desde:</label>
-                    <input type="date" id="startDate">
-                </div>
-                <div>
-                    <label>Fecha hasta:</label>
-                    <input type="date" id="endDate">
-                </div>
-                <button id="applyFilters" class="btn" onclick="applyAdvancedFilters()">Aplicar Filtros</button>
+            <div class="filters">
+                <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
+                <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
+                <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
             </div>
         </div>
         
@@ -845,7 +736,6 @@
             <table id="transactionsTable">
                 <thead>
                     <tr>
-                        <th width="30px"></th>
                         <th>Fecha</th>
                         <th>Nombre</th>
                         <th>CI</th>
@@ -858,34 +748,25 @@
                         <th>Riesgo</th>
                         <th>Estado</th>
                         <th>Acciones</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
-                <tbody id="transactionsBody">
+                <tbody>
                     <tr>
-                        <td colspan="13" class="loading">
-                            <div class="loading-spinner"></div>
-                        </td>
+                        <td colspan="13" style="text-align:center; padding:30px;">Cargando transacciones...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
-        <div class="pagination" id="pagination">
-            <button onclick="changePage(-1)"><i class="fas fa-chevron-left"></i></button>
-            <button class="active">1</button>
-            <button onclick="changePage(1)"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        
-        <!-- Winner Search -->
-        <div class="section-header" style="margin-top: 40px;">
+        <div class="config-panel" style="margin-top: 30px;">
             <h2><i class="fas fa-trophy"></i> Búsqueda de Ganadores</h2>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="winnerSearchInput" placeholder="Buscar por número de boleto ganador..." onkeyup="searchWinners()">
+            </div>
+            <div id="winnerSearchResults" style="margin-top: 20px;"></div>
         </div>
-        
-        <div class="search-container" style="margin-bottom: 20px;">
-            <i class="fas fa-search"></i>
-            <input type="text" id="winnerSearchInput" placeholder="Buscar por número de boleto ganador..." oninput="searchWinners()">
-        </div>
-        <div id="winnerSearchResults" style="margin-top: 20px;"></div>
         
         <div class="footer">
             <p>Sistema de Administración de Rifa Premium &copy; 2025 - Todos los derechos reservados</p>
@@ -898,7 +779,7 @@
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
             pricePerTicket: 80,
-            adminWhatsApp: "584244955900"
+            adminWhatsApp: "584127430912"
         };
 
         let currentFilter = 'all';
@@ -906,17 +787,15 @@
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
-        let selectedTransactions = new Set();
-        let allTransactions = [];
-        let currentPage = 1;
-        const itemsPerPage = 10;
 
         function formatTicketNumber(number) {
             return String(number).padStart(5, '0');
         }
 
         function cleanPhone(phone) {
+            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
+            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -928,34 +807,142 @@
             window.open(`https://wa.me/${cleanedPhone}`, '_blank');
         }
 
+        async function getAllExistingTickets() {
+            const existingTickets = new Set();
+            let page = 0;
+            const pageSize = 1000;
+            let hasMore = true;
+
+            try {
+                while (hasMore) {
+                    const response = await fetch(
+                        `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&order=ticket_number.asc&offset=${page * pageSize}&limit=${pageSize}`, 
+                        {
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        }
+                    );
+
+                    if (!response.ok) {
+                        const error = await response.text();
+                        throw new Error(`Error en la respuesta: ${response.status} - ${error}`);
+                    }
+
+                    const ticketsData = await response.json();
+                    
+                    if (ticketsData.length === 0) {
+                        hasMore = false;
+                        break;
+                    }
+
+                    ticketsData.forEach(ticket => {
+                        existingTickets.add(ticket.ticket_number);
+                    });
+
+                    if (ticketsData.length < pageSize) {
+                        hasMore = false;
+                    } else {
+                        page++;
+                    }
+                }
+                return existingTickets;
+            } catch (error) {
+                console.error("Error obteniendo tickets existentes:", error);
+                throw error;
+            }
+        }
+
+        async function generateTickets(transactionId, quantity) {
+            try {
+                const existingTickets = await getAllExistingTickets();
+                const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
+                const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
+                
+                if (availableTickets.length < quantity) {
+                    alert(`Error: Solo quedan ${availableTickets.length} boletos disponibles`);
+                    return false;
+                }
+                
+                const selectedTickets = [];
+                while (selectedTickets.length < quantity) {
+                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
+                    selectedTickets.push(availableTickets[randomIndex]);
+                    availableTickets.splice(randomIndex, 1);
+                }
+                
+                const ticketsToInsert = selectedTickets.map(ticketNumber => ({
+                    transaction_id: transactionId,
+                    ticket_number: ticketNumber,
+                    status: "ACTIVO"
+                }));
+                
+                const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(ticketsToInsert)
+                });
+                
+                if (!insertRes.ok) {
+                    const errorDetail = await insertRes.json();
+                    throw new Error(`Error insertando tickets: ${insertRes.status} - ${JSON.stringify(errorDetail)}`);
+                }
+                
+                return ticketsToInsert;
+            } catch (error) {
+                console.error("Error generando tickets:", error);
+                alert(`Error generando tickets: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                CONFIG.totalTickets = config.totalTickets;
+                CONFIG.pricePerTicket = config.pricePerTicket;
+                
+                document.getElementById('totalTickets').value = config.totalTickets;
+                document.getElementById('ticketPrice').value = config.pricePerTicket;
+                document.getElementById('raffleDate').value = config.raffleDate;
+                document.getElementById('prizeImageUrl').value = config.prizeImage;
+            } catch (error) {
+                console.log("Usando configuración por defecto");
+            }
+        }
+
+        async function saveConfig() {
+            const config = {
+                totalTickets: parseInt(document.getElementById('totalTickets').value),
+                pricePerTicket: parseInt(document.getElementById('ticketPrice').value),
+                raffleDate: document.getElementById('raffleDate').value,
+                prizeImage: document.getElementById('prizeImageUrl').value
+            };
+            
+            localStorage.setItem('rifaConfig', JSON.stringify(config));
+            alert("Configuración guardada. Recuerda actualizar el archivo config.json en producción.");
+            loadTransactions();
+        }
+
         async function loadTransactions() {
             try {
-                // Mostrar indicador de carga
-                document.getElementById('transactionsBody').innerHTML = `
-                    <tr>
-                        <td colspan="13" class="loading">
-                            <div class="loading-spinner"></div>
-                        </td>
-                    </tr>
-                `;
-                
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
                 
                 if (currentFilter === 'pending') {
                     url += `&status=eq.PENDIENTE`;
                 } else if (currentFilter === 'verified') {
                     url += `&status=eq.VERIFICADO`;
-                } else if (currentFilter === 'suspicious') {
-                    url += `&or=(reference.neq.null,id_number.neq.null)`;
                 }
                 
                 if (currentSearch) {
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
                 }
-                
-                // Aplicar paginación
-                const offset = (currentPage - 1) * itemsPerPage;
-                url += `&offset=${offset}&limit=${itemsPerPage}`;
                 
                 const response = await fetch(url, {
                     headers: {
@@ -964,19 +951,18 @@
                     }
                 });
                 
-                allTransactions = await response.json();
+                const transactions = await response.json();
                 
                 // Buscar duplicados
-                findDuplicates(allTransactions);
+                findDuplicates(transactions);
                 
-                renderTransactions(allTransactions);
-                updateStats(allTransactions);
-                updatePagination();
+                renderTransactions(transactions);
+                updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
-                document.getElementById('transactionsBody').innerHTML = `
+                document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
-                        <td colspan="13" style="text-align:center; padding:30px; color:var(--danger-color);">
+                        <td colspan="13" style="text-align:center; padding:30px; color:#dc3545;">
                             <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
                         </td>
                     </tr>
@@ -1028,22 +1014,27 @@
             const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
             const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
             
+            try {
+                const existingTickets = await getAllExistingTickets();
+                const availableTickets = CONFIG.totalTickets - existingTickets.size;
+                document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
+            } catch (error) {
+                console.error("Error calculando tickets disponibles:", error);
+                document.getElementById('availableTickets').textContent = "Error";
+            }
+            
             const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
             const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
             const verifiedCount = verifiedTransactions.length;
             
-            // Actualizar estadísticas
-            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
             document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
-            document.getElementById('verifiedCount').textContent = verifiedCount;
             document.getElementById('pendingCount').textContent = pendingCount;
-            
-            // Actualizar notificaciones
-            document.getElementById('notificationCount').textContent = pendingCount;
+            document.getElementById('verifiedCount').textContent = verifiedCount;
+            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
         }
 
         function renderTransactions(transactions) {
-            const tbody = document.getElementById('transactionsBody');
+            const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
 
             if (transactions.length === 0) {
@@ -1077,13 +1068,10 @@
                 
                 // Comprobante
                 const receiptLink = transaction.receipt_url ? 
-                    `<a href="javascript:void(0);" onclick="showReceiptPreview('${transaction.receipt_url}')" class="receipt-link">Ver</a>` : 
-                    '<button class="btn action-button" onclick="uploadReceipt('+transaction.id+')">Subir</button>';
+                    `<a href="${transaction.receipt_url}" target="_blank" class="receipt-link">Ver</a>` : 
+                    '<button class="btn" onclick="uploadReceipt(${transaction.id})">Subir</button>';
                 
                 row.innerHTML = `
-                    <td>
-                        <input type="checkbox" class="transaction-check" data-id="${transaction.id}" onchange="toggleTransactionSelection(${transaction.id})">
-                    </td>
                     <td>${formattedDate}</td>
                     <td><strong>${transaction.name}</strong></td>
                     <td class="${duplicateIds.has(transaction.id_number) ? 'duplicate' : ''}">${transaction.id_number}</td>
@@ -1105,21 +1093,18 @@
                         <span class="status-badge">${transaction.status}</span>
                     </td>
                     <td>
-                        <div class="table-row-actions">
-                            ${transaction.status !== "VERIFICADO" ? 
-                                `<button class="btn-verify action-button" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
-                                    <i class="fas fa-check-circle"></i>
-                                </button>` : 
-                                `<button class="btn-verified action-button" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
-                                    <i class="fas fa-ticket-alt"></i>
-                                </button>`}
-                            <button class="btn-whatsapp action-button" onclick="openWhatsApp('${transaction.phone}')">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            <button class="btn-delete action-button" onclick="deleteTransaction(${transaction.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+                        ${transaction.status !== "VERIFICADO" ? 
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                                <i class="fas fa-check-circle"></i> Verificar
+                            </button>` : 
+                            `<button class="btn-verified" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
+                                <i class="fas fa-ticket-alt"></i> Ver Tickets
+                            </button>`}
+                    </td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -1140,6 +1125,8 @@
             // 3. Boletos por encima del límite
             if (transaction.tickets > 500) score += 4;
             
+            // 4. Monto inusual (no aplica aquí porque no tenemos monto pagado, solo asumimos que pago el monto exacto)
+            
             return Math.min(score, 10);
         }
 
@@ -1155,6 +1142,14 @@
                     });
                     
                     if (deleteRes.ok) {
+                        await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        });
+                        
                         alert("Transacción eliminada correctamente");
                         loadTransactions();
                     } else {
@@ -1170,13 +1165,10 @@
         async function verifyPayment(transactionId, ticketQuantity, phone) {
             if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
                 try {
-                    // Simulación de generación de boletos
-                    const tickets = [];
-                    for (let i = 0; i < ticketQuantity; i++) {
-                        tickets.push({
-                            ticket_number: Math.floor(Math.random() * 10000) + 1,
-                            status: "ACTIVO"
-                        });
+                    const tickets = await generateTickets(transactionId, ticketQuantity);
+                    
+                    if (!tickets) {
+                        return;
                     }
                     
                     const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
@@ -1235,16 +1227,21 @@
             document.body.appendChild(modal);
         }
         
-        function viewTransactionTickets(transactionId, name) {
-            // Simulación de datos de tickets
-            const tickets = [];
-            for (let i = 0; i < 5; i++) {
-                tickets.push({
-                    ticket_number: Math.floor(Math.random() * 10000) + 1,
-                    status: "ACTIVO"
+        async function viewTransactionTickets(transactionId, name) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
                 });
+                
+                const tickets = await response.json();
+                displayTicketsModal(tickets, name);
+            } catch (error) {
+                console.error("Error obteniendo boletos:", error);
+                alert("Error al obtener boletos");
             }
-            displayTicketsModal(tickets, name);
         }
         
         function displayTicketsModal(tickets, name) {
@@ -1265,7 +1262,7 @@
                     <div class="ticket-summary">
                         <div class="ticket-summary-item">
                             <h3>Transacción</h3>
-                            <p>#${Math.floor(Math.random() * 1000) + 1000}</p>
+                            <p>#${tickets[0].transaction_id}</p>
                         </div>
                         <div class="ticket-summary-item">
                             <h3>Boletos</h3>
@@ -1326,130 +1323,83 @@
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            currentPage = 1;
             loadTransactions();
         }
 
         function searchTransactions() {
             currentSearch = document.getElementById('searchInput').value;
-            currentPage = 1;
-            loadTransactions();
-        }
-        
-        function applyAdvancedFilters() {
-            // Aquí se implementaría la lógica de filtros avanzados
-            alert("Filtros avanzados aplicados");
-            loadTransactions();
-        }
-        
-        function updatePagination() {
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            
-            // Botón Anterior
-            pagination.innerHTML += `
-                <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-            `;
-            
-            // Números de página (simplificado)
-            pagination.innerHTML += `
-                <button class="${currentPage === 1 ? 'active' : ''}">1</button>
-                <button ${currentPage === 2 ? 'class="active"' : ''}>2</button>
-                <button>3</button>
-            `;
-            
-            // Botón Siguiente
-            pagination.innerHTML += `
-                <button onclick="changePage(1)">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            `;
-        }
-        
-        function changePage(direction) {
-            currentPage += direction;
-            if (currentPage < 1) currentPage = 1;
             loadTransactions();
         }
         
         async function quickVerifyPayment() {
             const reference = document.getElementById('quickVerifyInput').value;
             if (!reference) {
-                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:var(--danger-color);">Ingresa una referencia</p>';
+                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:#f44336;">Ingresa una referencia</p>';
                 return;
             }
             
             try {
-                // Simulación de verificación rápida
-                document.getElementById('quickVerifyResult').innerHTML = `
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const transactions = await response.json();
+                if (transactions.length === 0) {
+                    document.getElementById('quickVerifyResult').innerHTML = '<p>No se encontró la transacción</p>';
+                    return;
+                }
+                
+                const transaction = transactions[0];
+                const riskScore = calculateRiskScore(transaction);
+                
+                let resultHTML = `
                     <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                        <h3>Transacción Verificada</h3>
-                        <p><strong>Referencia:</strong> ${reference}</p>
-                        <p><strong>Estado:</strong> VERIFICADA</p>
-                        <p><strong>Boletos asignados:</strong> 5</p>
-                        <div class="ticket-list">
-                            <span class="ticket-number">${formatTicketNumber(Math.floor(Math.random() * 10000))}</span>
-                            <span class="ticket-number">${formatTicketNumber(Math.floor(Math.random() * 10000))}</span>
-                            <span class="ticket-number">${formatTicketNumber(Math.floor(Math.random() * 10000))}</span>
-                            <span class="ticket-number">${formatTicketNumber(Math.floor(Math.random() * 10000))}</span>
-                            <span class="ticket-number">${formatTicketNumber(Math.floor(Math.random() * 10000))}</span>
-                        </div>
+                        <h3>Detalles de Transacción</h3>
+                        <p><strong>Nombre:</strong> ${transaction.name}</p>
+                        <p><strong>Monto:</strong> Bs. ${transaction.tickets * CONFIG.pricePerTicket}</p>
+                        <p><strong>Boletos:</strong> ${transaction.tickets}</p>
+                        <p><strong>Riesgo:</strong> ${riskScore}/10</p>
+                        <button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                            <i class="fas fa-check-circle"></i> Verificar Pago
+                        </button>
                     </div>
                 `;
+                
+                document.getElementById('quickVerifyResult').innerHTML = resultHTML;
             } catch (error) {
                 console.error("Error en verificación rápida:", error);
-                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:var(--danger-color);">Error al verificar</p>';
+                document.getElementById('quickVerifyResult').innerHTML = '<p style="color:#f44336;">Error al verificar</p>';
             }
         }
         
-        function searchWinners() {
-            const ticketNumber = document.getElementById('winnerSearchInput').value;
-            if (!ticketNumber) {
-                document.getElementById('winnerSearchResults').innerHTML = '';
-                return;
+        async function markAsWinner(ticketNumber) {
+            if (confirm(`¿Marcar boleto ${formatTicketNumber(ticketNumber)} como ganador?`)) {
+                try {
+                    // Actualizar el boleto como ganador en la base de datos
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=eq.${ticketNumber}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ is_winner: true })
+                    });
+                    
+                    if (response.ok) {
+                        alert(`¡Boleto ${formatTicketNumber(ticketNumber)} marcado como ganador!`);
+                        searchWinners();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error marcando ganador:", error);
+                    alert("Ocurrió un error al marcar el ganador");
+                }
             }
-            
-            // Simulación de búsqueda de ganadores
-            const winner = {
-                name: "María Rodríguez",
-                id_number: "V-12345678",
-                ticket_number: ticketNumber,
-                phone: "+584244955900"
-            };
-            
-            document.getElementById('winnerSearchResults').innerHTML = `
-                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                    <h3 style="text-align:center; margin-bottom:20px;">Boleto #${formatTicketNumber(ticketNumber)}</h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <h4>Información del Boleto</h4>
-                            <p><strong>Estado:</strong> ACTIVO</p>
-                            <p><strong>Fecha de compra:</strong> ${new Date().toLocaleDateString()}</p>
-                        </div>
-                        
-                        <div>
-                            <h4>Información del Comprador</h4>
-                            <p><strong>Nombre:</strong> ${winner.name}</p>
-                            <p><strong>Cédula:</strong> ${winner.id_number}</p>
-                            <p><strong>Teléfono:</strong> ${winner.phone}</p>
-                        </div>
-                    </div>
-                    
-                    <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
-                        <h3><i class="fas fa-trophy"></i> ¡BOLETO GANADOR!</h3>
-                        <button class="btn" onclick="generateCertificate({
-                            name: '${winner.name}',
-                            id_number: '${winner.id_number}',
-                            ticket_number: ${ticketNumber}
-                        })" style="margin-top:10px;">
-                            <i class="fas fa-certificate"></i> Generar Certificado
-                        </button>
-                    </div>
-                </div>
-            `;
         }
         
         function generateCertificate(winner) {
@@ -1489,75 +1439,125 @@
             window.print();
         }
         
-        function uploadReceipt(transactionId) {
-            const receiptUrl = prompt("Ingrese la URL del comprobante de pago:");
-            if (receiptUrl) {
-                alert(`Comprobante subido para la transacción ${transactionId}`);
+        async function searchWinners() {
+            const ticketNumber = document.getElementById('winnerSearchInput').value;
+            if (!ticketNumber) {
+                document.getElementById('winnerSearchResults').innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=*,transactions(name,id_number,phone)&ticket_number=eq.${ticketNumber}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const tickets = await response.json();
+                displayWinnerResults(tickets);
+            } catch (error) {
+                console.error("Error buscando ganadores:", error);
+                document.getElementById('winnerSearchResults').innerHTML = `
+                    <p style="color:#dc3545; padding:15px; text-align:center;">
+                        <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
+                    </p>
+                `;
             }
         }
-        
-        function showReceiptPreview(url) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <h2><i class="fas fa-file-invoice"></i> Comprobante de Pago</h2>
-                    <div style="text-align:center; padding:20px;">
-                        <i class="fas fa-receipt" style="font-size:100px; color:#4361ee; margin-bottom:20px;"></i>
-                        <p>Comprobante asociado a la transacción</p>
-                        <p><a href="${url}" target="_blank">${url}</a></p>
+
+        function displayWinnerResults(tickets) {
+            const container = document.getElementById('winnerSearchResults');
+            
+            if (!tickets || tickets.length === 0) {
+                container.innerHTML = `
+                    <p style="padding:15px; text-align:center; color:#6c757d;">
+                        <i class="fas fa-info-circle"></i> No se encontró el boleto
+                    </p>
+                `;
+                return;
+            }
+            
+            const ticket = tickets[0];
+            const transaction = ticket.transactions;
+            const formattedNumber = formatTicketNumber(ticket.ticket_number);
+            
+            let html = `
+                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    <h3 style="text-align:center; margin-bottom:20px;">Boleto #${formattedNumber}</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4>Información del Boleto</h4>
+                            <p><strong>Estado:</strong> ${ticket.status}</p>
+                            <p><strong>Fecha de compra:</strong> ${new Date(ticket.created_at).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <div>
+                            <h4>Información del Comprador</h4>
+                            <p><strong>Nombre:</strong> ${transaction.name}</p>
+                            <p><strong>Cédula:</strong> ${transaction.id_number}</p>
+                            <p><strong>Teléfono:</strong> ${transaction.phone}</p>
+                        </div>
                     </div>
-                    <div class="modal-buttons">
-                        <button onclick="this.closest('.modal').remove()">
-                            <i class="fas fa-times"></i> Cerrar
+            `;
+            
+            if (ticket.is_winner) {
+                html += `
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                        <h3><i class="fas fa-trophy"></i> ¡BOLETO GANADOR!</h3>
+                        <button class="btn" onclick="generateCertificate({
+                            name: '${transaction.name}',
+                            id_number: '${transaction.id_number}',
+                            ticket_number: ${ticket.ticket_number}
+                        })" style="margin-top:10px;">
+                            <i class="fas fa-certificate"></i> Generar Certificado
                         </button>
                     </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-        
-        function toggleTransactionSelection(id) {
-            if (selectedTransactions.has(id)) {
-                selectedTransactions.delete(id);
+                `;
             } else {
-                selectedTransactions.add(id);
+                html += `
+                    <div style="text-align:center; margin-top:20px;">
+                        <button class="btn-verify" onclick="markAsWinner(${ticket.ticket_number})">
+                            <i class="fas fa-trophy"></i> Marcar como Ganador
+                        </button>
+                    </div>
+                `;
             }
-            updateBulkActions();
-        }
-        
-        function updateBulkActions() {
-            const count = selectedTransactions.size;
-            document.getElementById('bulkVerifyBtn').innerHTML = `<i class="fas fa-check-double"></i> Verificar seleccionados (${count})`;
-        }
-        
-        document.getElementById('selectAllBtn').addEventListener('click', () => {
-            document.querySelectorAll('.transaction-check').forEach(checkbox => {
-                checkbox.checked = true;
-                const id = parseInt(checkbox.dataset.id);
-                selectedTransactions.add(id);
-            });
-            updateBulkActions();
-        });
-        
-        document.getElementById('bulkVerifyBtn').addEventListener('click', async () => {
-            if (selectedTransactions.size === 0) return;
             
-            if (confirm(`¿Verificar ${selectedTransactions.size} transacciones?`)) {
-                // Simulación de verificación masiva
-                alert(`¡${selectedTransactions.size} transacciones verificadas con éxito!`);
-                selectedTransactions.clear();
-                loadTransactions();
-            }
-        });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
         
+        async function uploadReceipt(transactionId) {
+            const receiptUrl = prompt("Ingrese la URL del comprobante de pago:");
+            if (receiptUrl) {
+                try {
+                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ receipt_url: receiptUrl })
+                    });
+                    loadTransactions();
+                } catch (error) {
+                    console.error("Error guardando comprobante:", error);
+                    alert("Error al guardar el comprobante");
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Simular carga de datos
-            setTimeout(() => {
-                loadTransactions();
-            }, 1500);
+            loadConfig();
+            loadTransactions();
+            setInterval(loadTransactions, 120000);
         });
     </script>
 </body>
 </html>
+
+
 
