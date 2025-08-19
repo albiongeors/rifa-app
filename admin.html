@@ -713,9 +713,7 @@
         }
 
         function cleanPhone(phone) {
-            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
-            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -877,7 +875,7 @@
                 findDuplicates(transactions);
                 
                 renderTransactions(transactions);
-                updateStats(transactions);
+                await updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `
@@ -931,26 +929,29 @@
         }
 
         async function updateStats(transactions) {
-            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
-            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
-            
             try {
                 const existingTickets = await getAllExistingTickets();
-                const availableTickets = CONFIG.totalTickets - existingTickets.size;
+                const soldTickets = existingTickets.size;
+                const availableTickets = CONFIG.totalTickets - soldTickets;
+                
+                const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+                const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+                const verifiedCount = verifiedTransactions.length;
+                const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+                
+                document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+                document.getElementById('pendingCount').textContent = pendingCount;
+                document.getElementById('verifiedCount').textContent = verifiedCount;
+                document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
             } catch (error) {
-                console.error("Error calculando tickets disponibles:", error);
+                console.error("Error actualizando estadísticas:", error);
+                document.getElementById('totalSales').textContent = "Error";
+                document.getElementById('pendingCount').textContent = "Error";
+                document.getElementById('verifiedCount').textContent = "Error";
+                document.getElementById('soldTickets').textContent = "Error";
                 document.getElementById('availableTickets').textContent = "Error";
             }
-            
-            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
-            const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
-            const verifiedCount = verifiedTransactions.length;
-            
-            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
-            document.getElementById('pendingCount').textContent = pendingCount;
-            document.getElementById('verifiedCount').textContent = verifiedCount;
-            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
         }
 
         function renderTransactions(transactions) {
@@ -1306,5 +1307,3 @@
     </script>
 </body>
 </html>
-
-
