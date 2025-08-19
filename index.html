@@ -99,8 +99,6 @@
             position: relative;
             z-index: 2;
             margin-bottom: 15px;
-            display: flex;
-            justify-content: center;
         }
         
         .logo i {
@@ -326,7 +324,7 @@
             justify-content: center;
             margin: 20px 0;
             position: relative;
-            height: 300px;
+            height: 300px; /* Altura fija para el contenedor de la imagen */
             align-items: center;
         }
         
@@ -336,9 +334,9 @@
             border-radius: 18px;
             border: 3px solid var(--primary-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            object-fit: contain;
-            height: 100%;
-            background: white;
+            object-fit: contain; /* Cambiado de cover a contain */
+            height: 100%; /* Ocupa todo el alto del contenedor */
+            background: white; /* Fondo blanco para la imagen */
         }
         
         .ticket-selection {
@@ -769,6 +767,7 @@
             transform: scale(1.2);
         }
         
+        /* Nuevos estilos para selector de país */
         .phone-input-container {
             display: flex;
             gap: 10px;
@@ -856,11 +855,13 @@
             
             <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
             
+            <!-- NOTA DE COMPRA MÍNIMA -->
             <p style="text-align: center; color: #3a0ca3; font-weight: 500; margin-bottom: 20px;">
                 <i class="fas fa-info-circle"></i> Mínimo de compra: 2 boletos
             </p>
             
             <div class="ticket-selection">
+                <!-- SE ELIMINÓ LA OPCIÓN DE 1 BOLETO -->
                 <div class="ticket-option" data-quantity="2"><span>2</span></div>
                 <div class="ticket-option" data-quantity="5"><span>5</span></div>
                 <div class="ticket-option" data-quantity="10"><span>10</span></div>
@@ -871,6 +872,7 @@
             </div>
             
             <div class="ticket-input-container">
+                <!-- SE ESTABLECIÓ MÍNIMO DE 2 BOLETOS -->
                 <input type="number" id="ticketQuantityInput" min="2" value="2" required>
             </div>
             <p style="text-align:center; color: var(--light-text);">Precio por boleto: <strong id="ticketPrice" style="color: var(--primary-dark);">Bs. 0</strong></p>
@@ -898,6 +900,7 @@
             <label>Cédula de identidad</label>
             <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
             
+            <!-- NUEVO CAMPO DE TELÉFONO CON PAÍS -->
             <label>Teléfono</label>
             <div class="phone-input-container">
                 <div class="country-selector">
@@ -955,8 +958,10 @@
             <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
             <div style="margin-bottom:25px;">
                 <select id="paymentMethod" required>
+                    <!-- PAGO MÓVIL AHORA ES LA PRIMERA OPCIÓN -->
                     <option value="mobile">Pago Móvil</option>
                     <option value="bank">Transferencia Bancaria</option>
+                    <!-- NUEVO MÉTODO ZINLI -->
                     <option value="zinli">Zinli</option>
                 </select>
             </div>
@@ -978,6 +983,7 @@
                 <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
 
+            <!-- NUEVA SECCIÓN PARA ZINLI -->
             <div id="zinliDetails" class="payment-details" style="display:none;">
                 <h3>Datos para Pago con Zinli</h3>
                 <p><strong>Correo:</strong> ganaconyair@gmail.com</p>
@@ -1130,19 +1136,19 @@
 
         async function fetchSoldTickets() {
             try {
-                // Usar Content-Range header para obtener el conteo total
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
-                        'Range': '0-0'
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
                 
                 if (!response.ok) throw new Error('Error en la respuesta');
                 
-                const rangeHeader = response.headers.get('content-range');
-                soldTickets = rangeHeader ? parseInt(rangeHeader.split('/')[1]) : 0;
+                const transactions = await response.json();
+                soldTickets = transactions
+                    .filter(t => t.status === 'VERIFICADO')
+                    .reduce((sum, t) => sum + t.tickets, 0);
                 
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
@@ -1477,7 +1483,6 @@
     </script>
 </body>
 </html>
-
 
 
 
