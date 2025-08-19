@@ -379,14 +379,12 @@
             display: flex;
             gap: 15px;
             margin-top: 20px;
-            flex-wrap: wrap;
         }
         
         .modal-buttons button {
             flex: 1;
             padding: 12px;
             font-size: 16px;
-            min-width: 120px;
         }
         
         .btn-whatsapp {
@@ -715,7 +713,9 @@
         }
 
         function cleanPhone(phone) {
+            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
+            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -852,24 +852,17 @@
 
         async function loadTransactions() {
             try {
-                // Construir la URL base
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
                 
-                // Añadir filtros si están activos
                 if (currentFilter === 'pending') {
                     url += `&status=eq.PENDIENTE`;
                 } else if (currentFilter === 'verified') {
                     url += `&status=eq.VERIFICADO`;
                 }
                 
-                // Añadir búsqueda si existe
                 if (currentSearch) {
-                    // Codificar correctamente para Supabase
-                    const searchPattern = encodeURIComponent(`%${currentSearch}%`);
-                    url += `&or=(name.ilike.${searchPattern},id_number.ilike.${searchPattern},reference.ilike.${searchPattern})`;
+                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
                 }
-                
-                console.log("URL de la API:", url); // Para debugging
                 
                 const response = await fetch(url, {
                     headers: {
@@ -878,24 +871,19 @@
                     }
                 });
                 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Error ${response.status}: ${errorText}`);
-                }
-                
                 const transactions = await response.json();
                 
                 // Buscar duplicados
                 findDuplicates(transactions);
                 
                 renderTransactions(transactions);
-                await updateStats(transactions);
+                updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
                         <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
-                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones: ${error.message}
+                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
                         </td>
                     </tr>
                 `;
@@ -943,42 +931,26 @@
         }
 
         async function updateStats(transactions) {
+            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
+            
             try {
-                // Obtener el conteo total de tickets usando Content-Range
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
-                        'Range': '0-0'
-                    }
-                });
-                
-                let soldTickets = 0;
-                const rangeHeader = response.headers.get('content-range');
-                if (rangeHeader) {
-                    soldTickets = parseInt(rangeHeader.split('/')[1]);
-                }
-                
-                const availableTickets = CONFIG.totalTickets - soldTickets;
-                
-                const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
-                const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
-                const verifiedCount = verifiedTransactions.length;
-                const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
-                
-                document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
-                document.getElementById('pendingCount').textContent = pendingCount;
-                document.getElementById('verifiedCount').textContent = verifiedCount;
-                document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
+                const existingTickets = await getAllExistingTickets();
+                const availableTickets = CONFIG.totalTickets - existingTickets.size;
                 document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
             } catch (error) {
-                console.error("Error actualizando estadísticas:", error);
-                document.getElementById('totalSales').textContent = "Error";
-                document.getElementById('pendingCount').textContent = "Error";
-                document.getElementById('verifiedCount').textContent = "Error";
-                document.getElementById('soldTickets').textContent = "Error";
+                console.error("Error calculando tickets disponibles:", error);
                 document.getElementById('availableTickets').textContent = "Error";
             }
+            
+            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+            const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+            const verifiedCount = verifiedTransactions.length;
+            
+            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('verifiedCount').textContent = verifiedCount;
+            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
         }
 
         function renderTransactions(transactions) {
@@ -1241,10 +1213,6 @@
 
         function searchTransactions() {
             currentSearch = document.getElementById('searchInput').value;
-            // Si la búsqueda está vacía, resetear a cadena vacía
-            if (!currentSearch || currentSearch.trim() === '') {
-                currentSearch = '';
-            }
             loadTransactions();
         }
         
@@ -1338,6 +1306,5 @@
     </script>
 </body>
 </html>
-
 
 
