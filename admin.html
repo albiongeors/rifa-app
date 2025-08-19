@@ -457,7 +457,7 @@
         .ticket-number {
             background: #f0f4ff;
             border: 1px solid #4361ee;
-            border-radius: 4px;
+            borderRadius: 4px;
             padding: 5px 10px;
             font-weight: bold;
             font-family: monospace;
@@ -695,7 +695,7 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
             pricePerTicket: 80,
             adminWhatsApp: "584127430912"
@@ -713,9 +713,7 @@
         }
 
         function cleanPhone(phone) {
-            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
-            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -729,14 +727,14 @@
 
         async function getAllExistingTickets() {
             const existingTickets = new Set();
-            let page = 0;
-            const pageSize = 1000;
+            let start = 0;
+            const limit = 1000;
             let hasMore = true;
 
             try {
                 while (hasMore) {
                     const response = await fetch(
-                        `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&order=ticket_number.asc&offset=${page * pageSize}&limit=${pageSize}`, 
+                        `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&order=ticket_number.asc&offset=${start}&limit=${limit}`, 
                         {
                             headers: {
                                 'apikey': CONFIG.supabaseKey,
@@ -761,10 +759,10 @@
                         existingTickets.add(ticket.ticket_number);
                     });
 
-                    if (ticketsData.length < pageSize) {
+                    if (ticketsData.length < limit) {
                         hasMore = false;
                     } else {
-                        page++;
+                        start += limit;
                     }
                 }
                 return existingTickets;
@@ -871,19 +869,23 @@
                     }
                 });
                 
+                if (!response.ok) {
+                    throw new Error(`Error cargando transacciones: ${response.status}`);
+                }
+                
                 const transactions = await response.json();
                 
                 // Buscar duplicados
                 findDuplicates(transactions);
                 
                 renderTransactions(transactions);
-                updateStats(transactions);
+                await updateStats();
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `
                     <tr>
                         <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
-                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
+                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones: ${error.message}
                         </td>
                     </tr>
                 `;
@@ -930,27 +932,55 @@
             });
         }
 
-        async function updateStats(transactions) {
-            const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
-            const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
-            
+        async function updateStats() {
             try {
-                const existingTickets = await getAllExistingTickets();
-                const availableTickets = CONFIG.totalTickets - existingTickets.size;
+                // Obtener todas las transacciones para cálculos precisos
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error obteniendo estadísticas: ${response.status}`);
+                }
+                
+                const transactions = await response.json();
+                const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+                const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+                const verifiedCount = verifiedTransactions.length;
+                const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+                
+                // Obtener el conteo real de tickets vendidos
+                const ticketsResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=id`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                if (!ticketsResponse.ok) {
+                    throw new Error(`Error obteniendo tickets: ${ticketsResponse.status}`);
+                }
+                
+                const ticketsData = await ticketsResponse.json();
+                const soldTickets = ticketsData.length;
+                const availableTickets = CONFIG.totalTickets - soldTickets;
+                
+                document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+                document.getElementById('pendingCount').textContent = pendingCount;
+                document.getElementById('verifiedCount').textContent = verifiedCount;
+                document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
             } catch (error) {
-                console.error("Error calculando tickets disponibles:", error);
+                console.error("Error actualizando estadísticas:", error);
+                document.getElementById('totalSales').textContent = "Error";
+                document.getElementById('pendingCount').textContent = "Error";
+                document.getElementById('verifiedCount').textContent = "Error";
+                document.getElementById('soldTickets').textContent = "Error";
                 document.getElementById('availableTickets').textContent = "Error";
             }
-            
-            const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
-            const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
-            const verifiedCount = verifiedTransactions.length;
-            
-            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
-            document.getElementById('pendingCount').textContent = pendingCount;
-            document.getElementById('verifiedCount').textContent = verifiedCount;
-            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
         }
 
         function renderTransactions(transactions) {
@@ -1121,6 +1151,10 @@
                     }
                 });
                 
+                if (!response.ok) {
+                    throw new Error(`Error obteniendo tickets: ${response.status}`);
+                }
+                
                 const tickets = await response.json();
                 displayTicketsModal(tickets, name);
             } catch (error) {
@@ -1231,13 +1265,17 @@
                     }
                 });
                 
+                if (!response.ok) {
+                    throw new Error(`Error en la búsqueda: ${response.status}`);
+                }
+                
                 const transactions = await response.json();
                 displayTransactionSearchResults(transactions);
             } catch (error) {
                 console.error("Error buscando boletos:", error);
                 document.getElementById('ticketSearchResults').innerHTML = `
                     <p style="color:#dc3545; padding:15px; text-align:center;">
-                        <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
+                        <i class="fas fa-exclamation-circle"></i> Error en la búsqueda: ${error.message}
                     </p>
                 `;
             }
@@ -1284,7 +1322,7 @@
                                 <i class="fab fa-whatsapp"></i> ${transaction.phone}
                             </a>
                         </td>
-                        <td>${transaction.tickets.length || 0}</td>
+                        <td>${transaction.tickets?.length || 0}</td>
                         <td>
                             <button class="btn-verify" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
                                 <i class="fas fa-eye"></i> Ver
@@ -1306,5 +1344,3 @@
     </script>
 </body>
 </html>
-
-
