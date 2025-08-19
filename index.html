@@ -1136,8 +1136,7 @@
 
         async function fetchSoldTickets() {
             try {
-                // Obtener tickets directamente de la tabla tickets
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
@@ -1146,8 +1145,10 @@
                 
                 if (!response.ok) throw new Error('Error en la respuesta');
                 
-                const tickets = await response.json();
-                soldTickets = tickets.length;
+                const transactions = await response.json();
+                soldTickets = transactions
+                    .filter(t => t.status === 'VERIFICADO')
+                    .reduce((sum, t) => sum + t.tickets, 0);
                 
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
@@ -1482,3 +1483,8 @@
     </script>
 </body>
 </html>
+
+
+
+
+
