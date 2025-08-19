@@ -695,7 +695,7 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
             pricePerTicket: 80,
             adminWhatsApp: "584127430912"
@@ -928,34 +928,10 @@
             });
         }
 
-        async function getTotalSoldTickets() {
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=*`, {
-                    method: 'HEAD',
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Error en la respuesta: ${response.status}`);
-                }
-                
-                const contentRange = response.headers.get('content-range');
-                if (!contentRange) {
-                    throw new Error('No se encontró el header Content-Range');
-                }
-                return parseInt(contentRange.split('/')[1]);
-            } catch (error) {
-                console.error("Error obteniendo conteo de tickets:", error);
-                return 0;
-            }
-        }
-
         async function updateStats(transactions) {
             try {
-                const soldTickets = await getTotalSoldTickets();
+                const existingTickets = await getAllExistingTickets();
+                const soldTickets = existingTickets.size;
                 const availableTickets = CONFIG.totalTickets - soldTickets;
                 
                 const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
