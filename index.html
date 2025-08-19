@@ -659,10 +659,6 @@
             margin-bottom: 20px;
             color: var(--primary-dark);
             font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
         
         .payment-details p {
@@ -1140,27 +1136,19 @@
 
         async function fetchSoldTickets() {
             try {
-                // Usar el método de conteo exacto de Supabase
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=count`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
-                        'Range': '0-0'
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
                 
                 if (!response.ok) throw new Error('Error en la respuesta');
                 
-                // Obtener el conteo total desde el header Content-Range
-                const contentRange = response.headers.get('content-range');
-                if (contentRange) {
-                    const totalCount = parseInt(contentRange.split('/')[1]);
-                    soldTickets = totalCount || 0;
-                } else {
-                    // Fallback: intentar obtener el conteo desde el JSON
-                    const data = await response.json();
-                    soldTickets = data.length || 0;
-                }
+                const transactions = await response.json();
+                soldTickets = transactions
+                    .filter(t => t.status === 'VERIFICADO')
+                    .reduce((sum, t) => sum + t.tickets, 0);
                 
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
