@@ -684,6 +684,7 @@
         .confirmation-icon {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
         }
         
         .confirmation-icon i {
@@ -1049,7 +1050,7 @@
         const CONFIG = {
             adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
             pricePerTicket: 70,
@@ -1136,7 +1137,7 @@
 
         async function fetchSoldTickets() {
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
@@ -1483,6 +1484,7 @@
     </script>
 </body>
 </html>
+
 
 
 
