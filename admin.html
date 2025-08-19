@@ -596,11 +596,6 @@
         <div class="config-panel">
             <h2><i class="fas fa-cog"></i> Configuración de la Rifa</h2>
             <div class="config-grid">
-                <!-- Nuevo campo para porcentaje de ventas -->
-                <div class="config-item">
-                    <label>Porcentaje de Ventas (%)</label>
-                    <input type="number" id="salesPercentage" min="0" max="100" value="0">
-                </div>
                 <div class="config-item">
                     <label>Total de Boletos</label>
                     <input type="number" id="totalTickets" value="10000">
@@ -718,7 +713,9 @@
         }
 
         function cleanPhone(phone) {
+            // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
+            // Si empieza con 0, reemplazar con 58
             if (cleaned.startsWith('0')) {
                 cleaned = '58' + cleaned.substring(1);
             }
@@ -835,11 +832,6 @@
                 document.getElementById('ticketPrice').value = config.pricePerTicket;
                 document.getElementById('raffleDate').value = config.raffleDate;
                 document.getElementById('prizeImageUrl').value = config.prizeImage;
-                
-                // Cargar porcentaje de ventas si existe
-                if (config.salesPercentage !== undefined) {
-                    document.getElementById('salesPercentage').value = config.salesPercentage;
-                }
             } catch (error) {
                 console.log("Usando configuración por defecto");
             }
@@ -850,8 +842,7 @@
                 totalTickets: parseInt(document.getElementById('totalTickets').value),
                 pricePerTicket: parseInt(document.getElementById('ticketPrice').value),
                 raffleDate: document.getElementById('raffleDate').value,
-                prizeImage: document.getElementById('prizeImageUrl').value,
-                salesPercentage: parseInt(document.getElementById('salesPercentage').value) // Nuevo campo
+                prizeImage: document.getElementById('prizeImageUrl').value
             };
             
             localStorage.setItem('rifaConfig', JSON.stringify(config));
@@ -909,6 +900,7 @@
             duplicateIds = new Set();
             
             transactions.forEach(transaction => {
+                // Referencias
                 if (transaction.reference) {
                     if (references[transaction.reference]) {
                         duplicateReferences.add(transaction.reference);
@@ -917,6 +909,7 @@
                     }
                 }
                 
+                // Teléfonos
                 if (transaction.phone) {
                     const cleanPhone = transaction.phone.replace(/\D/g, '');
                     if (phones[cleanPhone]) {
@@ -926,6 +919,7 @@
                     }
                 }
                 
+                // Cédulas
                 if (transaction.id_number) {
                     if (ids[transaction.id_number]) {
                         duplicateIds.add(transaction.id_number);
@@ -937,25 +931,6 @@
         }
 
         async function updateStats(transactions) {
-            // Obtener la configuración guardada
-            const savedConfig = JSON.parse(localStorage.getItem('rifaConfig')) || {};
-            const manualPercentage = savedConfig.salesPercentage;
-
-            if (manualPercentage !== undefined && manualPercentage !== null) {
-                // Usar porcentaje manual
-                const soldPercentage = manualPercentage;
-                const availablePercentage = 100 - soldPercentage;
-                const soldTickets = Math.floor((soldPercentage / 100) * savedConfig.totalTickets);
-                
-                // Actualizar los contadores
-                document.getElementById('totalSales').textContent = `Bs. ${(soldTickets * savedConfig.pricePerTicket).toLocaleString()}`;
-                document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
-                document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
-                document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
-                document.getElementById('availableTickets').textContent = (savedConfig.totalTickets - soldTickets).toLocaleString();
-                return;
-            }
-
             const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
             const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
             
@@ -1000,6 +975,7 @@
                 const date = new Date(transaction.date);
                 const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
                 
+                // Verificar si es duplicado
                 const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
                 const isDuplicateRef = duplicateReferences.has(transaction.reference);
                 const isDuplicatePhone = duplicatePhones.has(cleanPhone);
@@ -1330,3 +1306,5 @@
     </script>
 </body>
 </html>
+
+
