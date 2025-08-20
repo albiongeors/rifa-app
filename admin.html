@@ -541,23 +541,6 @@
             color: #ff9800;
         }
         
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .status-badge.PENDIENTE {
-            background: #fffde7;
-            color: #ff9800;
-        }
-        
-        .status-badge.VERIFICADO {
-            background: #e8f5e9;
-            color: #28a745;
-        }
-        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -724,14 +707,12 @@
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
-        let allTransactions = [];
 
         function formatTicketNumber(number) {
             return String(number).padStart(5, '0');
         }
 
         function cleanPhone(phone) {
-            if (!phone) return '';
             // Eliminar todo lo que no sea número
             let cleaned = phone.replace(/\D/g, '');
             // Si empieza con 0, reemplazar con 58
@@ -891,7 +872,6 @@
                 });
                 
                 const transactions = await response.json();
-                allTransactions = transactions;
                 
                 // Buscar duplicados
                 findDuplicates(transactions);
@@ -955,19 +935,8 @@
             const soldTickets = verifiedTransactions.reduce((sum, t) => sum + t.tickets, 0);
             
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=count`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                if (!response.ok) throw new Error('Error en la respuesta');
-                
-                const data = await response.json();
-                const totalTicketsCount = data[0].count;
-                const availableTickets = CONFIG.totalTickets - totalTicketsCount;
-                
+                const existingTickets = await getAllExistingTickets();
+                const availableTickets = CONFIG.totalTickets - existingTickets.size;
                 document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
             } catch (error) {
                 console.error("Error calculando tickets disponibles:", error);
@@ -1025,7 +994,7 @@
                     <td>${transaction.tickets}</td>
                     <td class="${isDuplicateRef ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
                     <td>
-                        <span class="status-badge ${transaction.status}">${transaction.status}</span>
+                        <span class="status-badge">${transaction.status}</span>
                     </td>
                     <td>
                         ${transaction.status !== "VERIFICADO" ? 
@@ -1329,55 +1298,7 @@
             container.innerHTML = html;
         }
 
-        // Nueva función para exportar datos a CSV
-        function exportToCSV() {
-            if (allTransactions.length === 0) {
-                alert("No hay datos para exportar");
-                return;
-            }
-            
-            const headers = ["Fecha", "Nombre", "CI", "Teléfono", "Email", "Boletos", "Referencia", "Estado"];
-            let csvContent = headers.join(",") + "\n";
-            
-            allTransactions.forEach(transaction => {
-                const date = new Date(transaction.date);
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-                
-                const row = [
-                    formattedDate,
-                    `"${transaction.name}"`,
-                    transaction.id_number,
-                    transaction.phone,
-                    transaction.email || '',
-                    transaction.tickets,
-                    transaction.reference,
-                    transaction.status
-                ];
-                
-                csvContent += row.join(",") + "\n";
-            });
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `transacciones_rifa_${new Date().toISOString().slice(0,10)}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Añadir botón de exportación
         document.addEventListener('DOMContentLoaded', () => {
-            const header = document.querySelector('.header');
-            const exportBtn = document.createElement('button');
-            exportBtn.innerHTML = '<i class="fas fa-file-export"></i> Exportar CSV';
-            exportBtn.className = 'btn-refresh';
-            exportBtn.style.marginLeft = '10px';
-            exportBtn.onclick = exportToCSV;
-            header.appendChild(exportBtn);
-            
             loadConfig();
             loadTransactions();
             setInterval(loadTransactions, 120000);
@@ -1385,3 +1306,5 @@
     </script>
 </body>
 </html>
+
+

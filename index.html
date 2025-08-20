@@ -684,13 +684,6 @@
         .confirmation-icon {
             text-align: center;
             margin-bottom: 30px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
         
         .confirmation-icon i {
@@ -1056,7 +1049,7 @@
         const CONFIG = {
             adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
             pricePerTicket: 70,
@@ -1143,8 +1136,7 @@
 
         async function fetchSoldTickets() {
             try {
-                // Usamos el endpoint de count para obtener el número total de tickets vendidos
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=count`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
@@ -1153,8 +1145,10 @@
                 
                 if (!response.ok) throw new Error('Error en la respuesta');
                 
-                const data = await response.json();
-                soldTickets = data[0].count;
+                const transactions = await response.json();
+                soldTickets = transactions
+                    .filter(t => t.status === 'VERIFICADO')
+                    .reduce((sum, t) => sum + t.tickets, 0);
                 
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
@@ -1299,13 +1293,6 @@
             document.getElementById(`step${step}`).classList.add('active');
             updateStepIndicators();
             window.scrollTo(0, 0);
-            
-            // Reset payment method to mobile when going back to step 3
-            if (step === 3) {
-                document.getElementById('paymentMethod').value = 'mobile';
-                // Trigger the change event to update the visibility
-                document.getElementById('paymentMethod').dispatchEvent(new Event('change'));
-            }
         }
 
         function validateTicketQuantity() {
@@ -1496,3 +1483,8 @@
     </script>
 </body>
 </html>
+
+
+
+
+
