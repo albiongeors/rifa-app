@@ -189,10 +189,11 @@
         }
         
         .buyer-info h3 {
-            color: #3a0ca3;
+            text-align: center;
+            margin-top: 0;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            color: #3a0ca3;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -489,6 +490,7 @@
 
         // Función para formatear números de teléfono para mostrar
         function formatPhoneForDisplay(phone) {
+            if (!phone) return 'N/A';
             // Eliminar todo excepto números
             const cleaned = phone.replace(/\D/g, '');
             // Si tiene 12 caracteres (incluyendo código de país), formatear
@@ -505,6 +507,7 @@
 
         // Función para limpiar el teléfono para el link de WhatsApp
         function cleanPhone(phone) {
+            if (!phone) return '';
             return phone.replace(/\D/g, '');
         }
 
