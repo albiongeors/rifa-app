@@ -8,11 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --primary-dark: #3a0ca3;
-            --primary-light: #4cc9f0;
-            --accent-color: #f72585;
-            --success-color: #2ecc71;
+            --primary-color: #6A11CB;
+            --primary-dark: #4A00E0;
+            --primary-light: #8A2BE2;
+            --accent-color: #FF416C;
+            --success-color: #38EF7D;
             --light-bg: #f8f9fa;
             --dark-text: #2d3748;
             --light-text: #718096;
@@ -30,7 +30,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f0f2f5, #e2e8f0);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark-text);
             line-height: 1.6;
             padding: 20px;
@@ -46,13 +46,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at top right, rgba(67, 97, 238, 0.05), transparent 30%),
-                        radial-gradient(circle at bottom left, rgba(247, 37, 133, 0.05), transparent 30%);
+            background: radial-gradient(circle at top right, rgba(106, 17, 203, 0.05), transparent 30%),
+                        radial-gradient(circle at bottom left, rgba(255, 65, 108, 0.05), transparent 30%);
             z-index: -1;
         }
         
         .container {
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
             background: white;
             border-radius: var(--border-radius);
@@ -68,7 +68,7 @@
         header {
             background: linear-gradient(145deg, var(--primary-color), var(--primary-dark));
             color: white;
-            padding: 30px 20px;
+            padding: 25px 20px 30px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -81,7 +81,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #f72585, #4cc9f0, #f8961e);
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-light), var(--success-color));
         }
         
         header::after {
@@ -99,15 +99,57 @@
             position: relative;
             z-index: 2;
             margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
-        .logo i {
-            font-size: 48px;
-            background: linear-gradient(135deg, #ffffff, #e0e7ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        .logo-img {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(145deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            border: 4px solid white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-img::before {
+            content: "";
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.3) 10px,
+                rgba(255,255,255,0.3) 20px
+            );
+            animation: shine 3s infinite linear;
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+        
+        .logo-subtext {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--accent-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 5px;
+            display: inline-block;
         }
         
         header h1 {
@@ -149,14 +191,14 @@
             margin: 15px 0;
             border: none;
             border-radius: 15px;
-            background: var(--primary-color);
+            background: linear-gradient(145deg, var(--primary-color), var(--primary-dark));
             color: white;
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             text-align: center;
-            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -178,14 +220,13 @@
         }
         
         .btn:hover {
-            background: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
         }
         
         .btn:active {
             transform: translateY(1px);
-            box-shadow: 0 3px 10px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 3px 10px rgba(106, 17, 203, 0.4);
         }
         
         .btn-secondary {
@@ -227,7 +268,7 @@
         input:focus, select:focus {
             border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2), 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2), 0 4px 15px rgba(0,0,0,0.05);
         }
         
         input::placeholder {
@@ -324,19 +365,19 @@
             justify-content: center;
             margin: 20px 0;
             position: relative;
-            height: 300px; /* Altura fija para el contenedor de la imagen */
+            height: 380px;
             align-items: center;
         }
         
         .prize-image {
             width: 100%;
-            max-width: 300px;
+            max-width: 340px;
             border-radius: 18px;
             border: 3px solid var(--primary-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            object-fit: contain; /* Cambiado de cover a contain */
-            height: 100%; /* Ocupa todo el alto del contenedor */
-            background: white; /* Fondo blanco para la imagen */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            object-fit: contain;
+            height: 100%;
+            background: white;
         }
         
         .ticket-selection {
@@ -401,7 +442,7 @@
             color: white;
             border-color: var(--primary-dark);
             transform: scale(1.1);
-            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 10px 25px rgba(106, 17, 203, 0.4);
         }
         
         .ticket-option.selected span {
@@ -445,6 +486,7 @@
         
         .prizes-container ul {
             padding-left: 25px;
+            margin-bottom: 10px;
         }
         
         .prizes-container li {
@@ -494,10 +536,10 @@
             height: 8px;
             background: repeating-linear-gradient(
                 45deg,
-                #f72585,
-                #f72585 10px,
-                #4361ee 10px,
-                #4361ee 20px
+                var(--accent-color),
+                var(--accent-color) 10px,
+                var(--primary-color) 10px,
+                var(--primary-color) 20px
             );
         }
         
@@ -692,7 +734,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 5px 10px rgba(46, 204, 113, 0.3));
+            filter: drop-shadow(0 5px 10px rgba(56, 239, 125, 0.3));
         }
         
         .confetti {
@@ -767,7 +809,6 @@
             transform: scale(1.2);
         }
         
-        /* Nuevos estilos para selector de país */
         .phone-input-container {
             display: flex;
             gap: 10px;
@@ -796,6 +837,117 @@
         .phone-input input {
             width: 100%;
         }
+        
+        .verification-time {
+            background: linear-gradient(145deg, var(--primary-light), var(--primary-dark));
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.3);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .verification-time i {
+            font-size: 1.5rem;
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Nuevos estilos para información de referencia */
+        .reference-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .reference-info h4 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .reference-info ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .reference-info li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--dark-text);
+        }
+        
+        .reference-note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            border-left: 4px solid #ffc107;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .status-pendiente {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-aprobado {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-rechazado {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading i {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            animation: spin 1s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -806,10 +958,13 @@
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-crown"></i>
+                <div class="logo-img">
+                    <div class="logo-text">RIFA</div>
+                </div>
             </div>
-            <h1>RIFA PREMIUM</h1>
-            <p>GANA CON YAIR™</p>
+            <div class="logo-subtext">PREMIUM EDITION</div>
+            <h1>GANA CON YAIR™</h1>
+            <p>¡La oportunidad de ganar increíbles premios!</p>
         </header>
 
         <div id="step1" class="step-container active">
@@ -828,6 +983,11 @@
                     </div>
                 </div>
                 
+                <div class="verification-time">
+                    <i class="fas fa-clock"></i>
+                    <span>Tiempo de verificación de boletos: 5 min - 24 h</span>
+                </div>
+                
                 <div class="prizes-container">
                     <h3><i class="fas fa-gift"></i> Premios</h3>
                     <ul id="prizesList">
@@ -838,7 +998,7 @@
                     <i class="fas fa-play"></i> Comenzar
                 </button>
                 
-                <button id="checkTicketsBtn" class="btn" style="background: #4cc9f0; margin-top: 15px;">
+                <button id="checkTicketsBtn" class="btn" style="background: var(--primary-light); margin-top: 15px;">
                     <i class="fas fa-search"></i> Verificar mis boletos
                 </button>
             </div>
@@ -855,13 +1015,11 @@
             
             <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
             
-            <!-- NOTA DE COMPRA MÍNIMA -->
-            <p style="text-align: center; color: #3a0ca3; font-weight: 500; margin-bottom: 20px;">
+            <p style="text-align: center; color: var(--primary-dark); font-weight: 500; margin-bottom: 20px;">
                 <i class="fas fa-info-circle"></i> Mínimo de compra: 2 boletos
             </p>
             
             <div class="ticket-selection">
-                <!-- SE ELIMINÓ LA OPCIÓN DE 1 BOLETO -->
                 <div class="ticket-option" data-quantity="2"><span>2</span></div>
                 <div class="ticket-option" data-quantity="5"><span>5</span></div>
                 <div class="ticket-option" data-quantity="10"><span>10</span></div>
@@ -872,7 +1030,6 @@
             </div>
             
             <div class="ticket-input-container">
-                <!-- SE ESTABLECIÓ MÍNIMO DE 2 BOLETOS -->
                 <input type="number" id="ticketQuantityInput" min="2" value="2" required>
             </div>
             <p style="text-align:center; color: var(--light-text);">Precio por boleto: <strong id="ticketPrice" style="color: var(--primary-dark);">Bs. 0</strong></p>
@@ -900,7 +1057,6 @@
             <label>Cédula de identidad</label>
             <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
             
-            <!-- NUEVO CAMPO DE TELÉFONO CON PAÍS -->
             <label>Teléfono</label>
             <div class="phone-input-container">
                 <div class="country-selector">
@@ -958,10 +1114,8 @@
             <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
             <div style="margin-bottom:25px;">
                 <select id="paymentMethod" required>
-                    <!-- PAGO MÓVIL AHORA ES LA PRIMERA OPCIÓN -->
                     <option value="mobile">Pago Móvil</option>
                     <option value="bank">Transferencia Bancaria</option>
-                    <!-- NUEVO MÉTODO ZINLI -->
                     <option value="zinli">Zinli</option>
                 </select>
             </div>
@@ -983,16 +1137,31 @@
                 <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
 
-            <!-- NUEVA SECCIÓN PARA ZINLI -->
             <div id="zinliDetails" class="payment-details" style="display:none;">
                 <h3>Datos para Pago con Zinli</h3>
                 <p><strong>Correo:</strong> ganaconyair@gmail.com</p>
                 <p><strong>Monto:</strong> <span id="zinliAmount">0</span> Bs.</p>
             </div>
 
+            <!-- Información sobre la referencia de pago -->
+            <div class="reference-info">
+                <h4><i class="fas fa-info-circle"></i> Para realizar su pago:</h4>
+                <p>Por favor, utilice exclusivamente los últimos <strong>6 dígitos</strong> de su número de referencia de pago móvil o transferencia bancaria.</p>
+                
+                <div class="reference-note">
+                    <strong>Importante:</strong>
+                    <ul>
+                        <li>Asegúrese de enviar el monto exacto correspondiente.</li>
+                        <li>No se aceptan pagos mayores ni menores al valor establecido.</li>
+                        <li>En caso de error en el monto, no se realizarán reembolsos, sino que se generarán tickets adicionales para futuros sorteos.</li>
+                    </ul>
+                    Agradecemos su comprensión y colaboración.
+                </div>
+            </div>
+
             <div style="margin:25px 0;">
-                <label>Número de referencia</label>
-                <input type="text" id="referenceNumber" placeholder="Ej: 1234567890" required>
+                <label>Número de referencia (6 dígitos)</label>
+                <input type="text" id="referenceNumber" placeholder="Ej: 123456" maxlength="6" pattern="[0-9]{6}" title="Solo se permiten 6 dígitos" required>
                 <div id="referenceError" class="error-message"></div>
             </div>
 
@@ -1002,6 +1171,11 @@
             <button id="prevBtn4" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Atrás
             </button>
+            
+            <div class="loading" id="loadingStep4">
+                <i class="fas fa-spinner"></i>
+                <p>Procesando transacción...</p>
+            </div>
         </div>
 
         <div id="step5" class="step-container">
@@ -1028,6 +1202,11 @@
             <div style="text-align:center; padding:40px 20px;">
                 <h2 class="step-title"><i class="fas fa-ticket-alt"></i> Verificar Boletos</h2>
                 
+                <div class="verification-time">
+                    <i class="fas fa-clock"></i>
+                    <span>Tiempo de verificación: 5 min - 24 h</span>
+                </div>
+                
                 <div style="margin:25px 0;">
                     <label>Ingresa tu número de cédula</label>
                     <input type="text" id="verifyId" placeholder="Ej: V-12345678" style="max-width: 300px; margin: 0 auto; display: block; width: 100%; padding: 16px 20px; border: 1px solid #e2e8f0; border-radius: 15px; font-size: 16px; margin-top: 10px;">
@@ -1037,6 +1216,11 @@
                 </div>
                 
                 <div id="ticketResults" style="margin-top: 30px;"></div>
+                
+                <div class="loading" id="loadingStep6">
+                    <i class="fas fa-spinner"></i>
+                    <p>Buscando boletos...</p>
+                </div>
                 
                 <button id="backFromVerify" class="btn btn-secondary" style="max-width: 250px; margin: 30px auto 10px;">
                     <i class="fas fa-arrow-left"></i> Volver al inicio
@@ -1049,7 +1233,7 @@
         const CONFIG = {
             adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
             pricePerTicket: 70,
@@ -1122,6 +1306,11 @@
             document.getElementById('phoneNumber').addEventListener('input', function(e) {
                 this.value = this.value.replace(/\D/g, '');
             });
+
+            // Validación de número de referencia (solo 6 dígitos)
+            document.getElementById('referenceNumber').addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
         }
 
         function updateStepIndicators() {
@@ -1136,8 +1325,8 @@
 
         async function fetchSoldTickets() {
             try {
-                // Obtener tickets directamente de la tabla tickets
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
+                // Obtener todas las transacciones verificadas
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets&status=eq.VERIFICADO`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
@@ -1146,8 +1335,10 @@
                 
                 if (!response.ok) throw new Error('Error en la respuesta');
                 
-                const tickets = await response.json();
-                soldTickets = tickets.length;
+                const transactions = await response.json();
+                
+                // Sumar todos los tickets de las transacciones verificadas
+                soldTickets = transactions.reduce((total, transaction) => total + (parseInt(transaction.tickets) || 0), 0);
                 
                 const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
                 const availablePercentage = (100 - soldPercentage).toFixed(1);
@@ -1161,6 +1352,7 @@
                 console.error("Error obteniendo boletos vendidos:", error);
                 document.getElementById('soldPercentage').textContent = "0%";
                 document.getElementById('availablePercentage').textContent = "100%";
+                document.getElementById('progressBar').style.width = `0%`;
             }
         }
 
@@ -1195,12 +1387,21 @@
             const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
             const reference = document.getElementById('referenceNumber').value;
             
+            // Verificar que la referencia tenga 6 dígitos
+            if (reference.length !== 6) {
+                alert("La referencia debe tener exactamente 6 dígitos");
+                return { success: false };
+            }
+            
             // Verificar si la referencia ya existe
             const refExists = await checkReferenceExists(reference);
             if (refExists) {
                 alert("¡Esta referencia ya ha sido utilizada! Por favor usa un número diferente.");
                 return { success: false };
             }
+
+            // Obtener la fecha actual en formato ISO
+            const currentDate = new Date().toISOString();
 
             const data = {
                 name: document.getElementById('fullName').value,
@@ -1209,7 +1410,8 @@
                 email: document.getElementById('email').value,
                 tickets: ticketQuantity,
                 reference: reference,
-                status: "PENDIENTE"
+                status: "PENDIENTE",
+                date: currentDate  // Incluir la fecha actual
             };
 
             try {
@@ -1218,15 +1420,24 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+                        'Prefer': 'return=representation'
                     },
                     body: JSON.stringify(data)
                 });
 
-                return { success: true };
+                if (!response.ok) {
+                    const error = await response.text();
+                    console.error("Error en la respuesta de Supabase:", error);
+                    return { success: false, error: error };
+                }
+
+                const result = await response.json();
+                console.log("Transacción guardada correctamente:", result);
+                return { success: true, data: result };
             } catch (error) {
                 console.error("Error guardando datos:", error);
-                return { success: true };
+                return { success: false, error: error.message };
             }
         }
 
@@ -1319,25 +1530,33 @@
                 return;
             }
 
+            // Mostrar indicador de carga
+            document.getElementById('loadingStep6').style.display = 'block';
+            document.getElementById('ticketResults').innerHTML = '';
+
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=eq.${idNumber}&select=*,tickets(ticket_number,status)`, {
+                // Consulta corregida para buscar por cédula
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=eq.${encodeURIComponent(idNumber)}`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
                 
-                if (!response.ok) throw new Error('Error en la respuesta');
+                if (!response.ok) throw new Error('Error en la respuesta del servidor');
                 
                 const data = await response.json();
                 displayTicketResults(data);
             } catch (error) {
                 console.error("Error verificando boletos:", error);
                 document.getElementById('ticketResults').innerHTML = `
-                    <p style="color:#dc3545; margin-top:20px;">
-                        <i class="fas fa-exclamation-circle"></i> Error al buscar boletos
-                    </p>
+                    <div style="text-align:center; color:#dc3545; margin-top:20px;">
+                        <i class="fas fa-exclamation-circle"></i> Error al buscar boletos. Intenta nuevamente.
+                    </div>
                 `;
+            } finally {
+                // Ocultar indicador de carga
+                document.getElementById('loadingStep6').style.display = 'none';
             }
         }
 
@@ -1347,46 +1566,32 @@
             
             if (transactions.length === 0) {
                 container.innerHTML = `
-                    <p style="margin-top:20px;">
+                    <div style="text-align:center; margin-top:20px;">
                         <i class="fas fa-info-circle"></i> No se encontraron boletos para esta cédula
-                    </p>
+                    </div>
                 `;
                 return;
             }
             
             let html = '<div style="text-align:left; max-width:400px; margin:0 auto;">';
-            html += `<h3 style="margin-bottom:20px; color:var(--primary-dark);">Boletos encontrados: ${transactions.length} transacción(es)</h3>`;
+            html += `<h3 style="margin-bottom:20px; color:var(--primary-dark);">Transacciones encontradas: ${transactions.length}</h3>`;
             
             transactions.forEach(transaction => {
-                html += `<div style="background:white; border-radius:15px; padding:20px; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">`;
-                html += `<p><strong>Fecha:</strong> ${new Date(transaction.date).toLocaleDateString()}</p>`;
-                html += `<p><strong>Referencia:</strong> ${transaction.reference}</p>`;
-                html += `<p><strong>Teléfono:</strong> ${transaction.phone}</p>`;
-                html += `<p><strong>Estado:</strong> ${transaction.status}</p>`;
+                const statusClass = `status-${transaction.status.toLowerCase()}`;
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
                 
-                if (transaction.tickets && transaction.tickets.length > 0) {
-                    html += `<p style="margin-top:15px;"><strong>Boletos:</strong></p>`;
-                    html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">`;
-                    
-                    transaction.tickets.forEach(ticket => {
-                        html += `<div style="background:${ticket.status === 'ACTIVO' ? '#e8f5e9' : '#fffde7'}; 
-                                 border:1px solid #ddd; border-radius:10px; padding:8px 12px; font-weight:bold;">
-                            ${formatTicketNumber(ticket.ticket_number)}
-                        </div>`;
-                    });
-                    
-                    html += `</div>`;
-                }
+                html += `<div style="background:white; border-radius:15px; padding:20px; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">`;
+                html += `<p><strong>Fecha:</strong> ${formattedDate}</p>`;
+                html += `<p><strong>Referencia:</strong> ${transaction.reference}</p>`;
+                html += `<p><strong>Boletos:</strong> ${transaction.tickets}</p>`;
+                html += `<p><strong>Estado:</strong> <span class="status-badge ${statusClass}">${transaction.status}</span></p>`;
                 
                 html += `</div>`;
             });
             
             html += '</div>';
             container.innerHTML = html;
-        }
-
-        function formatTicketNumber(number) {
-            return String(number).padStart(5, '0');
         }
 
         document.addEventListener('DOMContentLoaded', init);
@@ -1461,6 +1666,11 @@
                 return;
             }
             
+            if (reference.length !== 6) {
+                alert("La referencia debe tener exactamente 6 dígitos");
+                return;
+            }
+            
             if (phoneNumber.length < 7) {
                 alert("Por favor ingresa un número de teléfono válido");
                 return;
@@ -1470,14 +1680,26 @@
                 return;
             }
             
+            // Mostrar indicador de carga
+            document.getElementById('loadingStep4').style.display = 'block';
+            
             const saveResult = await saveData();
+            
+            // Ocultar indicador de carga
+            document.getElementById('loadingStep4').style.display = 'none';
+            
             if (!saveResult.success) {
+                alert("Error al guardar la transacción. Por favor, intenta nuevamente.");
+                console.error("Error al guardar:", saveResult.error);
                 return;
             }
             
             openWhatsApp();
             document.getElementById('reportReference').textContent = reference;
             goToStep(5);
+            
+            // Actualizar estadísticas después de guardar
+            setTimeout(fetchSoldTickets, 1000);
         });
     </script>
 </body>
