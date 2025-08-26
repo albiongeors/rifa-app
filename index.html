@@ -74,6 +74,16 @@
             overflow: hidden;
         }
         
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f72585, #4cc9f0, #f8961e);
+        }
+        
         header::after {
             content: "";
             position: absolute;
@@ -224,12 +234,97 @@
             color: #a0aec0;
         }
         
+        .progress-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 14px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            width: 0%;
+            transition: width 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+            position: relative;
+        }
+        
+        .progress::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--light-text);
+        }
+        
+        .progress-stats span {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .ticket-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .ticket-input-container input {
+            max-width: 220px;
+            text-align: center;
+            font-size: 32px;
+            padding: 20px;
+            font-weight: bold;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+        }
+        
+        .ticket-input-container input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .error-message {
+            color: #f94144;
+            margin: 5px 0 15px;
+            display: none;
+            font-weight: 500;
+            text-align: center;
+        }
+        
         .prize-container {
             display: flex;
             justify-content: center;
             margin: 20px 0;
             position: relative;
-            height: 300px;
+            height: 300px; /* Altura fija para el contenedor de la imagen */
             align-items: center;
         }
         
@@ -239,9 +334,9 @@
             border-radius: 18px;
             border: 3px solid var(--primary-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            object-fit: contain;
-            height: 100%;
-            background: white;
+            object-fit: contain; /* Cambiado de cover a contain */
+            height: 100%; /* Ocupa todo el alto del contenedor */
+            background: white; /* Fondo blanco para la imagen */
         }
         
         .ticket-selection {
@@ -564,10 +659,6 @@
             margin-bottom: 20px;
             color: var(--primary-dark);
             font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
         
         .payment-details p {
@@ -656,6 +747,27 @@
             100% { transform: translateY(0) rotate(360deg); }
         }
         
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: var(--transition);
+        }
+        
+        .step-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        /* Nuevos estilos para selector de país */
         .phone-input-container {
             display: flex;
             gap: 10px;
@@ -684,85 +796,6 @@
         .phone-input input {
             width: 100%;
         }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .loading i {
-            font-size: 2rem;
-            color: var(--primary-color);
-        }
-
-        .error-message {
-            color: #dc3545;
-            text-align: center;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .ticket-results {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .transaction-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .transaction-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed #e2e8f0;
-        }
-
-        .ticket-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .ticket-item {
-            background: #f0f7ff;
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            border: 1px solid #cce5ff;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-approved {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-rejected {
-            background: #f8d7da;
-            color: #721c24;
-        }
     </style>
 </head>
 <body>
@@ -785,6 +818,16 @@
                     <img id="prizeImage" class="prize-image" alt="Premio">
                 </div>
                 
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <div>Vendido: <span id="soldPercentage">0%</span></div>
+                        <div>Disponible: <span id="availablePercentage">100%</span></div>
+                    </div>
+                </div>
+                
                 <div class="prizes-container">
                     <h3><i class="fas fa-gift"></i> Premios</h3>
                     <ul id="prizesList">
@@ -802,13 +845,23 @@
         </div>
 
         <div id="step2" class="step-container">
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            
             <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
             
+            <!-- NOTA DE COMPRA MÍNIMA -->
             <p style="text-align: center; color: #3a0ca3; font-weight: 500; margin-bottom: 20px;">
                 <i class="fas fa-info-circle"></i> Mínimo de compra: 2 boletos
             </p>
             
             <div class="ticket-selection">
+                <!-- SE ELIMINÓ LA OPCIÓN DE 1 BOLETO -->
                 <div class="ticket-option" data-quantity="2"><span>2</span></div>
                 <div class="ticket-option" data-quantity="5"><span>5</span></div>
                 <div class="ticket-option" data-quantity="10"><span>10</span></div>
@@ -819,6 +872,7 @@
             </div>
             
             <div class="ticket-input-container">
+                <!-- SE ESTABLECIÓ MÍNIMO DE 2 BOLETOS -->
                 <input type="number" id="ticketQuantityInput" min="2" value="2" required>
             </div>
             <p style="text-align:center; color: var(--light-text);">Precio por boleto: <strong id="ticketPrice" style="color: var(--primary-dark);">Bs. 0</strong></p>
@@ -832,12 +886,21 @@
         </div>
 
         <div id="step3" class="step-container">
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            
             <h2 class="step-title"><i class="fas fa-user"></i> Tus datos</h2>
             <label>Nombre completo</label>
             <input type="text" id="fullName" placeholder="Ej: María Rodríguez" required>
             <label>Cédula de identidad</label>
             <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
             
+            <!-- NUEVO CAMPO DE TELÉFONO CON PAÍS -->
             <label>Teléfono</label>
             <div class="phone-input-container">
                 <div class="country-selector">
@@ -884,17 +947,27 @@
         </div>
 
         <div id="step4" class="step-container">
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+            
             <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
             <div style="margin-bottom:25px;">
                 <select id="paymentMethod" required>
+                    <!-- PAGO MÓVIL AHORA ES LA PRIMERA OPCIÓN -->
                     <option value="mobile">Pago Móvil</option>
                     <option value="bank">Transferencia Bancaria</option>
+                    <!-- NUEVO MÉTODO ZINLI -->
                     <option value="zinli">Zinli</option>
                 </select>
             </div>
 
             <div id="mobileDetails" class="payment-details">
-                <h3><i class="fas fa-mobile-alt"></i> Datos para Pago Móvil</h3>
+                <h3>Datos para Pago Móvil</h3>
                 <p><strong>Banco:</strong> <span id="mobileBank">Banco de Venezuela</span></p>
                 <p><strong>Teléfono:</strong> <span id="mobilePhone">0412-0479871</span></p>
                 <p><strong>Cédula:</strong> <span id="mobileId">V-25441167</span></p>
@@ -902,7 +975,7 @@
             </div>
 
             <div id="bankDetails" class="payment-details" style="display:none;">
-                <h3><i class="fas fa-university"></i> Datos para transferencia</h3>
+                <h3>Datos para transferencia</h3>
                 <p><strong>Banco:</strong> <span id="bankName">Banco de Venezuela</span></p>
                 <p><strong>Titular:</strong> <span id="accountHolder">YAIR TROYA</span></p>
                 <p><strong>Cédula:</strong> <span id="accountRif">V-25441167</span></p>
@@ -910,8 +983,9 @@
                 <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
             </div>
 
+            <!-- NUEVA SECCIÓN PARA ZINLI -->
             <div id="zinliDetails" class="payment-details" style="display:none;">
-                <h3><i class="fas fa-wallet"></i> Datos para Pago con Zinli</h3>
+                <h3>Datos para Pago con Zinli</h3>
                 <p><strong>Correo:</strong> ganaconyair@gmail.com</p>
                 <p><strong>Monto:</strong> <span id="zinliAmount">0</span> Bs.</p>
             </div>
@@ -957,18 +1031,12 @@
                 <div style="margin:25px 0;">
                     <label>Ingresa tu número de cédula</label>
                     <input type="text" id="verifyId" placeholder="Ej: V-12345678" style="max-width: 300px; margin: 0 auto; display: block; width: 100%; padding: 16px 20px; border: 1px solid #e2e8f0; border-radius: 15px; font-size: 16px; margin-top: 10px;">
-                    <div id="verifyError" class="error-message"></div>
                     <button id="verifyTicketsBtn" class="btn" style="max-width: 250px; margin: 20px auto;">
                         <i class="fas fa-search"></i> Buscar Boletos
                     </button>
                 </div>
-
-                <div class="loading" id="loadingTickets">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Buscando boletos...</p>
-                </div>
                 
-                <div id="ticketResults" class="ticket-results"></div>
+                <div id="ticketResults" style="margin-top: 30px;"></div>
                 
                 <button id="backFromVerify" class="btn btn-secondary" style="max-width: 250px; margin: 30px auto 10px;">
                     <i class="fas fa-arrow-left"></i> Volver al inicio
@@ -981,7 +1049,7 @@
         const CONFIG = {
             adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
             pricePerTicket: 70,
@@ -1006,6 +1074,7 @@
         };
 
         let currentStep = 1;
+        let soldTickets = 0;
 
         async function init() {
             document.getElementById('prizeImage').src = CONFIG.prizeImage;
@@ -1028,6 +1097,7 @@
                 prizesList.appendChild(li);
             });
             
+            await fetchSoldTickets();
             updateTicketUI();
             
             document.querySelectorAll('.ticket-option').forEach(option => {
@@ -1046,10 +1116,52 @@
             // Seleccionar automáticamente 2 tickets al inicio
             document.querySelector('.ticket-option[data-quantity="2"]').classList.add('selected');
             
+            updateStepIndicators();
+
             // Validación de número de teléfono (solo números)
             document.getElementById('phoneNumber').addEventListener('input', function(e) {
                 this.value = this.value.replace(/\D/g, '');
             });
+        }
+
+        function updateStepIndicators() {
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                if (index + 1 === currentStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        async function fetchSoldTickets() {
+            try {
+                // Obtener tickets directamente de la tabla tickets
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Error en la respuesta');
+                
+                const tickets = await response.json();
+                soldTickets = tickets.length;
+                
+                const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
+                const availablePercentage = (100 - soldPercentage).toFixed(1);
+                
+                document.getElementById('soldPercentage').textContent = `${soldPercentage}%`;
+                document.getElementById('availablePercentage').textContent = `${availablePercentage}%`;
+                
+                const progress = (soldTickets / CONFIG.totalTickets) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            } catch (error) {
+                console.error("Error obteniendo boletos vendidos:", error);
+                document.getElementById('soldPercentage').textContent = "0%";
+                document.getElementById('availablePercentage').textContent = "100%";
+            }
         }
 
         function updateTicketUI() {
@@ -1097,9 +1209,7 @@
                 email: document.getElementById('email').value,
                 tickets: ticketQuantity,
                 reference: reference,
-                status: "PENDIENTE",
-                payment_method: document.getElementById('paymentMethod').value,
-                amount: ticketQuantity * CONFIG.pricePerTicket
+                status: "PENDIENTE"
             };
 
             try {
@@ -1108,26 +1218,15 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
-                        'Prefer': 'return=representation'
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     },
                     body: JSON.stringify(data)
                 });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("Error en la respuesta de Supabase:", response.status, errorData);
-                    alert("Error al guardar la transacción. Por favor, intente nuevamente.");
-                    return { success: false };
-                }
-
-                const result = await response.json();
-                console.log("Transacción guardada exitosamente:", result);
-                return { success: true, data: result };
+                return { success: true };
             } catch (error) {
                 console.error("Error guardando datos:", error);
-                alert("Error de conexión. Por favor, intente nuevamente.");
-                return { success: false };
+                return { success: true };
             }
         }
 
@@ -1139,11 +1238,6 @@
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
-                
-                if (!response.ok) {
-                    console.error("Error verificando referencia:", response.status);
-                    return false;
-                }
                 
                 const data = await response.json();
                 return data.length > 0;
@@ -1196,11 +1290,13 @@
                 container.classList.remove('active');
             });
             document.getElementById(`step${step}`).classList.add('active');
+            updateStepIndicators();
             window.scrollTo(0, 0);
         }
 
         function validateTicketQuantity() {
             const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
+            const availableTickets = CONFIG.totalTickets - soldTickets;
             
             // Validar mínimo de 2 boletos
             if (ticketQuantity < 2) {
@@ -1208,99 +1304,39 @@
                 return false;
             }
             
+            if (ticketQuantity > availableTickets) {
+                alert(`Solo quedan ${availableTickets} boletos disponibles`);
+                return false;
+            }
+            
             return true;
         }
         
         async function verifyUserTickets() {
-            const rawId = document.getElementById('verifyId').value.trim();
-            
-            // Validación mejorada para cédulas venezolanas
-            const idRegex = /^[VEve]?[-]?\d{5,9}$/;
-            if (!idRegex.test(rawId)) {
-                document.getElementById('verifyError').textContent = "Formato de cédula inválido. Use V-12345678 o E-12345678";
-                document.getElementById('verifyError').style.display = 'block';
+            const idNumber = document.getElementById('verifyId').value.trim();
+            if (!idNumber) {
+                alert("Por favor ingresa tu número de cédula");
                 return;
-            } else {
-                document.getElementById('verifyError').style.display = 'none';
             }
-            
-            // Normalizar la cédula (quitar guiones y convertir a mayúsculas)
-            const idNumber = rawId.toUpperCase().replace(/-/g, '');
-            
-            // Mostrar indicador de carga
-            document.getElementById('loadingTickets').style.display = 'block';
-            document.getElementById('ticketResults').innerHTML = '';
 
             try {
-                // Codificar el parámetro para la URL
-                const encodedId = encodeURIComponent(idNumber);
-                
-                // Consultar las transacciones por cédula
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=ilike.${encodedId}&select=*`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=eq.${idNumber}&select=*,tickets(ticket_number,status)`, {
                     headers: {
                         'apikey': CONFIG.supabaseKey,
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`
                     }
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`Error en la respuesta: ${response.status}`);
-                }
+                if (!response.ok) throw new Error('Error en la respuesta');
                 
-                const transactions = await response.json();
-                
-                // Ocultar indicador de carga
-                document.getElementById('loadingTickets').style.display = 'none';
-                
-                if (transactions.length === 0) {
-                    document.getElementById('ticketResults').innerHTML = `
-                        <div style="text-align:center; padding:20px; background:#f8f9fa; border-radius:15px;">
-                            <i class="fas fa-info-circle" style="font-size:3rem; color:#6c757d; margin-bottom:15px;"></i>
-                            <p style="font-size:18px; color:#6c757d;">No se encontraron transacciones para la cédula: <strong>${rawId}</strong></p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // Para cada transacción, buscar los boletos asociados
-                const transactionsWithTickets = await Promise.all(
-                    transactions.map(async transaction => {
-                        try {
-                            const ticketsResponse = await fetch(
-                                `${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transaction.id}&select=*`,
-                                {
-                                    headers: {
-                                        'apikey': CONFIG.supabaseKey,
-                                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                                    }
-                                }
-                            );
-                            
-                            if (ticketsResponse.ok) {
-                                const tickets = await ticketsResponse.json();
-                                transaction.tickets = tickets;
-                            } else {
-                                console.error("Error obteniendo boletos:", ticketsResponse.status);
-                                transaction.tickets = [];
-                            }
-                        } catch (error) {
-                            console.error("Error obteniendo boletos:", error);
-                            transaction.tickets = [];
-                        }
-                        return transaction;
-                    })
-                );
-                
-                displayTicketResults(transactionsWithTickets);
+                const data = await response.json();
+                displayTicketResults(data);
             } catch (error) {
                 console.error("Error verificando boletos:", error);
-                document.getElementById('loadingTickets').style.display = 'none';
                 document.getElementById('ticketResults').innerHTML = `
-                    <div style="text-align:center; padding:20px; background:#fff3cd; border-radius:15px; border:1px solid #ffeaa7;">
-                        <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:#856404; margin-bottom:15px;"></i>
-                        <p style="font-size:18px; color:#856404;">Error al buscar boletos. Por favor, intente nuevamente.</p>
-                        <p style="font-size:14px; color:#856404;">${error.message}</p>
-                    </div>
+                    <p style="color:#dc3545; margin-top:20px;">
+                        <i class="fas fa-exclamation-circle"></i> Error al buscar boletos
+                    </p>
                 `;
             }
         }
@@ -1309,47 +1345,37 @@
             const container = document.getElementById('ticketResults');
             container.innerHTML = '';
             
-            let html = `
-                <div style="text-align:left; max-width:400px; margin:0 auto;">
-                    <h3 style="margin-bottom:20px; color:var(--primary-dark); text-align:center;">
-                        <i class="fas fa-ticket-alt"></i> Boletos Encontrados
-                    </h3>
-            `;
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <p style="margin-top:20px;">
+                        <i class="fas fa-info-circle"></i> No se encontraron boletos para esta cédula
+                    </p>
+                `;
+                return;
+            }
+            
+            let html = '<div style="text-align:left; max-width:400px; margin:0 auto;">';
+            html += `<h3 style="margin-bottom:20px; color:var(--primary-dark);">Boletos encontrados: ${transactions.length} transacción(es)</h3>`;
             
             transactions.forEach(transaction => {
-                // Determinar clase CSS según el estado
-                let statusClass = 'status-pending';
-                if (transaction.status === 'APROBADO') statusClass = 'status-approved';
-                if (transaction.status === 'RECHAZADO') statusClass = 'status-rejected';
-                
-                html += `
-                    <div class="transaction-card">
-                        <div class="transaction-header">
-                            <div>
-                                <strong>Fecha:</strong> ${new Date(transaction.created_at || transaction.date).toLocaleDateString()}
-                            </div>
-                            <span class="status-badge ${statusClass}">${transaction.status}</span>
-                        </div>
-                        <p><strong>Referencia:</strong> ${transaction.reference}</p>
-                        <p><strong>Boletos:</strong> ${transaction.tickets}</p>
-                `;
+                html += `<div style="background:white; border-radius:15px; padding:20px; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">`;
+                html += `<p><strong>Fecha:</strong> ${new Date(transaction.date).toLocaleDateString()}</p>`;
+                html += `<p><strong>Referencia:</strong> ${transaction.reference}</p>`;
+                html += `<p><strong>Teléfono:</strong> ${transaction.phone}</p>`;
+                html += `<p><strong>Estado:</strong> ${transaction.status}</p>`;
                 
                 if (transaction.tickets && transaction.tickets.length > 0) {
-                    html += `<div class="ticket-grid">`;
+                    html += `<p style="margin-top:15px;"><strong>Boletos:</strong></p>`;
+                    html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">`;
                     
                     transaction.tickets.forEach(ticket => {
-                        html += `
-                            <div class="ticket-item">
-                                ${formatTicketNumber(ticket.ticket_number)}
-                            </div>
-                        `;
+                        html += `<div style="background:${ticket.status === 'ACTIVO' ? '#e8f5e9' : '#fffde7'}; 
+                                 border:1px solid #ddd; border-radius:10px; padding:8px 12px; font-weight:bold;">
+                            ${formatTicketNumber(ticket.ticket_number)}
+                        </div>`;
                     });
                     
                     html += `</div>`;
-                } else {
-                    html += `<p style="margin-top:15px; color:#6c757d; text-align:center;">
-                        <i class="fas fa-info-circle"></i> No hay boletos asignados a esta transacción aún.
-                    </p>`;
                 }
                 
                 html += `</div>`;
