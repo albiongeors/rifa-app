@@ -3,29 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Rifa Exclusive</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Panel de Administración - Rifa Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-color: #f8f9fe;
-            --surface-color: #ffffff;
-            --primary-color: #2c3e50; /* Azul Nocturno */
-            --secondary-color: #34495e; /* Azul Grisáceo */
-            --accent-color: #d4af37; /* Oro Viejo */
-            --text-primary: #2c3e50;
-            --text-secondary: #7f8c8d;
-            --border-color: #e5e7eb;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
-            --shadow-color: rgba(44, 62, 80, 0.1);
-            --border-radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -33,134 +13,149 @@
         }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #3a0ca3, #4361ee);
+            color: #333;
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
         }
         
         .container {
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
-            background-color: var(--surface-color);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 40px var(--shadow-color);
-            padding: 30px;
-            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #3a0ca3, #4361ee, #4cc9f0);
+        }
+        
+        h1 {
+            color: #3a0ca3;
+            margin-bottom: 25px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            background: #3a0ca3;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
         }
         
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
             gap: 20px;
         }
-
-        h1 {
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        h1 i {
-            color: var(--accent-color);
-        }
         
-        .panel-section {
-            background-color: var(--bg-color);
-            padding: 25px;
-            border-radius: 12px;
+        .config-panel {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 10px;
             margin-bottom: 30px;
-            border: 1px solid var(--border-color);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #4361ee;
         }
         
-        .panel-section h2 {
+        .config-panel h2 {
             margin-top: 0;
             margin-bottom: 20px;
+            color: #3a0ca3;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.5rem;
         }
         
         .config-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            margin-bottom: 20px;
         }
         
-        .input-group {
+        .config-item {
             display: flex;
             flex-direction: column;
         }
         
-        .input-group label {
-            font-weight: 500;
+        .config-item label {
+            font-weight: 600;
             margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            color: #495057;
+            font-size: 14px;
         }
         
-        input[type="text"], input[type="number"] {
+        .config-item input {
             width: 100%;
             padding: 12px 15px;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 1rem;
-            transition: var(--transition);
-            background-color: var(--surface-color);
-            color: var(--text-primary);
+            border: 1px solid #ced4da;
+            font-size: 16px;
+            transition: all 0.3s;
         }
         
-        input[type="text"]:focus, input[type="number"]:focus {
+        .config-item input:focus {
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
         }
         
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         
         .stat-card {
-            background: var(--surface-color);
+            background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 15px var(--shadow-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid #4361ee;
         }
+        
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px var(--shadow-color);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
-        .stat-card i {
-            font-size: 2rem;
-            padding: 15px;
-            border-radius: 50%;
-            background-color: var(--bg-color);
-        }
-        .stat-card .icon-sales { color: var(--success-color); }
-        .stat-card .icon-pending { color: var(--warning-color); }
-        .stat-card .icon-verified { color: var(--primary-color); }
-        .stat-card .icon-sold { color: #8e44ad; }
-        .stat-card .icon-available { color: #2980b9; }
-
-        .stat-info .stat-value {
-            font-size: 1.8rem;
+        
+        .stat-value {
+            font-size: 32px;
             font-weight: 700;
+            color: #3a0ca3;
+            margin: 10px 0;
         }
-        .stat-info .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 16px;
             font-weight: 500;
         }
         
@@ -169,22 +164,30 @@
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 25px;
-            align-items: center;
         }
         
         .search-container {
-            flex: 1 1 300px;
+            flex: 1;
+            min-width: 300px;
             position: relative;
         }
+        
         .search-container input {
-            padding-left: 45px;
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
+        
         .search-container i {
             position: absolute;
-            left: 15px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-secondary);
+            color: #6c757d;
+            font-size: 18px;
         }
         
         .filters {
@@ -195,98 +198,136 @@
         
         .table-container {
             overflow-x: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px;
+            min-width: 1000px;
         }
         
         th, td {
-            padding: 15px;
+            padding: 15px 18px;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
         }
         
         thead {
-            background-color: var(--bg-color);
+            background: linear-gradient(to right, #3a0ca3, #4361ee);
+            color: white;
         }
         
         th {
             font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            position: sticky;
+            top: 0;
         }
         
-        tbody tr:last-child td {
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        
+        tbody tr:last-child {
             border-bottom: none;
         }
         
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
         tbody tr:hover {
-            background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);
+            background-color: #e9f0ff;
         }
         
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-        .status-verified {
-            background-color: color-mix(in srgb, var(--success-color) 15%, transparent);
-            color: var(--success-color);
-        }
-        .status-pending {
-            background-color: color-mix(in srgb, var(--warning-color) 15%, transparent);
-            color: var(--warning-color);
+        .verified td {
+            background-color: #e8f5e9;
         }
         
-        .duplicate-cell {
-            background-color: color-mix(in srgb, var(--danger-color) 15%, transparent);
-            border: 1px solid var(--danger-color);
-            border-radius: 4px;
-            padding: 2px 5px;
-            font-weight: bold;
+        .pending td {
+            background-color: #fffde7;
         }
-
-        button, .btn {
-            background-color: var(--primary-color);
+        
+        button {
+            background-color: #4361ee;
             color: white;
             border: none;
             padding: 10px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: var(--transition);
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
-        button:hover, .btn:hover {
-            filter: brightness(1.2);
+        
+        button:hover {
+            background-color: #3a0ca3;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
-        .btn-refresh { background-color: var(--secondary-color); }
-        .btn-verify { background-color: var(--success-color); }
-        .btn-delete { background-color: var(--danger-color); }
-        .btn-view { background-color: #2980b9; }
-        .btn-disabled { background-color: var(--text-secondary); cursor: not-allowed; }
-        .btn-whatsapp { background-color: #25D366; }
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-refresh {
+            background: #4a5568;
+        }
+        
+        .btn-refresh:hover {
+            background: #2d3748;
+        }
+        
+        .btn-verify {
+            background-color: #28a745;
+        }
+        
+        .btn-verify:hover {
+            background-color: #218838;
+        }
+        
+        .btn-verified {
+            background-color: #6c757d;
+            cursor: default;
+        }
+        
+        .btn-verified:hover {
+            transform: none;
+            box-shadow: none;
+            background-color: #6c757d;
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        
+        .btn-delete:hover {
+            background-color: #bd2130;
+        }
         
         .filter-btn {
-            background-color: var(--surface-color);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            background: #e9ecef;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 10px 20px;
         }
+        
         .filter-btn.active {
-            background-color: var(--primary-color);
+            background: #4361ee;
             color: white;
-            border-color: var(--primary-color);
+            border-color: #4361ee;
+        }
+        
+        .btn-save {
+            background: #28a745;
+            padding: 12px 25px;
+            font-size: 16px;
         }
         
         .modal {
@@ -295,156 +336,321 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        .modal.open {
-            opacity: 1;
-            visibility: visible;
+            backdrop-filter: blur(4px);
         }
         
         .modal-content {
-            background: var(--surface-color);
+            background: white;
             padding: 30px;
-            border-radius: var(--border-radius);
+            border-radius: 15px;
             width: 90%;
-            max-width: 700px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            transition: var(--transition);
-            transform: scale(0.95);
+            max-width: 800px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+            animation: modalIn 0.4s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        .modal.open .modal-content {
-            transform: scale(1);
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .modal h2 {
+            color: #3a0ca3;
             margin-bottom: 20px;
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        
+        .modal p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
         .modal-buttons {
             display: flex;
             gap: 15px;
-            margin-top: 25px;
-            justify-content: flex-end;
+            margin-top: 20px;
         }
-        .modal-buttons button { flex: none; }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 16px;
+            resize: vertical;
+            margin: 15px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 14px;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .ticket-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .ticket-results-table th, 
+        .ticket-results-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .ticket-results-table thead {
+            background: linear-gradient(to right, #3a0ca3, #4361ee);
+            color: white;
+        }
+
+        .ticket-results-table tbody tr:hover {
+            background-color: #e9f0ff;
+        }
         
         .ticket-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 15px;
             max-height: 300px;
             overflow-y: auto;
-            padding: 15px;
-            border: 1px solid var(--border-color);
+            padding: 10px;
+            border: 1px solid #eee;
             border-radius: 8px;
-            background-color: var(--bg-color);
         }
         
         .ticket-number {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-weight: 600;
+            background: #f0f4ff;
+            border: 1px solid #4361ee;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-weight: bold;
             font-family: monospace;
-            text-align: center;
-            color: var(--primary-color);
         }
-
+        
         .whatsapp-link {
             color: #25D366;
             font-weight: bold;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .whatsapp-link:hover { text-decoration: underline; }
+        
+        .whatsapp-link:hover {
+            text-decoration: underline;
+        }
+        
+        .duplicate {
+            background-color: #ffebee !important;
+            border: 1px solid #f44336;
+        }
+        
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .ticket-summary {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .ticket-summary-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            border-left: 4px solid #4361ee;
+        }
+        
+        .ticket-summary-item h3 {
+            color: #3a0ca3;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .ticket-summary-item p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .ticket-summary-item .ticket-count {
+            color: #3a0ca3;
+        }
+        
+        .ticket-summary-item .amount {
+            color: #28a745;
+        }
+        
+        .ticket-summary-item .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        
+        .ticket-summary-item .verified {
+            background: #e8f5e9;
+            color: #28a745;
+        }
+        
+        .ticket-summary-item .pending {
+            background: #fffde7;
+            color: #ff9800;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .ticket-summary {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                width: 100%;
+            }
+            
+            .filter-btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-crown"></i> Panel de Administración</h1>
-            <button class="btn-refresh" onclick="loadTransactions(true)">
-                <i class="fas fa-sync-alt"></i> Refrescar
+            <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Premium</h1>
+            <button class="btn-refresh" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Actualizar Datos
             </button>
         </div>
         
-        <div class="panel-section">
-            <h2><i class="fas fa-cogs"></i> Configuración de la Rifa</h2>
+        <div class="config-panel">
+            <h2><i class="fas fa-cog"></i> Configuración de la Rifa</h2>
             <div class="config-grid">
-                <div class="input-group">
+                <div class="config-item">
                     <label>Total de Boletos</label>
                     <input type="number" id="totalTickets" value="10000">
                 </div>
-                <div class="input-group">
+                <div class="config-item">
                     <label>Precio por Boleto (Bs.)</label>
                     <input type="number" id="ticketPrice" value="80">
                 </div>
-                <div class="input-group">
+                <div class="config-item">
                     <label>Fecha del Sorteo</label>
-                    <input type="text" id="raffleDate" placeholder="Ej: 30 de Diciembre">
+                    <input type="text" id="raffleDate" value="">
                 </div>
-                <div class="input-group">
+                <div class="config-item">
                     <label>URL Imagen Premio</label>
                     <input type="text" id="prizeImageUrl" value="https://i.ibb.co/RTbcLX0p/combo-ogra-2-0.jpg">
                 </div>
             </div>
+            <button class="btn-save" onclick="saveConfig()">
+                <i class="fas fa-save"></i> Guardar Configuración
+            </button>
         </div>
         
         <div class="stats">
             <div class="stat-card">
-                <i class="fas fa-hand-holding-dollar icon-sales"></i>
-                <div class="stat-info">
-                    <div class="stat-value" id="totalSales">Bs. 0</div>
-                    <div class="stat-label">INGRESOS (VERIFICADOS)</div>
-                </div>
+                <div class="stat-value" id="totalSales">0</div>
+                <div class="stat-label">VENTAS TOTALES</div>
             </div>
             <div class="stat-card">
-                <i class="fas fa-hourglass-half icon-pending"></i>
-                <div class="stat-info">
-                    <div class="stat-value" id="pendingCount">0</div>
-                    <div class="stat-label">TRANSACCIONES PENDIENTES</div>
-                </div>
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">PENDIENTES</div>
             </div>
             <div class="stat-card">
-                 <i class="fas fa-check-circle icon-verified"></i>
-                <div class="stat-info">
-                    <div class="stat-value" id="verifiedCount">0</div>
-                    <div class="stat-label">TRANSACCIONES VERIFICADAS</div>
-                </div>
+                <div class="stat-value" id="verifiedCount">0</div>
+                <div class="stat-label">VERIFICADOS</div>
             </div>
             <div class="stat-card">
-                <i class="fas fa-ticket icon-sold"></i>
-                <div class="stat-info">
-                    <div class="stat-value" id="soldTickets">0</div>
-                    <div class="stat-label">BOLETOS VENDIDOS</div>
-                </div>
+                <div class="stat-value" id="soldTickets">0</div>
+                <div class="stat-label">BOLETOS VENDIDOS</div>
             </div>
             <div class="stat-card">
-                 <i class="fas fa-layer-group icon-available"></i>
-                <div class="stat-info">
-                    <div class="stat-value" id="availableTickets">0</div>
-                    <div class="stat-label">BOLETOS DISPONIBLES</div>
-                </div>
+                <div class="stat-value" id="availableTickets">0</div>
+                <div class="stat-label">BOLETOS DISPONIBLES</div>
             </div>
         </div>
         
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula, referencia o teléfono..." onkeyup="handleSearch()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o referencia..." onkeyup="searchTransactions()">
             </div>
+            
             <div class="filters">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-                <button class="filter-btn" data-filter="pending">Pendientes</button>
-                <button class="filter-btn" data-filter="verified">Verificados</button>
+                <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
+                <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
+                <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
             </div>
         </div>
         
@@ -456,303 +662,648 @@
                         <th>Nombre</th>
                         <th>CI</th>
                         <th>Teléfono</th>
+                        <th>Email</th>
                         <th>Boletos</th>
                         <th>Referencia</th>
                         <th>Estado</th>
                         <th>Acciones</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="10" style="text-align:center; padding:30px;">Cargando transacciones...</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-    </div>
-
-    <div id="ticketsModal" class="modal">
-        <div class="modal-content">
-            <h2 id="modalTitle"></h2>
-            <p id="modalDescription"></p>
-            <div id="modalTicketList" class="ticket-list"></div>
-            <div class="modal-buttons">
-                <button id="modalCloseBtn" class="btn btn-secondary">Cerrar</button>
-                <button id="modalCopyBtn" class="btn">
-                    <i class="fas fa-copy"></i> Copiar Números
-                </button>
-                <button id="modalWhatsappBtn" class="btn btn-whatsapp">
-                    <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
-                </button>
+        
+        <div class="config-panel" style="margin-top: 30px;">
+            <h2><i class="fas fa-search"></i> Buscar Boletos</h2>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="ticketSearchInput" placeholder="Buscar por número de boleto, cédula, teléfono o referencia..." onkeyup="searchTickets()">
             </div>
+            <div id="ticketSearchResults" style="margin-top: 20px;"></div>
+        </div>
+        
+        <div class="footer">
+            <p>Sistema de Administración de Rifa Premium &copy; 2025 - Todos los derechos reservados</p>
         </div>
     </div>
-
 
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c"
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            totalTickets: 10000,
+            pricePerTicket: 80,
+            adminWhatsApp: "584127430912"
         };
-        
-        let allTransactions = [];
+
         let currentFilter = 'all';
         let currentSearch = '';
+        let currentTicketFilter = 'all';
         let duplicateReferences = new Set();
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
 
-        // --- CORE FUNCTIONS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            setupEventListeners();
-            loadTransactions(true);
-        });
-
-        function setupEventListeners() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelector('.filter-btn.active').classList.remove('active');
-                    e.target.classList.add('active');
-                    currentFilter = e.target.dataset.filter;
-                    renderTransactions();
-                });
-            });
-
-            const modal = document.getElementById('ticketsModal');
-            document.getElementById('modalCloseBtn').addEventListener('click', () => modal.classList.remove('open'));
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.classList.remove('open');
-            });
-        }
-        
-        let searchTimeout;
-        function handleSearch() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                currentSearch = document.getElementById('searchInput').value.toLowerCase();
-                renderTransactions();
-            }, 300);
+        function formatTicketNumber(number) {
+            return String(number).padStart(5, '0');
         }
 
-        async function loadTransactions(forceRefresh = false) {
-            if (allTransactions.length > 0 && !forceRefresh) {
-                renderTransactions();
-                return;
+        function cleanPhone(phone) {
+            let cleaned = phone.replace(/\D/g, '');
+            if (cleaned.startsWith('0')) {
+                cleaned = '58' + cleaned.substring(1);
             }
-            
-            const tbody = document.querySelector("#transactionsTable tbody");
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
+            return cleaned;
+        }
+
+        function openWhatsApp(phone) {
+            const cleanedPhone = cleanPhone(phone);
+            window.open(`https://wa.me/${cleanedPhone}`, '_blank');
+        }
+
+        async function getAllExistingTickets() {
+            const existingTickets = new Set();
+            let page = 0;
+            const pageSize = 1000;
+            let hasMore = true;
 
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=created_at.desc`, {
-                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
-                });
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                allTransactions = await response.json();
-                findDuplicates();
-                renderTransactions();
-                updateStats();
+                while (hasMore) {
+                    const response = await fetch(
+                        `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&order=ticket_number.asc&offset=${page * pageSize}&limit=${pageSize}`, 
+                        {
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        }
+                    );
+
+                    if (!response.ok) {
+                        const error = await response.text();
+                        throw new Error(`Error en la respuesta: ${response.status} - ${error}`);
+                    }
+
+                    const ticketsData = await response.json();
+                    
+                    if (ticketsData.length === 0) {
+                        hasMore = false;
+                        break;
+                    }
+
+                    ticketsData.forEach(ticket => {
+                        existingTickets.add(ticket.ticket_number);
+                    });
+
+                    if (ticketsData.length < pageSize) {
+                        hasMore = false;
+                    } else {
+                        page++;
+                    }
+                }
+                return existingTickets;
             } catch (error) {
-                console.error("Error loading transactions:", error);
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--danger-color);"><i class="fas fa-exclamation-triangle"></i> Error al cargar datos.</td></tr>`;
+                console.error("Error obteniendo tickets existentes:", error);
+                throw error;
             }
         }
 
-        // --- DATA PROCESSING & RENDERING ---
-        
-        function findDuplicates() {
-            const references = new Map();
-            const phones = new Map();
-            const ids = new Map();
+        async function generateTickets(transactionId, quantity) {
+            try {
+                const existingTickets = await getAllExistingTickets();
+                const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
+                const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
+                
+                if (availableTickets.length < quantity) {
+                    alert(`Error: Solo quedan ${availableTickets.length} boletos disponibles`);
+                    return false;
+                }
+                
+                const selectedTickets = [];
+                while (selectedTickets.length < quantity) {
+                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
+                    selectedTickets.push(availableTickets[randomIndex]);
+                    availableTickets.splice(randomIndex, 1);
+                }
+                
+                const ticketsToInsert = selectedTickets.map(ticketNumber => ({
+                    transaction_id: transactionId,
+                    ticket_number: ticketNumber,
+                    status: "ACTIVO"
+                }));
+                
+                const insertRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify(ticketsToInsert)
+                });
+                
+                if (!insertRes.ok) {
+                    const errorDetail = await insertRes.json();
+                    throw new Error(`Error insertando tickets: ${insertRes.status} - ${JSON.stringify(errorDetail)}`);
+                }
+                
+                return ticketsToInsert;
+            } catch (error) {
+                console.error("Error generando tickets:", error);
+                alert(`Error generando tickets: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/config.json');
+                const config = await response.json();
+                CONFIG.totalTickets = config.totalTickets;
+                CONFIG.pricePerTicket = config.pricePerTicket;
+                
+                document.getElementById('totalTickets').value = config.totalTickets;
+                document.getElementById('ticketPrice').value = config.pricePerTicket;
+                document.getElementById('raffleDate').value = config.raffleDate;
+                document.getElementById('prizeImageUrl').value = config.prizeImage;
+            } catch (error) {
+                console.log("Usando configuración por defecto");
+            }
+        }
+
+        async function saveConfig() {
+            const config = {
+                totalTickets: parseInt(document.getElementById('totalTickets').value),
+                pricePerTicket: parseInt(document.getElementById('ticketPrice').value),
+                raffleDate: document.getElementById('raffleDate').value,
+                prizeImage: document.getElementById('prizeImageUrl').value
+            };
             
-            allTransactions.forEach(t => {
-                if (t.reference) references.set(t.reference, (references.get(t.reference) || 0) + 1);
-                if (t.phone) phones.set(t.phone.replace(/\D/g, ''), (phones.get(t.phone.replace(/\D/g, '')) || 0) + 1);
-                if (t.id_number) ids.set(t.id_number, (ids.get(t.id_number) || 0) + 1);
+            localStorage.setItem('rifaConfig', JSON.stringify(config));
+            alert("Configuración guardada. Recuerda actualizar el archivo config.json en producción.");
+            loadTransactions();
+        }
+
+        async function loadTransactions() {
+            try {
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
+                
+                if (currentFilter === 'pending') {
+                    url += `&status=eq.PENDIENTE`;
+                } else if (currentFilter === 'verified') {
+                    url += `&status=eq.VERIFICADO`;
+                }
+                
+                if (currentSearch) {
+                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,reference.ilike.*${currentSearch}*)`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
+                });
+                
+                const transactions = await response.json();
+                
+                // Buscar duplicados
+                findDuplicates(transactions);
+                
+                renderTransactions(transactions);
+                await updateStats(transactions);
+            } catch (error) {
+                console.error("Error cargando transacciones:", error);
+                document.querySelector("#transactionsTable tbody").innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align:center; padding:30px; color:#dc3545;">
+                            <i class="fas fa-exclamation-triangle"></i> Error cargando transacciones
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function findDuplicates(transactions) {
+            const references = {};
+            const phones = {};
+            const ids = {};
+            
+            duplicateReferences = new Set();
+            duplicatePhones = new Set();
+            duplicateIds = new Set();
+            
+            transactions.forEach(transaction => {
+                // Referencias
+                if (transaction.reference) {
+                    if (references[transaction.reference]) {
+                        duplicateReferences.add(transaction.reference);
+                    } else {
+                        references[transaction.reference] = 1;
+                    }
+                }
+                
+                // Teléfonos
+                if (transaction.phone) {
+                    const cleanPhone = transaction.phone.replace(/\D/g, '');
+                    if (phones[cleanPhone]) {
+                        duplicatePhones.add(cleanPhone);
+                    } else {
+                        phones[cleanPhone] = 1;
+                    }
+                }
+                
+                // Cédulas
+                if (transaction.id_number) {
+                    if (ids[transaction.id_number]) {
+                        duplicateIds.add(transaction.id_number);
+                    } else {
+                        ids[transaction.id_number] = 1;
+                    }
+                }
             });
-
-            duplicateReferences = new Set([...references].filter(([k, v]) => v > 1).map(([k, v]) => k));
-            duplicatePhones = new Set([...phones].filter(([k, v]) => v > 1).map(([k, v]) => k));
-            duplicateIds = new Set([...ids].filter(([k, v]) => v > 1).map(([k, v]) => k));
         }
 
-        function updateStats() {
-            const totalTickets = parseInt(document.getElementById('totalTickets').value);
-            const ticketPrice = parseFloat(document.getElementById('ticketPrice').value);
-            
-            const verified = allTransactions.filter(t => t.status === 'VERIFICADO');
-            const pending = allTransactions.filter(t => t.status === 'PENDIENTE');
-
-            const totalSales = verified.reduce((sum, t) => sum + (t.tickets * ticketPrice), 0);
-            const soldTickets = verified.reduce((sum, t) => sum + t.tickets, 0);
-
-            document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString('es-VE')}`;
-            document.getElementById('pendingCount').textContent = pending.length;
-            document.getElementById('verifiedCount').textContent = verified.length;
-            document.getElementById('soldTickets').textContent = soldTickets.toLocaleString('es-VE');
-            document.getElementById('availableTickets').textContent = (totalTickets - soldTickets).toLocaleString('es-VE');
+        async function updateStats(transactions) {
+            try {
+                const existingTickets = await getAllExistingTickets();
+                const soldTickets = existingTickets.size;
+                const availableTickets = CONFIG.totalTickets - soldTickets;
+                
+                const verifiedTransactions = transactions.filter(t => t.status === 'VERIFICADO');
+                const pendingCount = transactions.filter(t => t.status === 'PENDIENTE').length;
+                const verifiedCount = verifiedTransactions.length;
+                const totalSales = verifiedTransactions.reduce((sum, t) => sum + (t.tickets * CONFIG.pricePerTicket), 0);
+                
+                document.getElementById('totalSales').textContent = `Bs. ${totalSales.toLocaleString()}`;
+                document.getElementById('pendingCount').textContent = pendingCount;
+                document.getElementById('verifiedCount').textContent = verifiedCount;
+                document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
+                document.getElementById('availableTickets').textContent = availableTickets.toLocaleString();
+            } catch (error) {
+                console.error("Error actualizando estadísticas:", error);
+                document.getElementById('totalSales').textContent = "Error";
+                document.getElementById('pendingCount').textContent = "Error";
+                document.getElementById('verifiedCount').textContent = "Error";
+                document.getElementById('soldTickets').textContent = "Error";
+                document.getElementById('availableTickets').textContent = "Error";
+            }
         }
 
-        function renderTransactions() {
+        function renderTransactions(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
 
-            const filtered = allTransactions.filter(t => {
-                const matchesFilter = currentFilter === 'all' || t.status.toLowerCase() === currentFilter;
-                const matchesSearch = !currentSearch ||
-                    t.name.toLowerCase().includes(currentSearch) ||
-                    t.id_number.toLowerCase().includes(currentSearch) ||
-                    t.reference.toLowerCase().includes(currentSearch) ||
-                    t.phone.includes(currentSearch);
-                return matchesFilter && matchesSearch;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;"><i class="fas fa-info-circle"></i> No se encontraron transacciones.</td></tr>`;
+            if (transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align:center; padding:30px;">
+                            <i class="fas fa-info-circle"></i> No se encontraron transacciones
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 
-            filtered.forEach(t => {
+            transactions.forEach(transaction => {
                 const row = document.createElement("tr");
-                const isDuplicateRef = duplicateReferences.has(t.reference);
-                const isDuplicatePhone = duplicatePhones.has(t.phone.replace(/\D/g, ''));
-                const isDuplicateId = duplicateIds.has(t.id_number);
+                row.classList.add(transaction.status === "VERIFICADO" ? "verified" : "pending");
+                
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
+                // Verificar si es duplicado
+                const cleanPhone = transaction.phone ? transaction.phone.replace(/\D/g, '') : '';
+                const isDuplicateRef = duplicateReferences.has(transaction.reference);
+                const isDuplicatePhone = duplicatePhones.has(cleanPhone);
+                const isDuplicateId = duplicateIds.has(transaction.id_number);
                 
                 row.innerHTML = `
-                    <td>${new Date(t.created_at).toLocaleString('es-VE')}</td>
-                    <td><b>${t.name}</b></td>
-                    <td class="${isDuplicateId ? 'duplicate-cell' : ''}">${t.id_number}</td>
-                    <td class="${isDuplicatePhone ? 'duplicate-cell' : ''}">
-                        <a href="https://wa.me/${t.phone.replace(/\D/g, '')}" target="_blank" class="whatsapp-link">${t.phone}</a>
+                    <td>${formattedDate}</td>
+                    <td><strong>${transaction.name}</strong></td>
+                    <td class="${isDuplicateId ? 'duplicate' : ''}">${transaction.id_number}</td>
+                    <td class="${isDuplicatePhone ? 'duplicate' : ''}">
+                        <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
+                            <i class="fab fa-whatsapp"></i> ${transaction.phone}
+                        </a>
                     </td>
-                    <td>${t.tickets}</td>
-                    <td class="${isDuplicateRef ? 'duplicate-cell' : ''}">${t.reference}</td>
-                    <td><span class="status-badge status-${t.status.toLowerCase()}">${t.status}</span></td>
+                    <td>${transaction.email || 'N/A'}</td>
+                    <td>${transaction.tickets}</td>
+                    <td class="${isDuplicateRef ? 'duplicate' : ''}"><code>${transaction.reference}</code></td>
                     <td>
-                        <div style="display:flex; gap: 8px;">
-                        ${t.status !== "VERIFICADO" ? 
-                            `<button class="btn btn-verify" onclick="verifyTransaction(${t.id}, ${t.tickets})"><i class="fas fa-check"></i> Verificar</button>` : 
-                            `<button class="btn btn-view" onclick="viewTickets(${t.id}, '${t.name}')"><i class="fas fa-eye"></i> Ver Boletos</button>`}
-                        <button class="btn btn-delete" onclick="deleteTransaction(${t.id})"><i class="fas fa-trash"></i></button>
-                        </div>
+                        <span class="status-badge">${transaction.status}</span>
+                    </td>
+                    <td>
+                        ${transaction.status !== "VERIFICADO" ? 
+                            `<button class="btn-verify" onclick="verifyPayment(${transaction.id}, ${transaction.tickets}, '${transaction.phone}')">
+                                <i class="fas fa-check-circle"></i> Verificar
+                            </button>` : 
+                            `<button class="btn-verified" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
+                                <i class="fas fa-ticket-alt"></i> Ver Tickets
+                            </button>`}
+                    </td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        // --- ACTIONS (VERIFY, DELETE, VIEW) ---
-
-        async function verifyTransaction(transactionId, quantity) {
-            if (!confirm(`¿Confirmas el pago y deseas generar ${quantity} boletos?`)) return;
-
-            try {
-                // 1. Get all existing ticket numbers
-                const existingTicketsResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, {
-                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
-                });
-                const existingTicketsData = await existingTicketsResponse.json();
-                const existingTicketNumbers = new Set(existingTicketsData.map(t => t.ticket_number));
-
-                // 2. Generate new, unique ticket numbers
-                const totalTickets = parseInt(document.getElementById('totalTickets').value);
-                const newTickets = [];
-                while (newTickets.length < quantity) {
-                    const ticketNumber = Math.floor(Math.random() * totalTickets) + 1;
-                    if (!existingTicketNumbers.has(ticketNumber)) {
-                        newTickets.push({ transaction_id: transactionId, ticket_number: ticketNumber, status: "ACTIVO" });
-                        existingTicketNumbers.add(ticketNumber);
-                    }
-                }
-                
-                // 3. Insert new tickets
-                const insertResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
-                    body: JSON.stringify(newTickets)
-                });
-                if (!insertResponse.ok) throw new Error('Failed to insert tickets');
-
-                // 4. Update transaction status
-                const updateResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
-                    body: JSON.stringify({ status: 'VERIFICADO' })
-                });
-                if (!updateResponse.ok) throw new Error('Failed to update transaction');
-                
-                alert('Transacción verificada y boletos generados!');
-                const transaction = allTransactions.find(t => t.id === transactionId);
-                showTicketsModal(transaction, newTickets.map(t => t.ticket_number));
-                loadTransactions(true);
-            } catch (error) {
-                console.error("Error verifying transaction:", error);
-                alert("Error al verificar la transacción.");
-            }
-        }
-
         async function deleteTransaction(transactionId) {
-            if (!confirm("¿Seguro que quieres eliminar esta transacción? Se borrarán también los boletos asociados. Esta acción es irreversible.")) return;
+            if (confirm("¿Estás seguro de eliminar esta transacción? Esta acción no se puede deshacer.")) {
+                try {
+                    const deleteRes = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        }
+                    });
+                    
+                    if (deleteRes.ok) {
+                        await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': CONFIG.supabaseKey,
+                                'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                            }
+                        });
+                        
+                        alert("Transacción eliminada correctamente");
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error eliminando transacción:", error);
+                    alert("Ocurrió un error al eliminar la transacción");
+                }
+            }
+        }
 
+        async function verifyPayment(transactionId, ticketQuantity, phone) {
+            if (confirm("¿Confirmas que el pago ha sido verificado y quieres generar los boletos?")) {
+                try {
+                    const tickets = await generateTickets(transactionId, ticketQuantity);
+                    
+                    if (!tickets) {
+                        return;
+                    }
+                    
+                    const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.supabaseKey,
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                        },
+                        body: JSON.stringify({ status: 'VERIFICADO' })
+                    });
+                    
+                    if (response.ok) {
+                        showTicketsModal(tickets, phone, transactionId);
+                        loadTransactions();
+                    } else {
+                        throw new Error("Error en la respuesta");
+                    }
+                } catch (error) {
+                    console.error("Error verificando pago:", error);
+                    alert("Ocurrió un error al verificar el pago");
+                }
+            }
+        }
+
+        function showTicketsModal(tickets, phone, transactionId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const formattedTickets = tickets.map(t => 
+                formatTicketNumber(t.ticket_number)
+            );
+            
+            const ticketNumbers = formattedTickets.join(', ');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-ticket-alt"></i> Tickets Generados</h2>
+                    <p>Se han generado <strong>${tickets.length} tickets</strong> para la transacción <code>#${transactionId}</code>:</p>
+                    <textarea id="ticketNumbers">${ticketNumbers}</textarea>
+                    <p>Puedes copiar los números o enviarlos directamente por WhatsApp al cliente.</p>
+                    <div class="modal-buttons">
+                        <button onclick="copyTicketNumbers()">
+                            <i class="fas fa-copy"></i> Copiar Números
+                        </button>
+                        <button class="btn-whatsapp" onclick="sendTicketsByWhatsApp('${phone}', '${ticketNumbers}')">
+                            <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                        </button>
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        async function viewTransactionTickets(transactionId, name) {
             try {
-                await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
-                    method: 'DELETE',
-                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
-                });
-
-                await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
-                    method: 'DELETE',
-                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
                 });
                 
-                alert('Transacción eliminada.');
-                loadTransactions(true);
+                const tickets = await response.json();
+                displayTicketsModal(tickets, name);
             } catch (error) {
-                console.error("Error deleting transaction:", error);
-                alert("Error al eliminar la transacción.");
+                console.error("Error obteniendo boletos:", error);
+                alert("Error al obtener boletos");
             }
         }
         
-        async function viewTickets(transactionId, name) {
+        function displayTicketsModal(tickets, name) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const formattedTickets = tickets.map(t => 
+                formatTicketNumber(t.ticket_number)
+            );
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="ticket-header">
+                        <h2><i class="fas fa-ticket-alt"></i> Boletos de ${name}</h2>
+                        <div>Total: <strong>${tickets.length}</strong></div>
+                    </div>
+                    
+                    <div class="ticket-summary">
+                        <div class="ticket-summary-item">
+                            <h3>Transacción</h3>
+                            <p>#${tickets[0].transaction_id}</p>
+                        </div>
+                        <div class="ticket-summary-item">
+                            <h3>Boletos</h3>
+                            <p class="ticket-count">${tickets.length}</p>
+                        </div>
+                        <div class="ticket-summary-item">
+                            <h3>Estado</h3>
+                            <p><span class="status verified">VERIFICADO</span></p>
+                        </div>
+                    </div>
+                    
+                    <h3>Números de Boletos:</h3>
+                    <div class="ticket-list">
+                        ${formattedTickets.map(t => `<span class="ticket-number">${t}</span>`).join('')}
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button onclick="copyTicketNumbers()">
+                            <i class="fas fa-copy"></i> Copiar Números
+                        </button>
+                        <button onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function copyTicketNumbers() {
+            const textarea = document.getElementById('ticketNumbers');
+            if (textarea) {
+                textarea.select();
+                document.execCommand('copy');
+                alert('¡Números copiados al portapapeles!');
+            }
+        }
+
+        function sendTicketsByWhatsApp(phone, ticketNumbers) {
+            const cleanedPhone = phone.replace(/[^0-9]/g, '');
+            const formattedPhone = cleanedPhone.startsWith('58') ? cleanedPhone : '58' + cleanedPhone;
+            
+            const message = encodeURIComponent(
+                `*TUS TICKETS PARA LA RIFA PREMIUM GANA CON YAIR*\n\n` +
+                `¡Gracias por tu compra! Aquí están los números de tus tickets:\n\n` +
+                `${ticketNumbers}\n\n` +
+                `¡Mucha suerte en el sorteo ! 🍀\n\n` +
+                `Atentamente,\nEquipo de gana con yair`
+            );
+            
+            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadTransactions();
+        }
+
+        function searchTransactions() {
+            currentSearch = document.getElementById('searchInput').value;
+            loadTransactions();
+        }
+        
+        async function searchTickets() {
+            const searchTerm = document.getElementById('ticketSearchInput').value.trim();
+            if (searchTerm.length < 3) {
+                document.getElementById('ticketSearchResults').innerHTML = '';
+                return;
+            }
+            
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number`, {
-                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(id_number.ilike.%25${searchTerm}%25,phone.ilike.%25${searchTerm}%25,reference.ilike.%25${searchTerm}%25)&select=*,tickets(ticket_number)`, {
+                    headers: {
+                        'apikey': CONFIG.supabaseKey,
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    }
                 });
-                const ticketData = await response.json();
-                const transaction = allTransactions.find(t => t.id === transactionId);
-                showTicketsModal(transaction, ticketData.map(t => t.ticket_number));
+                
+                const transactions = await response.json();
+                displayTransactionSearchResults(transactions);
             } catch (error) {
-                console.error("Error fetching tickets:", error);
-                alert("Error al cargar los boletos.");
+                console.error("Error buscando boletos:", error);
+                document.getElementById('ticketSearchResults').innerHTML = `
+                    <p style="color:#dc3545; padding:15px; text-align:center;">
+                        <i class="fas fa-exclamation-circle"></i> Error en la búsqueda
+                    </p>
+                `;
             }
         }
 
-        // --- MODAL & HELPERS ---
-        
-        function showTicketsModal(transaction, ticketNumbers) {
-            const modal = document.getElementById('ticketsModal');
-            document.getElementById('modalTitle').textContent = `Boletos de ${transaction.name}`;
-            document.getElementById('modalDescription').textContent = `Se han asignado ${ticketNumbers.length} boletos.`;
-            document.getElementById('modalTicketList').innerHTML = ticketNumbers
-                .map(num => `<div class="ticket-number">${String(num).padStart(5, '0')}</div>`)
-                .join('');
-
-            const formattedTickets = ticketNumbers.map(n => String(n).padStart(5, '0')).join(', ');
-
-            document.getElementById('modalCopyBtn').onclick = () => {
-                navigator.clipboard.writeText(formattedTickets).then(() => alert('Números copiados!'));
-            };
-
-            document.getElementById('modalWhatsappBtn').onclick = () => {
-                 const message = encodeURIComponent(
-                    `*¡Felicidades! Tus boletos para la Rifa Exclusive están listos* 🥳\n\n` +
-                    `Hola ${transaction.name}, gracias por tu compra. Aquí tienes tus números de la suerte:\n\n` +
-                    `*${formattedTickets}*\n\n` +
-                    `¡Te deseamos mucha suerte en el sorteo! 🍀\n\n` +
-                    `_Equipo Gana con Yair™_`
-                );
-                window.open(`https://wa.me/${transaction.phone.replace(/\D/g, '')}?text=${message}`, '_blank');
-            };
-
-            modal.classList.add('open');
+        function displayTransactionSearchResults(transactions) {
+            const container = document.getElementById('ticketSearchResults');
+            
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = `
+                    <p style="padding:15px; text-align:center; color:#6c757d;">
+                        <i class="fas fa-info-circle"></i> No se encontraron transacciones
+                    </p>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="ticket-results-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>CI</th>
+                            <th>Teléfono</th>
+                            <th>Boletos</th>
+                            <th>Ver Boletos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
+                html += `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${transaction.name}</td>
+                        <td>${transaction.id_number}</td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openWhatsApp('${transaction.phone}')" class="whatsapp-link">
+                                <i class="fab fa-whatsapp"></i> ${transaction.phone}
+                            </a>
+                        </td>
+                        <td>${transaction.tickets.length || 0}</td>
+                        <td>
+                            <button class="btn-verify" onclick="viewTransactionTickets(${transaction.id}, '${transaction.name}')">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadTransactions();
+            setInterval(loadTransactions, 120000);
+        });
     </script>
 </body>
 </html>
