@@ -3,1054 +3,648 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIFA PREMIUM - GANA CON YAIR™</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>RIFA EXCLUSIVE - GANA CON YAIR™</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --primary-dark: #4a00e0;
-            --primary-light: #8e2de2;
-            --accent-color: #ff416c;
-            --accent-gradient: linear-gradient(to right, #ff416c, #ff4b2b);
-            --success-color: #2ecc71;
-            --light-bg: #f8f9fa;
-            --dark-text: #2d3748;
-            --light-text: #718096;
+            /* Light Mode Palette */
+            --bg-color-light: #f8f9fe;
+            --surface-color-light: #ffffff;
+            --primary-color-light: #2c3e50; /* Azul Nocturno */
+            --secondary-color-light: #34495e; /* Azul Grisáceo */
+            --accent-color-light: #d4af37; /* Oro Viejo */
+            --text-primary-light: #2c3e50;
+            --text-secondary-light: #7f8c8d;
+            --border-color-light: #e5e7eb;
+            --shadow-color-light: rgba(44, 62, 80, 0.1);
+
+            /* Dark Mode Palette */
+            --bg-color-dark: #12181f;
+            --surface-color-dark: #1a222c;
+            --primary-color-dark: #e1e8f0;
+            --secondary-color-dark: #9aaebd;
+            --accent-color-dark: #e6c566; /* Oro Claro */
+            --text-primary-dark: #f8f9fe;
+            --text-secondary-dark: #9aaebd;
+            --border-color-dark: #2c3a4a;
+            --shadow-color-dark: rgba(0, 0, 0, 0.2);
+
+            /* Default to Light Mode */
+            --bg-color: var(--bg-color-light);
+            --surface-color: var(--surface-color-light);
+            --primary-color: var(--primary-color-light);
+            --secondary-color: var(--secondary-color-light);
+            --accent-color: var(--accent-color-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --border-color: var(--border-color-light);
+            --shadow: 0 10px 30px var(--shadow-color-light);
+            --shadow-sm: 0 4px 15px var(--shadow-color-light);
+            
             --border-radius: 20px;
-            --card-radius: 16px;
-            --shadow: 0 15px 35px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
-            --card-gradient: linear-gradient(145deg, #ffffff, #f5f7ff);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: var(--bg-color-dark);
+                --surface-color: var(--surface-color-dark);
+                --primary-color: var(--primary-color-dark);
+                --secondary-color: var(--secondary-color-dark);
+                --accent-color: var(--accent-color-dark);
+                --text-primary: var(--text-primary-dark);
+                --text-secondary: var(--text-secondary-dark);
+                --border-color: var(--border-color-dark);
+                --shadow: 0 10px 30px var(--shadow-color-dark);
+                --shadow-sm: 0 4px 15px var(--shadow-color-dark);
+            }
         }
         
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: var(--dark-text);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
-        }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at top right, rgba(106, 17, 203, 0.08), transparent 30%),
-                        radial-gradient(circle at bottom left, rgba(255, 65, 108, 0.08), transparent 30%);
-            z-index: -1;
+            transition: var(--transition);
         }
         
         .container {
             max-width: 500px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background-color: var(--surface-color);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             overflow: hidden;
-            position: relative;
-            z-index: 1;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transform: translateZ(0);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
         }
         
         header {
-            background: linear-gradient(145deg, var(--primary-color), var(--primary-dark));
+            background: linear-gradient(145deg, var(--secondary-color), var(--primary-color));
             color: white;
-            padding: 35px 20px;
+            padding: 40px 25px;
             text-align: center;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
-        header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: var(--accent-gradient);
-        }
-        
-        header::after {
-            content: "";
-            position: absolute;
-            bottom: -50px;
-            left: -50px;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
+
         .logo {
-            position: relative;
-            z-index: 2;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .logo i {
-            font-size: 52px;
-            background: linear-gradient(135deg, #ffffff, #e0e7ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-            animation: pulse 2s infinite;
+            font-size: 50px;
+            color: var(--accent-color);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            animation: star-glow 2s infinite ease-in-out;
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+
+        @keyframes star-glow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
         }
         
         header h1 {
-            font-size: 2.4rem;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 2;
+            font-size: 2.2rem;
             font-weight: 800;
             letter-spacing: 0.5px;
         }
         
         header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 2;
+            font-size: 1.1rem;
+            opacity: 0.8;
             font-weight: 300;
         }
         
         .step-container {
-            padding: 30px 25px;
+            padding: 35px 30px;
             display: none;
-            min-height: 500px;
             animation: fadeIn 0.5s ease;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .step-container.active {
             display: block;
         }
+
+        .step-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .step-title i {
+            color: var(--accent-color);
+        }
         
         .btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
             padding: 16px;
             margin: 15px 0;
             border: none;
-            border-radius: 15px;
-            background: linear-gradient(145deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            font-size: 17px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+            color: var(--surface-color);
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            text-align: center;
-            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-        
-        .btn:hover::after {
-            transform: translateX(100%);
+            box-shadow: 0 5px 15px var(--shadow-color-light);
         }
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+            box-shadow: 0 8px 20px var(--shadow-color-light);
+            filter: brightness(1.1);
         }
         
         .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 10px rgba(106, 17, 203, 0.4);
+            transform: translateY(0);
+            box-shadow: 0 4px 10px var(--shadow-color-light);
         }
-        
-        .btn-secondary {
-            background: #6c757d;
-            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+
+        .btn.btn-secondary {
+            background: var(--secondary-color);
+            color: var(--bg-color);
+            box-shadow: none;
+            border: 1px solid var(--border-color);
         }
-        
-        .btn-secondary:hover {
-            background: #5a6268;
-            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+
+        .btn.btn-secondary:hover {
+             background: var(--text-secondary);
         }
-        
+
         .btn-whatsapp {
             background: #25D366;
-            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            color: white;
         }
-        
         .btn-whatsapp:hover {
-            background: #1da851;
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+             background: #1DA851;
         }
         
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
         input, select {
             width: 100%;
-            padding: 16px 20px;
-            margin: 10px 0 20px;
-            border: 1px solid #e2e8f0;
-            border-radius: 15px;
-            font-size: 16px;
+            padding: 15px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
             transition: var(--transition);
-            background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
         }
         
         input:focus, select:focus {
-            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2), 0 4px 15px rgba(0,0,0,0.05);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
         }
         
-        input::placeholder {
-            color: #a0aec0;
+        .prize-image {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+            transition: var(--transition);
         }
-        
-        /* OCULTAR BARRA DE PROGRESO */
-        .progress-container {
-            display: none !important;
+        .prize-image:hover {
+            transform: scale(1.03);
         }
-        
+
         .prizes-container {
-            margin-top: 25px;
-            text-align: left;
-            padding: 0 15px;
-            background: white;
-            border-radius: var(--card-radius);
+            background: var(--bg-color);
+            border-radius: 16px;
             padding: 25px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.03);
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
         }
-        
-        .prizes-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: var(--accent-gradient);
-        }
-        
+
         .prizes-container h3 {
             text-align: center;
             margin-bottom: 20px;
-            color: var(--primary-dark);
             font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .prizes-container ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .prizes-container li {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-            position: relative;
-        }
-        
-        .prizes-container ul {
-            padding-left: 25px;
-        }
-        
-        .prizes-container li {
+            gap: 15px;
             margin-bottom: 15px;
             font-weight: 500;
-            position: relative;
-            padding-left: 25px;
         }
-        
-        .prizes-container li::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 10px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-        }
-        
-        .prizes-container li strong {
+
+        .prizes-container li i {
             color: var(--accent-color);
+            font-size: 1.2rem;
         }
-        
-        .ticket {
-            width: 340px;
-            background: linear-gradient(145deg, var(--primary-color), var(--primary-dark));
-            border-radius: 25px;
-            padding: 30px;
-            color: white;
+
+        .ticket-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .ticket-option {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            margin: 25px auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.2);
-            transform-style: preserve-3d;
-            perspective: 1000px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1.1rem;
         }
-        
-        .ticket::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background: repeating-linear-gradient(
-                45deg,
-                #ff416c,
-                #ff416c 10px,
-                #6a11cb 10px,
-                #6a11cb 20px
-            );
+
+        .ticket-option:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: translateY(-2px);
         }
-        
-        .ticket::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: repeating-linear-gradient(
-                to right,
-                transparent,
-                transparent 20px,
-                rgba(255,255,255,0.3) 20px,
-                rgba(255,255,255,0.3) 40px
-            );
+
+        .ticket-option.selected {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border-color: var(--accent-color);
+            font-weight: 700;
         }
-        
-        .ticket-header {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        
-        .ticket-number {
-            font-size: 60px;
-            font-weight: 800;
-            margin: 30px 0;
-            background: rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            border: 2px solid rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ticket-number::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: translateX(-100%);
-            animation: shine 2s infinite;
-        }
-        
-        @keyframes shine {
-            100% { transform: translateX(100%); }
-        }
-        
-        .ticket-footer {
-            font-size: 18px;
-            margin-top: 30px;
-            opacity: 0.9;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
-        
-        .ticket-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-            font-size: 16px;
-            padding: 0 15px;
-            font-weight: 300;
-        }
-        
-        .ticket-qr {
-            width: 110px;
-            height: 110px;
-            background: #fff;
-            margin: 25px auto;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-dark);
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ticket-qr::before {
-            content: "QR CODE";
-            position: absolute;
-            font-size: 10px;
-            bottom: 5px;
-            letter-spacing: 1px;
-        }
-        
-        .step-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--primary-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            font-size: 1.7rem;
-            position: relative;
-        }
-        
-        .step-title i {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-size: 1.8rem;
-        }
-        
+
         .amount-display {
             text-align: center;
-            font-size: 26px;
-            margin: 25px 0;
+            font-size: 1.8rem;
+            margin: 30px 0;
             font-weight: 700;
-            color: var(--primary-dark);
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            color: var(--text-primary);
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
         }
-        
-        .payment-details {
-            background: white;
-            border-radius: var(--card-radius);
-            padding: 25px;
-            margin: 25px 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.03);
+        .amount-display strong {
+            color: var(--accent-color);
         }
-        
-        .payment-details::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--success-color), var(--primary-light));
-        }
-        
-        .payment-details h3 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: var(--primary-dark);
-            font-size: 1.4rem;
-        }
-        
-        .payment-details p {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .payment-details p:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .payment-details strong {
-            color: var(--primary-dark);
-            min-width: 100px;
-            text-align: left;
-        }
-        
-        .confirmation-icon {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .confirmation-icon i {
-            font-size: 90px;
-            background: linear-gradient(135deg, var(--success-color), var(--primary-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 5px 10px rgba(46, 204, 113, 0.3));
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            opacity: 0;
-        }
-        
-        .floating {
-            position: absolute;
-            animation: float 15s infinite ease-in-out;
-            opacity: 0.1;
-            z-index: 0;
-        }
-        
-        .floating:nth-child(1) {
-            top: 10%;
-            left: 5%;
-            width: 80px;
-            height: 80px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            animation-delay: 0s;
-        }
-        
-        .floating:nth-child(2) {
-            top: 60%;
-            right: 10%;
-            width: 100px;
-            height: 100px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            animation-delay: 2s;
-        }
-        
-        .floating:nth-child(3) {
-            top: 30%;
-            right: 20%;
-            width: 60px;
-            height: 60px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            animation-delay: 4s;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(180deg); }
-            100% { transform: translateY(0) rotate(360deg); }
-        }
-        
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-            gap: 10px;
-        }
-        
-        .step-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #e2e8f0;
-            transition: var(--transition);
-        }
-        
-        .step-dot.active {
-            background: var(--primary-color);
-            transform: scale(1.2);
-        }
-        
-        /* Nuevos estilos para selector de país */
+
         .phone-input-container {
             display: flex;
             gap: 10px;
+        }
+        .country-selector { flex: 1; }
+        .phone-input { flex: 2; }
+        
+        .payment-details {
+            background-color: var(--bg-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
+        }
+        .payment-details h3 {
             margin-bottom: 20px;
-        }
-        
-        .country-selector {
-            flex: 1;
-            position: relative;
-        }
-        
-        .country-selector select {
-            padding-right: 40px;
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-        
-        .phone-input {
-            flex: 2;
-        }
-        
-        .phone-input input {
-            width: 100%;
-        }
-        
-        /* Nuevos estilos para imagen del premio */
-        .prize-image {
-            width: 100%;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            display: block;
-            max-width: 100%;
-            transition: transform 0.5s ease;
-        }
-        
-        .prize-image:hover {
-            transform: scale(1.02);
-        }
-        
-        /* Mejoras para selección de boletos */
-        .ticket-selection {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .ticket-option {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 15px;
-            padding: 15px;
             text-align: center;
+        }
+        .payment-details p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+        .payment-details p:last-child {
+            border: none;
+        }
+        .payment-details strong {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .payment-value {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
             cursor: pointer;
             transition: var(--transition);
-            font-weight: 600;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .copy-btn:hover {
+            color: var(--accent-color);
         }
         
-        .ticket-option:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(106, 17, 203, 0.15);
-        }
-        
-        .ticket-option.selected {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.25);
-        }
-        
-        .ticket-input-container {
-            margin-bottom: 20px;
-        }
-        
-        .ticket-input-container input {
-            text-align: center;
-            font-weight: 600;
-            font-size: 18px;
+        .confirmation-icon i {
+            font-size: 80px;
+            color: #2ecc71;
+            animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
-        /* Nuevos estilos para normativas */
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
         .normativas-container {
             margin-top: 25px;
-            border-radius: var(--card-radius);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
         }
-
         .btn-normativas {
             width: 100%;
             padding: 16px;
-            background: #f8f9fa;
+            background: var(--bg-color);
             border: none;
             text-align: left;
             font-weight: 600;
-            color: var(--primary-dark);
+            color: var(--text-primary);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: var(--transition);
         }
-
-        .btn-normativas:hover {
-            background: #e9ecef;
+        .btn-normativas i {
+             transition: var(--transition);
         }
-
+        .btn-normativas.active i {
+             transform: rotate(180deg);
+        }
         .normativas-content {
-            background: white;
-            padding: 0;
+            padding: 0 25px;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
+            transition: max-height 0.4s ease, padding 0.4s ease;
         }
-
         .normativas-content.active {
             padding: 25px;
             max-height: 1000px;
         }
 
-        .normativas-content ul {
-            padding-left: 20px;
-            margin: 15px 0;
-        }
-
-        .normativas-content li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        /* Estilo para mensajes de error */
         .error-message {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: -15px;
-            margin-bottom: 15px;
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
             display: none;
         }
         
-        /* Nuevos estilos para navegación entre pasos */
         .step-navigation {
             display: flex;
             justify-content: space-between;
+            gap: 15px;
             margin-top: 20px;
         }
         
         .step-navigation button {
-            width: 48%;
+            width: 100%;
         }
-        
-        /* Mejoras visuales para el paso de verificación */
-        .verification-step {
-            text-align: center;
+
+        .ticket-result-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
         }
-        
-        .verification-input {
-            max-width: 300px;
-            margin: 0 auto;
+        .ticket-result-card p {
+            margin-bottom: 8px;
         }
-        
-        /* Efectos visuales mejorados */
-        .glow {
-            animation: glow 2s infinite alternate;
+        .ticket-numbers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
         }
-        
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 10px -10px var(--primary-color);
-            }
-            to {
-                box-shadow: 0 0 20px 5px var(--primary-color);
-            }
+        .ticket-number-badge {
+            background-color: color-mix(in srgb, var(--accent-color) 20%, transparent);
+            color: var(--accent-color);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 600;
         }
-        
-        /* Responsive improvements */
+
+        /* Responsive */
         @media (max-width: 480px) {
-            .container {
-                border-radius: 15px;
-            }
-            
-            header {
-                padding: 25px 15px;
-            }
-            
-            header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .step-container {
-                padding: 20px 15px;
-            }
-            
-            .ticket-selection {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .phone-input-container {
-                flex-direction: column;
-            }
+            body { padding: 10px; }
+            .container { border-radius: 15px; }
+            .step-container { padding: 25px 20px; }
+            header { padding: 30px 20px; }
+            header h1 { font-size: 1.9rem; }
+            .ticket-selection { gap: 10px; }
+            .phone-input-container { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="floating"></div>
-    <div class="floating"></div>
-    <div class="floating"></div>
     
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-trophy"></i>
+                <i class="fas fa-star"></i>
             </div>
-            <h1>RIFA PREMIUM</h1>
+            <h1>RIFA EXCLUSIVE</h1>
             <p>GANA CON YAIR™</p>
         </header>
 
         <div id="step1" class="step-container active">
-            <div style="text-align: center;">
-                <div class="prize-container">
-                    <img id="prizeImage" class="prize-image" alt="Premio">
-                </div>
-                
-                <!-- Barra de progreso oculta pero funcional -->
-                <div class="progress-container" style="display: none !important;">
-                    <div class="progress-bar">
-                        <div class="progress" id="progressBar"></div>
-                    </div>
-                    <div class="progress-stats">
-                        <div>Vendido: <span id="soldPercentage">0%</span></div>
-                        <div>Disponible: <span id="availablePercentage">100%</span></div>
-                    </div>
-                </div>
-                
-                <div class="prizes-container">
-                    <h3><i class="fas fa-gift"></i> Premios</h3>
-                    <ul id="prizesList">
-                    </ul>
-                </div>
-                
-                <button id="startBtn" class="btn glow">
-                    <i class="fas fa-play"></i> Comenzar
-                </button>
-                
-                <button id="checkTicketsBtn" class="btn" style="background: var(--primary-light); margin-top: 15px;">
-                    <i class="fas fa-search"></i> Verificar mis boletos
-                </button>
+            <img id="prizeImage" class="prize-image" alt="Premio Principal">
+            
+            <div class="prizes-container">
+                <h3><i class="fas fa-award"></i> Tabla de Premios</h3>
+                <ul id="prizesList"></ul>
+            </div>
+            
+            <button id="startBtn" class="btn">
+                <i class="fas fa-ticket"></i> Comprar Boletos
+            </button>
+            
+            <button id="checkTicketsBtn" class="btn btn-secondary">
+                <i class="fas fa-search"></i> Verificar mis Boletos
+            </button>
 
-                <!-- Sección de normativas -->
-                <div class="normativas-container">
-                    <button id="toggleNormativas" class="btn-normativas">Normativas de Pago y Adquisición de Boletos <i class="fas fa-chevron-down"></i></button>
-                    <div id="normativasContent" class="normativas-content">
-                        <p>Con el objetivo de garantizar un proceso transparente y ordenado, se informa lo siguiente:</p>
-                        <ul>
-                            <li><strong>Exactitud en el Pago:</strong> Los pagos deben realizarse por el monto exacto correspondiente a la cantidad de boletos solicitados. No se aceptan pagos por montos superiores o inferiores.</li>
-                            <li><strong>Política de Reembolsos:</strong> Es importante destacar que no se realizan reembolsos bajo ninguna circunstancia.</li>
-                            <li><strong>Pagos en Excedente:</strong> En el caso excepcional de un depósito por un monto superior, los fondos adicionales no serán reembolsados. En su lugar, se convertirán automáticamente en boletos para la rifa actual (siempre que haya disponibilidad) o para la siguiente edición.</li>
-                            <li><strong>Compra Mínima:</strong> La compra mínima es de dos (2) boletos. Si el pago realizado corresponde a un solo boleto pero se solicitaron dos, el pago no será verificado y por lo tanto, los boletos no quedarán asignados.</li>
-                            <li><strong>Referencia de Pago:</strong> Cada transacción debe incluir una referencia de pago única de 6 dígitos. Si se detecta una referencia duplicada, ninguno de los boletos asociados será verificado hasta que se aclare la situación.</li>
-                            <li><strong>Para Agilizar su Verificación:</strong> Es imprescindible que al realizar su transferencia o depósito, incluya en el concepto los últimos 6 dígitos de su referencia de pago. Esto agilizará significativamente la validación de su transacción.</li>
-                        </ul>
-                        <p>Agradecemos su comprensión y cooperación para que todo el proceso se lleve a cabo de manera eficiente.</p>
-                    </div>
+            <div class="normativas-container">
+                <button id="toggleNormativas" class="btn-normativas">
+                    <span>Normas de la Rifa</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="normativasContent" class="normativas-content">
+                    <p>Para garantizar un proceso transparente y justo para todos, por favor lea las siguientes normas:</p>
+                    <ul>
+                        <li><strong>Pago Exacto:</strong> Realice el pago por el monto exacto de los boletos solicitados.</li>
+                        <li><strong>No Hay Reembolsos:</strong> Una vez realizada la compra, no se efectuarán reembolsos.</li>
+                        <li><strong>Pagos Excedentes:</strong> Si realiza un pago por un monto superior, el excedente se acreditará como boletos adicionales (si hay disponibilidad) o para futuras rifas.</li>
+                        <li><strong>Compra Mínima:</strong> Se requiere una compra mínima de dos (2) boletos.</li>
+                        <li><strong>Referencia Única:</strong> Utilice una referencia de pago única. Referencias duplicadas requerirán aclaración antes de validar los boletos.</li>
+                        <li><strong>Agilizar Verificación:</strong> Incluya los 6 dígitos de la referencia en el concepto del pago para una validación más rápida.</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <div id="step2" class="step-container">
-            <div class="step-indicator">
-                <div class="step-dot"></div>
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-            </div>
-            
-            <h2 class="step-title"><i class="fas fa-ticket-alt"></i> ¿Cuántos boletos?</h2>
-            
-            <!-- NOTA DE COMPRA MÍNIMA -->
-            <p style="text-align: center; color: var(--primary-dark); font-weight: 500; margin-bottom: 20px;">
-                <i class="fas fa-info-circle"></i> Mínimo de compra: 2 boletos
+            <h2 class="step-title"><i class="fas fa-hashtag"></i> Elige la cantidad</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-top: -20px; margin-bottom: 20px;">
+                Compra mínima: 2 boletos.
             </p>
             
             <div class="ticket-selection">
-                <!-- SE ELIMINÓ LA OPCIÓN DE 1 BOLETO -->
-                <div class="ticket-option" data-quantity="2"><span>2</span></div>
-                <div class="ticket-option" data-quantity="5"><span>5</span></div>
-                <div class="ticket-option" data-quantity="10"><span>10</span></div>
-                <div class="ticket-option" data-quantity="20"><span>20</span></div>
-                <div class="ticket-option" data-quantity="30"><span>30</span></div>
-                <div class="ticket-option" data-quantity="40"><span>40</span></div>
-                <div class="ticket-option" data-quantity="50"><span>50</span></div>
+                <div class="ticket-option" data-quantity="2">2</div>
+                <div class="ticket-option" data-quantity="5">5</div>
+                <div class="ticket-option" data-quantity="10">10</div>
+                <div class="ticket-option" data-quantity="20">20</div>
+                <div class="ticket-option" data-quantity="50">50</div>
+                <div class="ticket-option" data-quantity="100">100</div>
             </div>
             
-            <div class="ticket-input-container">
-                <!-- SE ESTABLECIÓ MÍNIMO DE 2 BOLETOS -->
+            <div class="input-group">
+                <label for="ticketQuantityInput">Otra cantidad</label>
                 <input type="number" id="ticketQuantityInput" min="2" value="2" required>
             </div>
-            <p style="text-align:center; color: var(--light-text);">Precio por boleto: <strong id="ticketPrice" style="color: var(--primary-dark);">Bs. 0</strong></p>
+            <p style="text-align:center; color: var(--text-secondary);">Precio por boleto: <strong id="ticketPrice" style="color: var(--text-primary);">Bs. 0</strong></p>
+            
             <div class="amount-display">Total: <strong id="totalAmount">0</strong> Bs.</div>
             
             <div class="step-navigation">
-                <button id="prevBtn2" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Atrás
-                </button>
-                <button id="continueToInfo" class="btn">
-                    Continuar <i class="fas fa-arrow-right"></i>
-                </button>
+                <button id="prevBtn2" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
+                <button id="continueToInfo" class="btn">Continuar <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
 
         <div id="step3" class="step-container">
-            <div class="step-indicator">
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
+            <h2 class="step-title"><i class="fas fa-user-check"></i> Completa tus Datos</h2>
+            <div class="input-group">
+                <label for="fullName">Nombre completo</label>
+                <input type="text" id="fullName" placeholder="Ej: Juan Pérez" required>
+                <div class="error-message" id="fullNameError"></div>
+            </div>
+            <div class="input-group">
+                <label for="idNumber">Cédula de identidad</label>
+                <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
+                 <div class="error-message" id="idNumberError"></div>
             </div>
             
-            <h2 class="step-title"><i class="fas fa-user"></i> Tus datos</h2>
-            <label>Nombre completo</label>
-            <input type="text" id="fullName" placeholder="Ej: María Rodríguez" required>
-            <label>Cédula de identidad</label>
-            <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
-            
-            <!-- NUEVO CAMPO DE TELÉFONO CON PAÍS -->
-            <label>Teléfono</label>
-            <div class="phone-input-container">
-                <div class="country-selector">
-                    <select id="countryCode" required>
-                        <option value="58" data-country="VE" selected>🇻🇪 Venezuela (+58)</option>
-                        <option value="1" data-country="US">🇺🇸 USA (+1)</option>
-                        <option value="34" data-country="ES">🇪🇸 España (+34)</option>
-                        <option value="52" data-country="MX">🇲🇽 México (+52)</option>
-                        <option value="54" data-country="AR">🇦🇷 Argentina (+54)</option>
-                        <option value="55" data-country="BR">🇧🇷 Brasil (+55)</option>
-                        <option value="51" data-country="PE">🇵🇪 Perú (+51)</option>
-                        <option value="56" data-country="CL">🇨🇱 Chile (+56)</option>
-                        <option value="57" data-country="CO">🇨🇴 Colombia (+57)</option>
-                        <option value="593" data-country="EC">🇪🇨 Ecuador (+593)</option>
-                        <option value="507" data-country="PA">🇵🇦 Panamá (+507)</option>
-                        <option value="506" data-country="CR">🇨🇷 Costa Rica (+506)</option>
-                        <option value="502" data-country="GT">🇬🇹 Guatemala (+502)</option>
-                        <option value="503" data-country="SV">🇸🇻 El Salvador (+503)</option>
-                        <option value="504" data-country="HN">🇭🇳 Honduras (+504)</option>
-                        <option value="505" data-country="NI">🇳🇮 Nicaragua (+505)</option>
-                        <option value="591" data-country="BO">🇧🇴 Bolivia (+591)</option>
-                        <option value="595" data-country="PY">🇵🇾 Paraguay (+595)</option>
-                        <option value="598" data-country="UY">🇺🇾 Uruguay (+598)</option>
-                        <option value="53" data-country="CU">🇨🇺 Cuba (+53)</option>
-                        <option value="33" data-country="FR">🇫🇷 Francia (+33)</option>
-                        <option value="44" data-country="GB">🇬🇧 Reino Unido (+44)</option>
-                        <option value="49" data-country="DE">🇩🇪 Alemania (+49)</option>
-                        <option value="39" data-country="IT">🇮🇹 Italia (+39)</option>
-                    </select>
+            <div class="input-group">
+                 <label for="countryCode">Teléfono</label>
+                <div class="phone-input-container">
+                    <div class="country-selector">
+                        <select id="countryCode" required>
+                            <option value="58" data-country="VE" selected>🇻🇪 +58</option>
+                            <option value="1" data-country="US">🇺🇸 +1</option>
+                            <option value="34" data-country="ES">🇪🇸 +34</option>
+                            <option value="57" data-country="CO">🇨🇴 +57</option>
+                            <option value="51" data-country="PE">🇵🇪 +51</option>
+                            <option value="56" data-country="CL">🇨🇱 +56</option>
+                        </select>
+                    </div>
+                    <div class="phone-input">
+                        <input type="tel" id="phoneNumber" placeholder="412 123 4567" required>
+                    </div>
                 </div>
-                <div class="phone-input">
-                    <input type="tel" id="phoneNumber" placeholder="Número de teléfono" required>
-                </div>
+                 <div class="error-message" id="phoneError"></div>
             </div>
             
-            <label>Correo electrónico</label>
-            <input type="email" id="email" placeholder="Ej: usuario@ejemplo.com" required>
+            <div class="input-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" placeholder="juan.perez@correo.com" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
             
             <div class="step-navigation">
-                <button id="prevBtn3" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Atrás
-                </button>
-                <button id="continueToPayment" class="btn">
-                    Continuar <i class="fas fa-arrow-right"></i>
-                </button>
+                <button id="prevBtn3" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
+                <button id="continueToPayment" class="btn">Continuar <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
 
         <div id="step4" class="step-container">
-            <div class="step-indicator">
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-            </div>
-            
-            <h2 class="step-title"><i class="fas fa-credit-card"></i> Método de pago</h2>
-            <div style="margin-bottom:25px;">
+            <h2 class="step-title"><i class="fas fa-wallet"></i> Realiza tu Pago</h2>
+            <div class="input-group">
+                 <label for="paymentMethod">Método de pago</label>
                 <select id="paymentMethod" required>
-                    <!-- PAGO MÓVIL AHORA ES LA PRIMERA OPCIÓN -->
                     <option value="mobile">Pago Móvil</option>
                     <option value="bank">Transferencia Bancaria</option>
-                    <!-- NUEVO MÉTODO ZINLI -->
                     <option value="zinli">Zinli</option>
                 </select>
             </div>
 
             <div id="mobileDetails" class="payment-details">
                 <h3>Datos para Pago Móvil</h3>
-                <p><strong>Banco:</strong> <span id="mobileBank">Banco de Venezuela</span></p>
-                <p><strong>Teléfono:</strong> <span id="mobilePhone">0412-0479871</span></p>
-                <p><strong>Cédula:</strong> <span id="mobileId">V-25441167</span></p>
-                <p><strong>Monto:</strong> <span id="mobileAmount">0</span> Bs.</p>
+                <p><strong>Banco:</strong> <span class="payment-value" id="mobileBank"></span></p>
+                <p><strong>Teléfono:</strong> <span class="payment-value" id="mobilePhone-value"><span id="mobilePhone"></span> <button class="copy-btn" data-copy-target="mobilePhone"><i class="far fa-copy"></i></button></span></p>
+                <p><strong>Cédula:</strong> <span class="payment-value" id="mobileId"></span></p>
+                <p><strong>Monto:</strong> <span class="payment-value" style="color: var(--accent-color); font-weight: 700;"><span id="mobileAmount">0</span> Bs.</span></p>
             </div>
 
             <div id="bankDetails" class="payment-details" style="display:none;">
-                <h3>Datos para transferencia</h3>
-                <p><strong>Banco:</strong> <span id="bankName">Banco de Venezuela</span></p>
-                <p><strong>Titular:</strong> <span id="accountHolder">YAIR TROYA</span></p>
-                <p><strong>Cédula:</strong> <span id="accountRif">V-25441167</span></p>
-                <p><strong>Cuenta:</strong> <span id="accountNumber">0102-0391-1900-0119-0401</span></p>
-                <p><strong>Monto:</strong> <span id="paymentAmount">0</span> Bs.</p>
+                <h3>Datos para Transferencia</h3>
+                <p><strong>Banco:</strong> <span class="payment-value" id="bankName"></span></p>
+                <p><strong>Titular:</strong> <span class="payment-value" id="accountHolder"></span></p>
+                <p><strong>Cédula:</strong> <span class="payment-value" id="accountRif"></span></p>
+                <p><strong>Cuenta:</strong> <span class="payment-value" id="accountNumber-value"><span id="accountNumber"></span> <button class="copy-btn" data-copy-target="accountNumber"><i class="far fa-copy"></i></button></span></p>
+                <p><strong>Monto:</strong> <span class="payment-value" style="color: var(--accent-color); font-weight: 700;"><span id="paymentAmount">0</span> Bs.</span></p>
             </div>
-
-            <!-- NUEVA SECCIÓN PARA ZINLI -->
+            
             <div id="zinliDetails" class="payment-details" style="display:none;">
                 <h3>Datos para Pago con Zinli</h3>
-                <p><strong>Correo:</strong> ganaconyair@gmail.com</p>
-                <p><strong>Monto:</strong> <span id="zinliAmount">0</span> Bs.</p>
+                <p><strong>Correo:</strong> <span class="payment-value" id="zinliEmail-value"><span id="zinliEmail"></span> <button class="copy-btn" data-copy-target="zinliEmail"><i class="far fa-copy"></i></button></span></p>
+                <p><strong>Monto:</strong> <span class="payment-value" style="color: var(--accent-color); font-weight: 700;"><span id="zinliAmount">0</span> Bs.</span></p>
             </div>
 
-            <div style="margin:25px 0;">
-                <label>Número de referencia (6 dígitos)</label>
-                <input type="text" id="referenceNumber" placeholder="Ej: 123456" maxlength="6" pattern="\d{6}" required>
-                <div id="referenceError" class="error-message"></div>
+            <div class="input-group">
+                <label for="referenceNumber">Número de referencia (últimos 6 dígitos)</label>
+                <input type="text" id="referenceNumber" placeholder="123456" maxlength="6" pattern="\d{6}" required>
+                <div class="error-message" id="referenceError">La referencia debe tener 6 dígitos.</div>
             </div>
 
             <button id="whatsappBtn" class="btn btn-whatsapp">
-                <i class="fab fa-whatsapp"></i> Enviar comprobante por WhatsApp
+                <i class="fab fa-whatsapp"></i> Reportar Pago por WhatsApp
             </button>
             
             <div class="step-navigation">
-                <button id="prevBtn4" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Atrás
-                </button>
+                <button id="prevBtn4" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
             </div>
         </div>
 
@@ -1060,43 +654,34 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h2 class="step-title" style="font-size: 2rem;">¡Pago Reportado!</h2>
-                <p style="margin:30px 0; font-size:18px; line-height:1.7; max-width: 400px; margin-left: auto; margin-right: auto;">
-                    Su compra está siendo procesada. La verificación puede tardar de 5 minutos a 24 horas.<br><br>
-                    Soporte: <strong>0424-4955900</strong>
+                <p style="margin:20px 0 30px; font-size:1.1rem; line-height:1.7;">
+                    Tu compra está siendo procesada. La verificación puede tardar entre <strong>5 minutos y 24 horas</strong>.
                 </p>
-                <p style="font-size:18px; margin-bottom: 10px;">Tu número de referencia es:</p>
-                <div style="background: white; padding:20px; border-radius:15px; margin:20px auto; font-size:22px; font-weight:bold; max-width: 300px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border: 2px dashed var(--success-color);">
+                <p style="font-size:1rem; margin-bottom: 10px;">Tu número de referencia es:</p>
+                <div style="background: var(--bg-color); padding:15px; border-radius:12px; margin:10px auto; font-size:1.8rem; font-weight:bold; max-width: 250px; border: 2px dashed #2ecc71;">
                     <span id="reportReference"></span>
                 </div>
-                <button id="returnHome" class="btn" style="max-width: 250px; margin: 30px auto 10px;">
-                    <i class="fas fa-home"></i> Volver al inicio
+                <button id="returnHome" class="btn" style="margin-top: 30px;">
+                    <i class="fas fa-home"></i> Volver al Inicio
                 </button>
             </div>
         </div>
         
-        <div id="step6" class="step-container verification-step">
-            <div class="step-indicator">
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot active"></div>
-            </div>
+        <div id="step6" class="step-container">
+            <h2 class="step-title"><i class="fas fa-receipt"></i> Verificar mis Boletos</h2>
             
-            <h2 class="step-title"><i class="fas fa-ticket-alt"></i> Verificar Boletos</h2>
-            
-            <div style="margin:25px 0;">
-                <label>Ingresa tu número de cédula</label>
-                <input type="text" id="verifyId" placeholder="Ej: V-12345678" class="verification-input" required>
-                <button id="verifyTicketsBtn" class="btn" style="max-width: 250px; margin: 20px auto;">
-                    <i class="fas fa-search"></i> Buscar Boletos
-                </button>
+            <div class="input-group">
+                <label for="verifyId">Ingresa tu número de cédula</label>
+                <input type="text" id="verifyId" placeholder="Ej: V-12345678" required>
             </div>
+            <button id="verifyTicketsBtn" class="btn">
+                <i class="fas fa-search"></i> Buscar
+            </button>
             
             <div id="ticketResults" style="margin-top: 30px;"></div>
             
-            <button id="backFromVerify" class="btn btn-secondary" style="max-width: 250px; margin: 30px auto 10px;">
-                <i class="fas fa-arrow-left"></i> Volver al inicio
+            <button id="backFromVerify" class="btn btn-secondary" style="margin-top: 20px;">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
             </button>
         </div>
     </div>
@@ -1106,205 +691,275 @@
             adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            adminPanelUrl: "https://ganaconyair.vercel.app/admin",
             totalTickets: 10000,
             pricePerTicket: 80,
-            raffleDate: "",
             prizeImage: "https://i.ibb.co/RTbcLX0p/combo-ogra-2-0.jpg",
             prizes: [
-                "1er Premio: <strong>Combo Hogar </strong>",
-                "2do Premio: <strong>300 dólares</strong>",
-                "3er Premio: <strong>Comprador de más tickets: 200 dólares</strong>"
+                { icon: "fa-gem", text: "1er Premio: <strong>Combo Hogar Premium</strong>" },
+                { icon: "fa-dollar-sign", text: "2do Premio: <strong>300 USD</strong>" },
+                { icon: "fa-trophy", text: "3er Premio: <strong>200 USD al mayor comprador</strong>" }
             ],
             bankDetails: {
                 name: "Banco de Venezuela",
                 holder: "YAIR TROYA",
                 id: "V-25441167",
-                account: "0102-0391-1900-0119-0401"
+                account: "01020391190001190401"
             },
             mobileDetails: {
                 bank: "Banco de Venezuela",
-                phone: "0412-0479871",
+                phone: "04120479871",
                 id: "V-25441167"
-            }
+            },
+            zinliEmail: "ganaconyair@gmail.com"
         };
 
         let currentStep = 1;
-        let soldTickets = 0;
 
-        async function init() {
+        // --- CORE FUNCTIONS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupInitialConfig();
+            setupEventListeners();
+            updateTicketUI();
+            
+            // Set initial selection
+            document.querySelector('.ticket-option[data-quantity="2"]').classList.add('selected');
+        });
+
+        function setupInitialConfig() {
             document.getElementById('prizeImage').src = CONFIG.prizeImage;
             document.getElementById('ticketPrice').textContent = `Bs. ${CONFIG.pricePerTicket}`;
             
+            // Bank Details
             document.getElementById('bankName').textContent = CONFIG.bankDetails.name;
             document.getElementById('accountHolder').textContent = CONFIG.bankDetails.holder;
             document.getElementById('accountRif').textContent = CONFIG.bankDetails.id;
-            document.getElementById('accountNumber').textContent = CONFIG.bankDetails.account;
-            
+            document.getElementById('accountNumber').textContent = CONFIG.bankDetails.account.replace(/(\d{4})(?=\d)/g, '$1-');
+
+            // Mobile Payment
             document.getElementById('mobileBank').textContent = CONFIG.mobileDetails.bank;
             document.getElementById('mobilePhone').textContent = CONFIG.mobileDetails.phone;
             document.getElementById('mobileId').textContent = CONFIG.mobileDetails.id;
+
+            // Zinli
+            document.getElementById('zinliEmail').textContent = CONFIG.zinliEmail;
             
             const prizesList = document.getElementById('prizesList');
-            prizesList.innerHTML = '';
-            CONFIG.prizes.forEach(prize => {
-                const li = document.createElement('li');
-                li.innerHTML = prize;
-                prizesList.appendChild(li);
-            });
+            prizesList.innerHTML = CONFIG.prizes.map(prize => `<li><i class="fas ${prize.icon}"></i> ${prize.text}</li>`).join('');
+        }
+
+        function setupEventListeners() {
+            // Step navigation
+            document.getElementById('startBtn').addEventListener('click', () => goToStep(2));
+            document.getElementById('checkTicketsBtn').addEventListener('click', () => goToStep(6));
+            document.getElementById('backFromVerify').addEventListener('click', () => goToStep(1));
+            document.getElementById('returnHome').addEventListener('click', resetForm);
             
-            await fetchSoldTickets();
+            document.getElementById('continueToInfo').addEventListener('click', () => { if (validateStep2()) goToStep(3); });
+            document.getElementById('continueToPayment').addEventListener('click', () => { if (validateStep3()) goToStep(4); });
+            
+            document.getElementById('prevBtn2').addEventListener('click', () => goToStep(1));
+            document.getElementById('prevBtn3').addEventListener('click', () => goToStep(2));
+            document.getElementById('prevBtn4').addEventListener('click', () => goToStep(3));
+
+            // Main actions
+            document.getElementById('verifyTicketsBtn').addEventListener('click', verifyUserTickets);
+            document.getElementById('whatsappBtn').addEventListener('click', handleWhatsappSubmit);
+            
+            // UI interactions
+            document.querySelectorAll('.ticket-option').forEach(option => {
+                option.addEventListener('click', handleTicketOptionClick);
+            });
+            document.getElementById('ticketQuantityInput').addEventListener('input', updateTicketUI);
+            document.getElementById('paymentMethod').addEventListener('change', handlePaymentMethodChange);
+            document.getElementById('toggleNormativas').addEventListener('click', toggleNormativas);
+            document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', handleCopyClick));
+            
+            // Form validation on input
+            document.getElementById('fullName').addEventListener('input', () => validateField('fullName', 'fullNameError', 'El nombre es requerido.'));
+            document.getElementById('idNumber').addEventListener('input', () => validateField('idNumber', 'idNumberError', 'La cédula es requerida.'));
+            document.getElementById('phoneNumber').addEventListener('input', () => validatePhone());
+            document.getElementById('email').addEventListener('input', () => validateEmail());
+            document.getElementById('referenceNumber').addEventListener('input', () => validateReference());
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.step-container').forEach(container => container.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function resetForm() {
+            document.getElementById('fullName').value = '';
+            document.getElementById('idNumber').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('referenceNumber').value = '';
+            document.getElementById('ticketQuantityInput').value = 2;
             updateTicketUI();
-            
-            document.querySelectorAll('.ticket-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const quantity = parseInt(this.getAttribute('data-quantity'));
-                    document.getElementById('ticketQuantityInput').value = quantity;
-                    updateTicketUI();
-                    
-                    document.querySelectorAll('.ticket-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                });
-            });
-            
-            // Seleccionar automáticamente 2 tickets al inicio
-            document.querySelector('.ticket-option[data-quantity="2"]').classList.add('selected');
-            
-            updateStepIndicators();
-
-            // Validación de número de teléfono (solo números)
-            document.getElementById('phoneNumber').addEventListener('input', function(e) {
-                this.value = this.value.replace(/\D/g, '');
-            });
-
-            // Validación de referencia de pago (solo 6 dígitos)
-            document.getElementById('referenceNumber').addEventListener('input', function(e) {
-                this.value = this.value.replace(/\D/g, '').slice(0, 6);
-                validateReferenceNumber(this.value);
-            });
-
-            // Toggle para normativas
-            document.getElementById('toggleNormativas').addEventListener('click', function() {
-                const content = document.getElementById('normativasContent');
-                content.classList.toggle('active');
-                const icon = this.querySelector('i');
-                if (content.classList.contains('active')) {
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
-                } else {
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                }
-            });
+            goToStep(1);
         }
 
-        function validateReferenceNumber(reference) {
-            const errorElement = document.getElementById('referenceError');
-            
-            if (reference.length > 0 && reference.length !== 6) {
-                errorElement.textContent = 'La referencia debe tener exactamente 6 dígitos';
-                errorElement.style.display = 'block';
-                return false;
-            } else {
-                errorElement.style.display = 'none';
-                return true;
-            }
-        }
-
-        function updateStepIndicators() {
-            document.querySelectorAll('.step-dot').forEach((dot, index) => {
-                if (index + 1 === currentStep) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        async function fetchSoldTickets() {
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=tickets,status`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
-                });
-                
-                if (!response.ok) throw new Error('Error en la respuesta');
-                
-                const transactions = await response.json();
-                soldTickets = transactions
-                    .filter(t => t.status === 'VERIFICADO')
-                    .reduce((sum, t) => sum + t.tickets, 0);
-                
-                const soldPercentage = (soldTickets / CONFIG.totalTickets * 100).toFixed(1);
-                const availablePercentage = (100 - soldPercentage).toFixed(1);
-                
-                document.getElementById('soldPercentage').textContent = `${soldPercentage}%`;
-                document.getElementById('availablePercentage').textContent = `${availablePercentage}%`;
-                
-                const progress = (soldTickets / CONFIG.totalTickets) * 100;
-                document.getElementById('progressBar').style.width = `${progress}%`;
-            } catch (error) {
-                console.error("Error obteniendo boletos vendidos:", error);
-                document.getElementById('soldPercentage').textContent = "0%";
-                document.getElementById('availablePercentage').textContent = "100%";
-            }
-        }
-
+        // --- UI HANDLERS ---
         function updateTicketUI() {
-            let ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
+            let quantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
+            if (quantity < 2 && quantity !== 0) quantity = 2;
             
-            // Forzar mínimo de 2 boletos
-            if (ticketQuantity < 2) {
-                ticketQuantity = 2;
-                document.getElementById('ticketQuantityInput').value = 2;
-            }
+            const total = quantity * CONFIG.pricePerTicket;
+            document.getElementById('totalAmount').textContent = total.toLocaleString('es-VE');
+            document.getElementById('paymentAmount').textContent = total.toLocaleString('es-VE');
+            document.getElementById('mobileAmount').textContent = total.toLocaleString('es-VE');
+            document.getElementById('zinliAmount').textContent = total.toLocaleString('es-VE');
             
-            const total = ticketQuantity * CONFIG.pricePerTicket;
-            document.getElementById('totalAmount').textContent = total;
-            document.getElementById('paymentAmount').textContent = total;
-            document.getElementById('mobileAmount').textContent = total;
-            document.getElementById('zinliAmount').textContent = total;
-            
-            document.querySelectorAll('.ticket-option').forEach(option => {
-                const optionQuantity = parseInt(option.getAttribute('data-quantity'));
-                if (optionQuantity === ticketQuantity) {
-                    option.classList.add('selected');
-                } else {
-                    option.classList.remove('selected');
-                }
+            document.querySelectorAll('.ticket-option').forEach(opt => {
+                opt.classList.toggle('selected', parseInt(opt.dataset.quantity) === quantity);
             });
+        }
+
+        function handleTicketOptionClick(e) {
+            const quantity = parseInt(e.target.dataset.quantity);
+            document.getElementById('ticketQuantityInput').value = quantity;
+            updateTicketUI();
+        }
+
+        function handlePaymentMethodChange(e) {
+            const method = e.target.value;
+            document.getElementById('bankDetails').style.display = method === 'bank' ? 'block' : 'none';
+            document.getElementById('mobileDetails').style.display = method === 'mobile' ? 'block' : 'none';
+            document.getElementById('zinliDetails').style.display = method === 'zinli' ? 'block' : 'none';
+        }
+        
+        function toggleNormativas(e) {
+            const btn = e.currentTarget;
+            const content = document.getElementById('normativasContent');
+            btn.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+
+        function handleCopyClick(e) {
+            const targetId = e.currentTarget.dataset.copyTarget;
+            const textToCopy = document.getElementById(targetId).textContent;
+            navigator.clipboard.writeText(textToCopy.replace(/-/g, '')).then(() => {
+                const icon = e.currentTarget.querySelector('i');
+                icon.classList.remove('fa-copy');
+                icon.classList.add('fa-check');
+                setTimeout(() => {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-copy');
+                }, 1500);
+            });
+        }
+
+        // --- VALIDATION ---
+        function validateField(fieldId, errorId, message) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            if (field.value.trim() === '') {
+                error.textContent = message;
+                error.style.display = 'block';
+                return false;
+            }
+            error.style.display = 'none';
+            return true;
+        }
+
+        function validateEmail() {
+            const field = document.getElementById('email');
+            const error = document.getElementById('emailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(field.value)) {
+                error.textContent = 'Por favor, introduce un correo válido.';
+                error.style.display = 'block';
+                return false;
+            }
+            error.style.display = 'none';
+            return true;
+        }
+        
+        function validatePhone() {
+            const field = document.getElementById('phoneNumber');
+            const error = document.getElementById('phoneError');
+            field.value = field.value.replace(/\D/g, ''); // Allow only numbers
+            if (field.value.length < 7) {
+                 error.textContent = 'El número de teléfono parece muy corto.';
+                 error.style.display = 'block';
+                 return false;
+            }
+            error.style.display = 'none';
+            return true;
+        }
+
+        function validateReference() {
+            const field = document.getElementById('referenceNumber');
+            const error = document.getElementById('referenceError');
+            field.value = field.value.replace(/\D/g, '');
+            if (field.value.length > 0 && field.value.length !== 6) {
+                error.style.display = 'block';
+                return false;
+            }
+            error.style.display = 'none';
+            return true;
+        }
+
+        function validateStep2() {
+            const quantity = parseInt(document.getElementById('ticketQuantityInput').value);
+            if (!quantity || quantity < 2) {
+                alert('La cantidad mínima de boletos es 2.');
+                return false;
+            }
+            return true;
+        }
+
+        function validateStep3() {
+            const isNameValid = validateField('fullName', 'fullNameError', 'El nombre es requerido.');
+            const isIdValid = validateField('idNumber', 'idNumberError', 'La cédula es requerida.');
+            const isPhoneValid = validatePhone();
+            const isEmailValid = validateEmail();
+            return isNameValid && isIdValid && isPhoneValid && isEmailValid;
+        }
+        
+        function validateStep4() {
+             const isRefValid = validateReference();
+             const refValue = document.getElementById('referenceNumber').value;
+             if(refValue.length !== 6){
+                document.getElementById('referenceError').style.display = 'block';
+                return false;
+             }
+             return isRefValid;
+        }
+
+        // --- API & DATA HANDLING ---
+        async function handleWhatsappSubmit() {
+            if (!validateStep3() || !validateStep4()) {
+                alert("Por favor, corrige los errores en el formulario.");
+                return;
+            }
+
+            const reference = document.getElementById('referenceNumber').value;
+            const refExists = await checkReferenceExists(reference);
+            if (refExists) {
+                alert("¡Esta referencia ya ha sido utilizada! Por favor, verifica el número o usa uno diferente.");
+                return;
+            }
+
+            const saveDataSuccess = await saveData();
+            if (saveDataSuccess) {
+                openWhatsApp();
+                document.getElementById('reportReference').textContent = reference;
+                goToStep(5);
+            } else {
+                alert("Hubo un error al guardar tu información. Por favor, intenta de nuevo.");
+            }
         }
 
         async function saveData() {
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
-            const countryCode = document.getElementById('countryCode').value;
-            const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
-            const reference = document.getElementById('referenceNumber').value;
-            
-            // Validar que la referencia tenga 6 dígitos
-            if (!validateReferenceNumber(reference) || reference.length !== 6) {
-                alert("La referencia de pago debe tener exactamente 6 dígitos");
-                return { success: false };
-            }
-            
-            // Verificar si la referencia ya existe
-            const refExists = await checkReferenceExists(reference);
-            if (refExists) {
-                alert("¡Esta referencia ya ha sido utilizada! Por favor usa un número diferente.");
-                return { success: false };
-            }
-
             const data = {
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
-                phone: `+${countryCode}${phoneNumber}`,
+                phone: `+${document.getElementById('countryCode').value}${document.getElementById('phoneNumber').value}`,
                 email: document.getElementById('email').value,
-                tickets: ticketQuantity,
-                reference: reference,
+                tickets: parseInt(document.getElementById('ticketQuantityInput').value),
+                reference: document.getElementById('referenceNumber').value,
                 status: "PENDIENTE"
             };
 
@@ -1318,269 +973,97 @@
                     },
                     body: JSON.stringify(data)
                 });
-
-                return { success: true };
+                return response.ok;
             } catch (error) {
                 console.error("Error guardando datos:", error);
-                return { success: true };
+                return false;
             }
         }
-
+        
         async function checkReferenceExists(reference) {
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}&select=reference`, {
+                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
                 });
-                
                 const data = await response.json();
                 return data.length > 0;
             } catch (error) {
                 console.error("Error verificando referencia:", error);
-                return false;
+                return false; // Assume not exists on error to avoid blocking user
             }
         }
 
         function openWhatsApp() {
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 2;
             const name = document.getElementById('fullName').value;
             const id = document.getElementById('idNumber').value;
-            const countryCode = document.getElementById('countryCode').value;
-            const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+            const phone = `+${document.getElementById('countryCode').value}${document.getElementById('phoneNumber').value}`;
             const email = document.getElementById('email').value;
+            const quantity = document.getElementById('ticketQuantityInput').value;
             const reference = document.getElementById('referenceNumber').value;
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const amount = ticketQuantity * CONFIG.pricePerTicket;
-            
-            let methodText = "";
-            if (paymentMethod === 'mobile') {
-                methodText = "Pago Móvil";
-            } else if (paymentMethod === 'bank') {
-                methodText = "Transferencia Bancaria";
-            } else if (paymentMethod === 'zinli') {
-                methodText = "Zinli";
-            }
-            
-            const formattedPhone = CONFIG.adminWhatsApp.replace(/[^0-9]/g, '');
+            const method = document.getElementById('paymentMethod').options[document.getElementById('paymentMethod').selectedIndex].text;
+            const amount = parseInt(quantity) * CONFIG.pricePerTicket;
+
             const message = encodeURIComponent(
-                `*NUEVO PAGO REPORTADO - RIFA PREMIUM*\n\n` +
-                `*Nombre:* ${name}\n` +
-                `*Cédula:* ${id}\n` +
-                `*Teléfono:* +${countryCode}${phoneNumber}\n` +
-                `*Email:* ${email}\n` +
-                `*Boletos:* ${ticketQuantity}\n` +
-                `*Método de Pago:* ${methodText}\n` +
-                `*Referencia:* ${reference}\n` +
-                `*Monto:* ${amount} Bs.\n\n` +
-                `Adjunto comprobante de pago`
+                `*NUEVO PAGO REPORTADO - RIFA EXCLUSIVE*\n\n` +
+                `👤 *Nombre:* ${name}\n` +
+                `🆔 *Cédula:* ${id}\n` +
+                `📱 *Teléfono:* ${phone}\n` +
+                `📧 *Email:* ${email}\n\n` +
+                `--- DETALLES DEL PAGO ---\n` +
+                `🎟️ *Boletos:* ${quantity}\n` +
+                `💳 *Método:* ${method}\n` +
+                `🔢 *Referencia:* ${reference}\n` +
+                `💰 *Monto:* ${amount.toLocaleString('es-VE')} Bs.\n\n` +
+                `_Adjunto mi comprobante de pago._`
             );
             
-            window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+            window.open(`https://wa.me/${CONFIG.adminWhatsApp}?text=${message}`, '_blank');
         }
 
-        function goToStep(step) {
-            currentStep = step;
-            document.querySelectorAll('.step-container').forEach(container => {
-                container.classList.remove('active');
-            });
-            document.getElementById(`step${step}`).classList.add('active');
-            updateStepIndicators();
-            window.scrollTo(0, 0);
-        }
-
-        function validateTicketQuantity() {
-            const ticketQuantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
-            const availableTickets = CONFIG.totalTickets - soldTickets;
-            
-            // Validar mínimo de 2 boletos
-            if (ticketQuantity < 2) {
-                alert("La cantidad mínima de boletos es 2");
-                return false;
-            }
-            
-            if (ticketQuantity > availableTickets) {
-                alert(`Solo quedan ${availableTickets} boletos disponibles`);
-                return false;
-            }
-            
-            return true;
-        }
-        
         async function verifyUserTickets() {
             const idNumber = document.getElementById('verifyId').value.trim();
             if (!idNumber) {
-                alert("Por favor ingresa tu número de cédula");
+                alert("Por favor ingresa tu número de cédula.");
                 return;
             }
+            const resultsContainer = document.getElementById('ticketResults');
+            resultsContainer.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Buscando...</p>`;
 
             try {
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id_number=eq.${idNumber}&select=*,tickets(ticket_number,status)`, {
-                    headers: {
-                        'apikey': CONFIG.supabaseKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
-                    }
+                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
                 });
-                
-                if (!response.ok) throw new Error('Error en la respuesta');
+                if (!response.ok) throw new Error('Error en la respuesta del servidor.');
                 
                 const data = await response.json();
                 displayTicketResults(data);
             } catch (error) {
                 console.error("Error verificando boletos:", error);
-                document.getElementById('ticketResults').innerHTML = `
-                    <p style="color:#dc3545; margin-top:20px;">
-                        <i class="fas fa-exclamation-circle"></i> Error al buscar boletos
-                    </p>
-                `;
+                resultsContainer.innerHTML = `<p style="color:#e74c3c;"><i class="fas fa-exclamation-circle"></i> Error al buscar boletos. Intenta más tarde.</p>`;
             }
         }
 
         function displayTicketResults(transactions) {
             const container = document.getElementById('ticketResults');
-            container.innerHTML = '';
-            
             if (transactions.length === 0) {
-                container.innerHTML = `
-                    <p style="margin-top:20px;">
-                        <i class="fas fa-info-circle"></i> No se encontraron boletos para esta cédula
-                    </p>
-                `;
+                container.innerHTML = `<p><i class="fas fa-info-circle"></i> No se encontraron transacciones para esta cédula.</p>`;
                 return;
             }
             
-            let html = '<div style="text-align:left; max-width:400px; margin:0 auto;">';
-            html += `<h3 style="margin-bottom:20px; color:var(--primary-dark);">Boletos encontrados: ${transactions.length} transacción(es)</h3>`;
-            
-            transactions.forEach(transaction => {
-                html += `<div style="background:white; border-radius:15px; padding:20px; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">`;
-                html += `<p><strong>Fecha:</strong> ${new Date(transaction.date).toLocaleDateString()}</p>`;
-                html += `<p><strong>Referencia:</strong> ${transaction.reference}</p>`;
-                html += `<p><strong>Teléfono:</strong> ${transaction.phone}</p>`;
-                html += `<p><strong>Estado:</strong> ${transaction.status}</p>`;
-                
-                if (transaction.tickets && transaction.tickets.length > 0) {
-                    html += `<p style="margin-top:15px;"><strong>Boletos:</strong></p>`;
-                    html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">`;
-                    
-                    transaction.tickets.forEach(ticket => {
-                        html += `<div style="background:${ticket.status === 'ACTIVO' ? '#e8f5e9' : '#fffde7'}; 
-                                 border:1px solid #ddd; border-radius:10px; padding:8px 12px; font-weight:bold;">
-                            ${formatTicketNumber(ticket.ticket_number)}
-                        </div>`;
-                    });
-                    
-                    html += `</div>`;
-                }
-                
-                html += `</div>`;
-            });
-            
-            html += '</div>';
-            container.innerHTML = html;
+            container.innerHTML = transactions.map(t => `
+                <div class="ticket-result-card">
+                    <p><strong>Fecha:</strong> ${new Date(t.created_at).toLocaleDateString('es-VE')}</p>
+                    <p><strong>Referencia:</strong> ${t.reference}</p>
+                    <p><strong>Estado:</strong> <span style="font-weight: bold; color: ${t.status === 'VERIFICADO' ? '#2ecc71' : '#f39c12'};">${t.status}</span></p>
+                    ${t.tickets && t.tickets.length > 0 ? `
+                        <p><strong>Boletos Asignados:</strong></p>
+                        <div class="ticket-numbers-grid">
+                            ${t.tickets.map(ticket => `<span class="ticket-number-badge">${String(ticket.ticket_number).padStart(5, '0')}</span>`).join('')}
+                        </div>
+                    ` : '<p><em>Aún no se han asignado números de boleto.</em></p>'}
+                </div>
+            `).join('');
         }
-
-        function formatTicketNumber(number) {
-            return String(number).padStart(5, '0');
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
-        
-        document.getElementById('startBtn').addEventListener('click', () => goToStep(2));
-        document.getElementById('checkTicketsBtn').addEventListener('click', () => goToStep(6));
-        document.getElementById('backFromVerify').addEventListener('click', () => goToStep(1));
-        document.getElementById('verifyTicketsBtn').addEventListener('click', verifyUserTickets);
-        
-        document.getElementById('continueToInfo').addEventListener('click', () => {
-            if (validateTicketQuantity()) {
-                goToStep(3);
-            }
-        });
-        
-        document.getElementById('continueToPayment').addEventListener('click', () => {
-            const name = document.getElementById('fullName').value;
-            const id = document.getElementById('idNumber').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const email = document.getElementById('email').value;
-            
-            if (!name || !id || !phoneNumber || !email) {
-                alert("Por favor completa todos los campos");
-                return;
-            }
-            
-            if (phoneNumber.length < 7) {
-                alert("Por favor ingresa un número de teléfono válido");
-                return;
-            }
-            
-            goToStep(4);
-        });
-        
-        document.getElementById('prevBtn2').addEventListener('click', () => goToStep(1));
-        document.getElementById('prevBtn3').addEventListener('click', () => goToStep(2));
-        document.getElementById('prevBtn4').addEventListener('click', () => goToStep(3));
-        document.getElementById('returnHome').addEventListener('click', () => {
-            document.getElementById('fullName').value = '';
-            document.getElementById('idNumber').value = '';
-            document.getElementById('phoneNumber').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('referenceNumber').value = '';
-            document.getElementById('ticketQuantityInput').value = '2';
-            updateTicketUI();
-            goToStep(1);
-        });
-
-        document.getElementById('ticketQuantityInput').addEventListener('input', updateTicketUI);
-        document.getElementById('ticketQuantityInput').addEventListener('change', function() {
-            if (this.value < 2) {
-                this.value = 2;
-            }
-            updateTicketUI();
-        });
-
-        document.getElementById('paymentMethod').addEventListener('change', function() {
-            document.getElementById('bankDetails').style.display = this.value === 'bank' ? 'block' : 'none';
-            document.getElementById('mobileDetails').style.display = this.value === 'mobile' ? 'block' : 'none';
-            document.getElementById('zinliDetails').style.display = this.value === 'zinli' ? 'block' : 'none';
-        });
-
-        document.getElementById('whatsappBtn').addEventListener('click', async () => {
-            const name = document.getElementById('fullName').value;
-            const id = document.getElementById('idNumber').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const email = document.getElementById('email').value;
-            const reference = document.getElementById('referenceNumber').value;
-            
-            if (!name || !id || !phoneNumber || !email || !reference) {
-                alert("Por favor completa todos los campos");
-                return;
-            }
-            
-            if (phoneNumber.length < 7) {
-                alert("Por favor ingresa un número de teléfono válido");
-                return;
-            }
-            
-            // Validar que la referencia tenga 6 dígitos
-            if (!validateReferenceNumber(reference) || reference.length !== 6) {
-                alert("La referencia de pago debe tener exactamente 6 dígitos");
-                return;
-            }
-            
-            if (!validateTicketQuantity()) {
-                return;
-            }
-            
-            const saveResult = await saveData();
-            if (!saveResult.success) {
-                return;
-            }
-            
-            openWhatsApp();
-            document.getElementById('reportReference').textContent = reference;
-            goToStep(5);
-        });
     </script>
 </body>
 </html>
