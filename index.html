@@ -9,474 +9,60 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* --- ESTILOS (Sin cambios, se mantienen los originales para la apariencia) --- */
         :root {
-            /* Light Mode Palette */
-            --bg-color-light: #f8f9fe;
-            --surface-color-light: #ffffff;
-            --primary-color-light: #2c3e50; /* Azul Nocturno */
-            --secondary-color-light: #34495e; /* Azul Grisáceo */
-            --accent-color-light: #d4af37; /* Oro Viejo */
-            --text-primary-light: #2c3e50;
-            --text-secondary-light: #7f8c8d;
-            --border-color-light: #e5e7eb;
-            --shadow-color-light: rgba(44, 62, 80, 0.1);
-
-            /* Dark Mode Palette */
-            --bg-color-dark: #12181f;
-            --surface-color-dark: #1a222c;
-            --primary-color-dark: #e1e8f0;
-            --secondary-color-dark: #9aaebd;
-            --accent-color-dark: #e6c566; /* Oro Claro */
-            --text-primary-dark: #f8f9fe;
-            --text-secondary-dark: #9aaebd;
-            --border-color-dark: #2c3a4a;
-            --shadow-color-dark: rgba(0, 0, 0, 0.2);
-
-            /* Default to Light Mode */
-            --bg-color: var(--bg-color-light);
-            --surface-color: var(--surface-color-light);
-            --primary-color: var(--primary-color-light);
-            --secondary-color: var(--secondary-color-light);
-            --accent-color: var(--accent-color-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --border-color: var(--border-color-light);
-            --shadow: 0 10px 30px var(--shadow-color-light);
-            --shadow-sm: 0 4px 15px var(--shadow-color-light);
-            
-            --border-radius: 20px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --bg-color-light: #f8f9fe; --surface-color-light: #ffffff; --primary-color-light: #2c3e50; --secondary-color-light: #34495e; --accent-color-light: #d4af37; --text-primary-light: #2c3e50; --text-secondary-light: #7f8c8d; --border-color-light: #e5e7eb; --shadow-color-light: rgba(44, 62, 80, 0.1);
+            --bg-color-dark: #12181f; --surface-color-dark: #1a222c; --primary-color-dark: #e1e8f0; --secondary-color-dark: #9aaebd; --accent-color-dark: #e6c566; --text-primary-dark: #f8f9fe; --text-secondary-dark: #9aaebd; --border-color-dark: #2c3a4a; --shadow-color-dark: rgba(0, 0, 0, 0.2);
+            --bg-color: var(--bg-color-light); --surface-color: var(--surface-color-light); --primary-color: var(--primary-color-light); --secondary-color: var(--secondary-color-light); --accent-color: var(--accent-color-light); --text-primary: var(--text-primary-light); --text-secondary: var(--text-secondary-light); --border-color: var(--border-color-light); --shadow: 0 10px 30px var(--shadow-color-light); --shadow-sm: 0 4px 15px var(--shadow-color-light);
+            --border-radius: 20px; --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: var(--bg-color-dark);
-                --surface-color: var(--surface-color-dark);
-                --primary-color: var(--primary-color-dark);
-                --secondary-color: var(--secondary-color-dark);
-                --accent-color: var(--accent-color-dark);
-                --text-primary: var(--text-primary-dark);
-                --text-secondary: var(--text-secondary-dark);
-                --border-color: var(--border-color-dark);
-                --shadow: 0 10px 30px var(--shadow-color-dark);
-                --shadow-sm: 0 4px 15px var(--shadow-color-dark);
+                --bg-color: var(--bg-color-dark); --surface-color: var(--surface-color-dark); --primary-color: var(--primary-color-dark); --secondary-color: var(--secondary-color-dark); --accent-color: var(--accent-color-dark); --text-primary: var(--text-primary-dark); --text-secondary: var(--text-secondary-dark); --border-color: var(--border-color-dark); --shadow: 0 10px 30px var(--shadow-color-dark); --shadow-sm: 0 4px 15px var(--shadow-color-dark);
             }
         }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: var(--transition);
-        }
-        
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: var(--surface-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-        
-        header {
-            background: linear-gradient(145deg, var(--secondary-color), var(--primary-color));
-            color: white;
-            padding: 40px 25px;
-            text-align: center;
-            position: relative;
-        }
-
-        .logo {
-            margin-bottom: 20px;
-        }
-        
-        .logo i {
-            font-size: 50px;
-            color: var(--accent-color);
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-            animation: star-glow 2s infinite ease-in-out;
-        }
-
-        @keyframes star-glow {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-        
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-        
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            font-weight: 300;
-        }
-        
-        .step-container {
-            padding: 35px 30px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .step-container.active {
-            display: block;
-        }
-
-        .step-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--text-primary);
-            font-size: 1.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .step-title i {
-            color: var(--accent-color);
-        }
-        
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 16px;
-            margin: 15px 0;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
-            color: var(--surface-color);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 5px 15px var(--shadow-color-light);
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px var(--shadow-color-light);
-            filter: brightness(1.1);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 10px var(--shadow-color-light);
-        }
-
-        .btn.btn-secondary {
-            background: var(--secondary-color);
-            color: var(--bg-color);
-            box-shadow: none;
-            border: 1px solid var(--border-color);
-        }
-
-        .btn.btn-secondary:hover {
-             background: var(--text-secondary);
-        }
-
-        .btn-whatsapp {
-            background: #25D366;
-            color: white;
-        }
-        .btn-whatsapp:hover {
-             background: #1DA851;
-        }
-        
-        .input-group {
-            margin-bottom: 25px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        input, select {
-            width: 100%;
-            padding: 15px 18px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: var(--transition);
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
-        }
-        
-        .prize-image {
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 25px;
-            transition: var(--transition);
-        }
-        .prize-image:hover {
-            transform: scale(1.03);
-        }
-
-        .prizes-container {
-            background: var(--bg-color);
-            border-radius: 16px;
-            padding: 25px;
-            margin: 25px 0;
-            border: 1px solid var(--border-color);
-        }
-
-        .prizes-container h3 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: var(--text-primary);
-        }
-
-        .prizes-container ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .prizes-container li {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .prizes-container li i {
-            color: var(--accent-color);
-            font-size: 1.2rem;
-        }
-
-        .ticket-selection {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .ticket-option {
-            background-color: var(--bg-color);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .ticket-option:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-        .ticket-option.selected {
-            background-color: var(--accent-color);
-            color: var(--primary-color);
-            border-color: var(--accent-color);
-            font-weight: 700;
-        }
-
-        .amount-display {
-            text-align: center;
-            font-size: 1.8rem;
-            margin: 30px 0;
-            font-weight: 700;
-            color: var(--text-primary);
-            background-color: var(--bg-color);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-        .amount-display strong {
-            color: var(--accent-color);
-        }
-
-        .phone-input-container {
-            display: flex;
-            gap: 10px;
-        }
-        .country-selector { flex: 1; }
-        .phone-input { flex: 2; }
-        
-        .payment-details {
-            background-color: var(--bg-color);
-            border-radius: 16px;
-            padding: 25px;
-            margin: 25px 0;
-            border: 1px solid var(--border-color);
-        }
-        .payment-details h3 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .payment-details p {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.95rem;
-        }
-        .payment-details p:last-child {
-            border: none;
-        }
-        .payment-details strong {
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-        .payment-value {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .copy-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .copy-btn:hover {
-            color: var(--accent-color);
-        }
-        
-        .confirmation-icon i {
-            font-size: 80px;
-            color: #2ecc71;
-            animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-
-        @keyframes pop-in {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .normativas-container {
-            margin-top: 25px;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-        .btn-normativas {
-            width: 100%;
-            padding: 16px;
-            background: var(--bg-color);
-            border: none;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: var(--transition);
-        }
-        .btn-normativas i {
-             transition: var(--transition);
-        }
-        .btn-normativas.active i {
-             transform: rotate(180deg);
-        }
-        .normativas-content {
-            padding: 0 25px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.4s ease;
-        }
-        .normativas-content.active {
-            padding: 25px;
-            max-height: 1000px;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 0.9rem;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        .step-navigation {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .step-navigation button {
-            width: 100%;
-        }
-
-        .ticket-result-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .ticket-result-card p {
-            margin-bottom: 8px;
-        }
-        .ticket-numbers-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .ticket-number-badge {
-            background-color: color-mix(in srgb, var(--accent-color) 20%, transparent);
-            color: var(--accent-color);
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            body { padding: 10px; }
-            .container { border-radius: 15px; }
-            .step-container { padding: 25px 20px; }
-            header { padding: 30px 20px; }
-            header h1 { font-size: 1.9rem; }
-            .ticket-selection { gap: 10px; }
-            .phone-input-container { flex-direction: column; }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-primary); line-height: 1.6; padding: 20px; min-height: 100vh; overflow-x: hidden; transition: var(--transition); }
+        .container { max-width: 500px; margin: 0 auto; background-color: var(--surface-color); border-radius: var(--border-radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border-color); transition: var(--transition); }
+        header { background: linear-gradient(145deg, var(--secondary-color), var(--primary-color)); color: white; padding: 40px 25px; text-align: center; position: relative; }
+        .logo { margin-bottom: 20px; }
+        .logo i { font-size: 50px; color: var(--accent-color); text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); animation: star-glow 2s infinite ease-in-out; }
+        @keyframes star-glow { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        header h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: 0.5px; }
+        header p { font-size: 1.1rem; opacity: 0.8; font-weight: 300; }
+        .step-container { padding: 35px 30px; display: none; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .step-container.active { display: block; }
+        .step-title { text-align: center; margin-bottom: 30px; color: var(--text-primary); font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .step-title i { color: var(--accent-color); }
+        .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; margin: 15px 0; border: none; border-radius: 12px; background: linear-gradient(145deg, var(--primary-color), var(--secondary-color)); color: var(--surface-color); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 5px 15px var(--shadow-color-light); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--shadow-color-light); filter: brightness(1.1); }
+        .btn:disabled { background: var(--secondary-color); cursor: not-allowed; }
+        .btn.btn-secondary { background: var(--secondary-color); color: var(--bg-color); box-shadow: none; border: 1px solid var(--border-color); }
+        .btn.btn-secondary:hover { background: var(--text-secondary); }
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-secondary); }
+        input { width: 100%; padding: 15px 18px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem; transition: var(--transition); background-color: var(--bg-color); color: var(--text-primary); }
+        input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+        .prize-image { width: 100%; border-radius: 16px; box-shadow: var(--shadow-sm); margin-bottom: 25px; transition: var(--transition); }
+        .prizes-container { background: var(--bg-color); border-radius: 16px; padding: 25px; margin: 25px 0; border: 1px solid var(--border-color); }
+        .prizes-container h3 { text-align: center; margin-bottom: 20px; font-size: 1.5rem; color: var(--text-primary); }
+        .prizes-container ul { list-style: none; padding: 0; }
+        .prizes-container li { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; font-weight: 500; }
+        .prizes-container li i { color: var(--accent-color); font-size: 1.2rem; }
+        .confirmation-icon i { font-size: 80px; color: #2ecc71; animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .normativas-container { margin-top: 25px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); }
+        .btn-normativas { width: 100%; padding: 16px; background: var(--bg-color); border: none; text-align: left; font-weight: 600; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: var(--transition); }
+        .btn-normativas i { transition: var(--transition); }
+        .btn-normativas.active i { transform: rotate(180deg); }
+        .normativas-content { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
+        .normativas-content.active { padding: 25px; max-height: 1000px; }
+        .error-message { color: #e74c3c; font-size: 0.9rem; margin-top: 5px; display: none; }
+        .ticket-result-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: left; }
+        .ticket-result-card p { margin-bottom: 8px; }
+        .ticket-numbers-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .ticket-number-badge { background-color: color-mix(in srgb, var(--accent-color) 20%, transparent); color: var(--accent-color); padding: 5px 12px; border-radius: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -490,72 +76,19 @@
             <p>GANA CON YAIR™</p>
         </header>
 
-        <div id="step1" class="step-container active">
+        <div id="step-form" class="step-container active">
             <img id="prizeImage" class="prize-image" alt="Premio Principal">
             
             <div class="prizes-container">
                 <h3><i class="fas fa-award"></i> Tabla de Premios</h3>
                 <ul id="prizesList"></ul>
             </div>
-            
-            <button id="startBtn" class="btn">
-                <i class="fas fa-ticket"></i> Comprar Boletos
-            </button>
-            
-            <button id="checkTicketsBtn" class="btn btn-secondary">
-                <i class="fas fa-search"></i> Verificar mis Boletos
-            </button>
 
-            <div class="normativas-container">
-                <button id="toggleNormativas" class="btn-normativas">
-                    <span>Normas de la Rifa</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div id="normativasContent" class="normativas-content">
-                    <p>Para garantizar un proceso transparente y justo para todos, por favor lea las siguientes normas:</p>
-                    <ul>
-                        <li><strong>Pago Exacto:</strong> Realice el pago por el monto exacto de los boletos solicitados.</li>
-                        <li><strong>No Hay Reembolsos:</strong> Una vez realizada la compra, no se efectuarán reembolsos.</li>
-                        <li><strong>Pagos Excedentes:</strong> Si realiza un pago por un monto superior, el excedente se acreditará como boletos adicionales (si hay disponibilidad) o para futuras rifas.</li>
-                        <li><strong>Compra Mínima:</strong> Se requiere una compra mínima de dos (2) boletos.</li>
-                        <li><strong>Referencia Única:</strong> Utilice una referencia de pago única. Referencias duplicadas requerirán aclaración antes de validar los boletos.</li>
-                        <li><strong>Agilizar Verificación:</strong> Incluya los 6 dígitos de la referencia en el concepto del pago para una validación más rápida.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div id="step2" class="step-container">
-            <h2 class="step-title"><i class="fas fa-hashtag"></i> Elige la cantidad</h2>
+            <h2 class="step-title"><i class="fas fa-user-check"></i> ¡Participa Gratis!</h2>
             <p style="text-align: center; color: var(--text-secondary); margin-top: -20px; margin-bottom: 20px;">
-                Compra mínima: 2 boletos.
+                Sigue las reglas y llena tus datos para recibir tus boletos.
             </p>
-            
-            <div class="ticket-selection">
-                <div class="ticket-option" data-quantity="2">2</div>
-                <div class="ticket-option" data-quantity="5">5</div>
-                <div class="ticket-option" data-quantity="10">10</div>
-                <div class="ticket-option" data-quantity="20">20</div>
-                <div class="ticket-option" data-quantity="50">50</div>
-                <div class="ticket-option" data-quantity="100">100</div>
-            </div>
-            
-            <div class="input-group">
-                <label for="ticketQuantityInput">Otra cantidad</label>
-                <input type="number" id="ticketQuantityInput" min="2" value="2" required>
-            </div>
-            <p style="text-align:center; color: var(--text-secondary);">Precio por boleto: <strong id="ticketPrice" style="color: var(--text-primary);">Bs. 0</strong></p>
-            
-            <div class="amount-display">Total: <strong id="totalAmount">0</strong> Bs.</div>
-            
-            <div class="step-navigation">
-                <button id="prevBtn2" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
-                <button id="continueToInfo" class="btn">Continuar <i class="fas fa-arrow-right"></i></button>
-            </div>
-        </div>
 
-        <div id="step3" class="step-container">
-            <h2 class="step-title"><i class="fas fa-user-check"></i> Completa tus Datos</h2>
             <div class="input-group">
                 <label for="fullName">Nombre completo</label>
                 <input type="text" id="fullName" placeholder="Ej: Juan Pérez" required>
@@ -566,108 +99,62 @@
                 <input type="text" id="idNumber" placeholder="Ej: V-12345678" required>
                  <div class="error-message" id="idNumberError"></div>
             </div>
-            
             <div class="input-group">
-                 <label for="countryCode">Teléfono</label>
-                <div class="phone-input-container">
-                    <div class="country-selector">
-                        <select id="countryCode" required>
-                            <option value="58" data-country="VE" selected>🇻🇪 +58</option>
-                            <option value="1" data-country="US">🇺🇸 +1</option>
-                            <option value="34" data-country="ES">🇪🇸 +34</option>
-                            <option value="57" data-country="CO">🇨🇴 +57</option>
-                            <option value="51" data-country="PE">🇵🇪 +51</option>
-                            <option value="56" data-country="CL">🇨🇱 +56</option>
-                        </select>
-                    </div>
-                    <div class="phone-input">
-                        <input type="tel" id="phoneNumber" placeholder="412 123 4567" required>
-                    </div>
-                </div>
+                 <label for="phoneNumber">Teléfono (WhatsApp)</label>
+                 <input type="tel" id="phoneNumber" placeholder="04121234567" required>
                  <div class="error-message" id="phoneError"></div>
             </div>
-            
             <div class="input-group">
-                <label for="email">Correo electrónico</label>
-                <input type="email" id="email" placeholder="juan.perez@correo.com" required>
-                <div class="error-message" id="emailError"></div>
-            </div>
-            
-            <div class="step-navigation">
-                <button id="prevBtn3" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
-                <button id="continueToPayment" class="btn">Continuar <i class="fas fa-arrow-right"></i></button>
-            </div>
-        </div>
-
-        <div id="step4" class="step-container">
-            <h2 class="step-title"><i class="fas fa-wallet"></i> Realiza tu Pago</h2>
-            <div class="input-group">
-                 <label for="paymentMethod">Método de pago</label>
-                <select id="paymentMethod" required>
-                    <option value="mobile">Pago Móvil</option>
-                    <option value="bank">Transferencia Bancaria</option>
-                    <option value="zinli">Zinli</option>
-                </select>
+                <label for="socialUser">Usuario de Red Social (Ej: TikTok, Instagram)</label>
+                <input type="text" id="socialUser" placeholder="@usuario" required>
+                <div class="error-message" id="socialUserError"></div>
             </div>
 
-            <div id="mobileDetails" class="payment-details">
-                <h3>Datos para Pago Móvil</h3>
-                <p><strong>Banco:</strong> <span class="payment-value" id="mobileBank"></span></p>
-                <p><strong>Teléfono:</strong> <span class="payment-value" id="mobilePhone-value"><span id="mobilePhone"></span> <button class="copy-btn" data-copy-target="mobilePhone"><i class="far fa-copy"></i></button></span></p>
-                <p><strong>Cédula:</strong> <span class="payment-value" id="mobileId"></span></p>
-                <p><strong>Monto:</strong> <span class="payment-value" style="color: var(--accent-color); font-weight: 700;"><span id="mobileAmount">0</span> Bs.</span></p>
-            </div>
-
-            <div id="bankDetails" class="payment-details" style="display:none;">
-                <h3>Datos para Transferencia</h3>
-                <p><strong>Banco:</strong> <span class="payment-value" id="bankName"></span></p>
-                <p><strong>Titular:</strong> <span class="payment-value" id="accountHolder"></span></p>
-                <p><strong>Cédula:</strong> <span class="payment-value" id="accountRif"></span></p>
-                <p><strong>Cuenta:</strong> <span class="payment-value" id="accountNumber-value"><span id="accountNumber"></span> <button class="copy-btn" data-copy-target="accountNumber"><i class="far fa-copy"></i></button></span></p>
-                <p><strong>Monto:</strong> <span class="payment-value" style="color: var(--accent-color); font-weight: 700;"><span id="paymentAmount">0</span> Bs.</span></p>
-            </div>
-            
-            <div id="zinliDetails" class="payment-details" style="display:none;">
-                <h3>Datos para Pago con Zinli</h3>
-                <p><strong>Correo:</strong> <span class="payment-value" id="zinliEmail-value"><span id="zinliEmail"></span> <button class="copy-btn" data-copy-target="zinliEmail"><i class="far fa-copy"></i></button></span></p>
-                <p><strong>Monto:</strong> <span class="payment-value" style="color: var(--accent-color); font-weight: 700;"><span id="zinliAmount">0</span> Bs.</span></p>
-            </div>
-
-            <div class="input-group">
-                <label for="referenceNumber">Número de referencia (últimos 6 dígitos)</label>
-                <input type="text" id="referenceNumber" placeholder="123456" maxlength="6" pattern="\d{6}" required>
-                <div class="error-message" id="referenceError">La referencia debe tener 6 dígitos.</div>
-            </div>
-
-            <button id="whatsappBtn" class="btn btn-whatsapp">
-                <i class="fab fa-whatsapp"></i> Reportar Pago por WhatsApp
+            <button id="participateBtn" class="btn">
+                <i class="fas fa-paper-plane"></i> Enviar mis Datos
             </button>
             
-            <div class="step-navigation">
-                <button id="prevBtn4" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Atrás</button>
+            <button id="checkTicketsBtn" class="btn btn-secondary" onclick="goToStep('step-verify')">
+                <i class="fas fa-search"></i> Verificar mis Boletos
+            </button>
+
+            <div class="normativas-container">
+                <button id="toggleNormativas" class="btn-normativas">
+                    <span>Reglas para Participar</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="normativasContent" class="normativas-content">
+                    <p>Para garantizar una participación válida, debes cumplir con lo siguiente:</p>
+                    <ul>
+                        <li><strong>Seguir la cuenta:</strong> Debes seguir nuestra cuenta oficial en la red social del video.</li>
+                        <li><strong>Comentar el video:</strong> Tienes que dejar un comentario en el video promocional de la rifa.</li>
+                        <li><strong>Datos Únicos:</strong> Tu cédula y número de teléfono solo pueden ser registrados una vez.</li>
+                        <li><strong>Un registro por persona:</strong> Solo se permite una participación por persona.</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <div id="step5" class="step-container">
-            <div style="text-align:center; padding:40px 20px;">
+        <div id="step-confirmation" class="step-container">
+             <div style="text-align:center; padding:40px 20px;">
                 <div class="confirmation-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h2 class="step-title" style="font-size: 2rem;">¡Pago Reportado!</h2>
+                <h2 class="step-title" style="font-size: 2rem;">¡Registro Enviado!</h2>
                 <p style="margin:20px 0 30px; font-size:1.1rem; line-height:1.7;">
-                    Tu compra está siendo procesada. La verificación puede tardar entre <strong>5 minutos y 24 horas</strong>.
+                    ¡Gracias por participar! Verificaremos que cumplas las reglas (seguir y comentar) y te enviaremos tus boletos por WhatsApp muy pronto.
                 </p>
-                <p style="font-size:1rem; margin-bottom: 10px;">Tu número de referencia es:</p>
+                <p style="font-size:1rem; margin-bottom: 10px;">Tu identificador de registro es tu cédula:</p>
                 <div style="background: var(--bg-color); padding:15px; border-radius:12px; margin:10px auto; font-size:1.8rem; font-weight:bold; max-width: 250px; border: 2px dashed #2ecc71;">
-                    <span id="reportReference"></span>
+                    <span id="confirmationId"></span>
                 </div>
-                <button id="returnHome" class="btn" style="margin-top: 30px;">
+                <button onclick="location.reload()" class="btn" style="margin-top: 30px;">
                     <i class="fas fa-home"></i> Volver al Inicio
                 </button>
             </div>
         </div>
         
-        <div id="step6" class="step-container">
+        <div id="step-verify" class="step-container">
             <h2 class="step-title"><i class="fas fa-receipt"></i> Verificar mis Boletos</h2>
             
             <div class="input-group">
@@ -680,7 +167,7 @@
             
             <div id="ticketResults" style="margin-top: 30px;"></div>
             
-            <button id="backFromVerify" class="btn btn-secondary" style="margin-top: 20px;">
+            <button onclick="goToStep('step-form')" class="btn btn-secondary" style="margin-top: 20px;">
                 <i class="fas fa-arrow-left"></i> Volver al Inicio
             </button>
         </div>
@@ -688,147 +175,47 @@
 
     <script>
         const CONFIG = {
-            adminWhatsApp: "584244955900",
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 10000,
-            pricePerTicket: 80,
             prizeImage: "https://i.ibb.co/RTbcLX0p/combo-ogra-2-0.jpg",
             prizes: [
                 { icon: "fa-gem", text: "1er Premio: <strong>Combo Hogar Premium</strong>" },
-                { icon: "fa-dollar-sign", text: "2do Premio: <strong>300 USD</strong>" },
-                { icon: "fa-trophy", text: "3er Premio: <strong>200 USD al mayor comprador</strong>" }
+                { icon: "fa-dollar-sign", text: "</strong>" },
+                { icon: "fa-trophy", text: " </strong>" }
             ],
-            bankDetails: {
-                name: "Banco de Venezuela",
-                holder: "YAIR TROYA",
-                id: "V-25441167",
-                account: "01020391190001190401"
-            },
-            mobileDetails: {
-                bank: "Banco de Venezuela",
-                phone: "04120479871",
-                id: "V-25441167"
-            },
-            zinliEmail: "ganaconyair@gmail.com"
         };
 
-        let currentStep = 1;
-
-        // --- CORE FUNCTIONS ---
         document.addEventListener('DOMContentLoaded', () => {
             setupInitialConfig();
             setupEventListeners();
-            updateTicketUI();
-            
-            // Set initial selection
-            document.querySelector('.ticket-option[data-quantity="2"]').classList.add('selected');
         });
 
         function setupInitialConfig() {
             document.getElementById('prizeImage').src = CONFIG.prizeImage;
-            document.getElementById('ticketPrice').textContent = `Bs. ${CONFIG.pricePerTicket}`;
-            
-            // Bank Details
-            document.getElementById('bankName').textContent = CONFIG.bankDetails.name;
-            document.getElementById('accountHolder').textContent = CONFIG.bankDetails.holder;
-            document.getElementById('accountRif').textContent = CONFIG.bankDetails.id;
-            document.getElementById('accountNumber').textContent = CONFIG.bankDetails.account.replace(/(\d{4})(?=\d)/g, '$1-');
-
-            // Mobile Payment
-            document.getElementById('mobileBank').textContent = CONFIG.mobileDetails.bank;
-            document.getElementById('mobilePhone').textContent = CONFIG.mobileDetails.phone;
-            document.getElementById('mobileId').textContent = CONFIG.mobileDetails.id;
-
-            // Zinli
-            document.getElementById('zinliEmail').textContent = CONFIG.zinliEmail;
-            
             const prizesList = document.getElementById('prizesList');
             prizesList.innerHTML = CONFIG.prizes.map(prize => `<li><i class="fas ${prize.icon}"></i> ${prize.text}</li>`).join('');
         }
 
         function setupEventListeners() {
-            // Step navigation
-            document.getElementById('startBtn').addEventListener('click', () => goToStep(2));
-            document.getElementById('checkTicketsBtn').addEventListener('click', () => goToStep(6));
-            document.getElementById('backFromVerify').addEventListener('click', () => goToStep(1));
-            document.getElementById('returnHome').addEventListener('click', resetForm);
-            
-            document.getElementById('continueToInfo').addEventListener('click', () => { if (validateStep2()) goToStep(3); });
-            document.getElementById('continueToPayment').addEventListener('click', () => { if (validateStep3()) goToStep(4); });
-            
-            document.getElementById('prevBtn2').addEventListener('click', () => goToStep(1));
-            document.getElementById('prevBtn3').addEventListener('click', () => goToStep(2));
-            document.getElementById('prevBtn4').addEventListener('click', () => goToStep(3));
-
-            // Main actions
+            document.getElementById('participateBtn').addEventListener('click', handleParticipationSubmit);
             document.getElementById('verifyTicketsBtn').addEventListener('click', verifyUserTickets);
-            document.getElementById('whatsappBtn').addEventListener('click', handleWhatsappSubmit);
-            
-            // UI interactions
-            document.querySelectorAll('.ticket-option').forEach(option => {
-                option.addEventListener('click', handleTicketOptionClick);
-            });
-            document.getElementById('ticketQuantityInput').addEventListener('input', updateTicketUI);
-            document.getElementById('paymentMethod').addEventListener('change', handlePaymentMethodChange);
             document.getElementById('toggleNormativas').addEventListener('click', toggleNormativas);
-            document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', handleCopyClick));
             
-            // Form validation on input
+            // Listeners para validación en tiempo real
             document.getElementById('fullName').addEventListener('input', () => validateField('fullName', 'fullNameError', 'El nombre es requerido.'));
             document.getElementById('idNumber').addEventListener('input', () => validateField('idNumber', 'idNumberError', 'La cédula es requerida.'));
             document.getElementById('phoneNumber').addEventListener('input', () => validatePhone());
-            document.getElementById('email').addEventListener('input', () => validateEmail());
-            document.getElementById('referenceNumber').addEventListener('input', () => validateReference());
+            document.getElementById('socialUser').addEventListener('input', () => validateField('socialUser', 'socialUserError', 'El usuario de tu red social es requerido.'));
         }
-
-        function goToStep(step) {
-            currentStep = step;
-            document.querySelectorAll('.step-container').forEach(container => container.classList.remove('active'));
-            document.getElementById(`step${step}`).classList.add('active');
+        
+        function goToStep(stepId) {
+            document.querySelectorAll('.step-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        function resetForm() {
-            document.getElementById('fullName').value = '';
-            document.getElementById('idNumber').value = '';
-            document.getElementById('phoneNumber').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('referenceNumber').value = '';
-            document.getElementById('ticketQuantityInput').value = 2;
-            updateTicketUI();
-            goToStep(1);
-        }
-
-        // --- UI HANDLERS ---
-        function updateTicketUI() {
-            let quantity = parseInt(document.getElementById('ticketQuantityInput').value) || 0;
-            if (quantity < 2 && quantity !== 0) quantity = 2;
-            
-            const total = quantity * CONFIG.pricePerTicket;
-            document.getElementById('totalAmount').textContent = total.toLocaleString('es-VE');
-            document.getElementById('paymentAmount').textContent = total.toLocaleString('es-VE');
-            document.getElementById('mobileAmount').textContent = total.toLocaleString('es-VE');
-            document.getElementById('zinliAmount').textContent = total.toLocaleString('es-VE');
-            
-            document.querySelectorAll('.ticket-option').forEach(opt => {
-                opt.classList.toggle('selected', parseInt(opt.dataset.quantity) === quantity);
-            });
-        }
-
-        function handleTicketOptionClick(e) {
-            const quantity = parseInt(e.target.dataset.quantity);
-            document.getElementById('ticketQuantityInput').value = quantity;
-            updateTicketUI();
-        }
-
-        function handlePaymentMethodChange(e) {
-            const method = e.target.value;
-            document.getElementById('bankDetails').style.display = method === 'bank' ? 'block' : 'none';
-            document.getElementById('mobileDetails').style.display = method === 'mobile' ? 'block' : 'none';
-            document.getElementById('zinliDetails').style.display = method === 'zinli' ? 'block' : 'none';
-        }
-        
         function toggleNormativas(e) {
             const btn = e.currentTarget;
             const content = document.getElementById('normativasContent');
@@ -836,21 +223,7 @@
             content.classList.toggle('active');
         }
 
-        function handleCopyClick(e) {
-            const targetId = e.currentTarget.dataset.copyTarget;
-            const textToCopy = document.getElementById(targetId).textContent;
-            navigator.clipboard.writeText(textToCopy.replace(/-/g, '')).then(() => {
-                const icon = e.currentTarget.querySelector('i');
-                icon.classList.remove('fa-copy');
-                icon.classList.add('fa-check');
-                setTimeout(() => {
-                    icon.classList.remove('fa-check');
-                    icon.classList.add('fa-copy');
-                }, 1500);
-            });
-        }
-
-        // --- VALIDATION ---
+        // --- VALIDACIÓN ---
         function validateField(fieldId, errorId, message) {
             const field = document.getElementById(fieldId);
             const error = document.getElementById(errorId);
@@ -862,26 +235,13 @@
             error.style.display = 'none';
             return true;
         }
-
-        function validateEmail() {
-            const field = document.getElementById('email');
-            const error = document.getElementById('emailError');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(field.value)) {
-                error.textContent = 'Por favor, introduce un correo válido.';
-                error.style.display = 'block';
-                return false;
-            }
-            error.style.display = 'none';
-            return true;
-        }
         
         function validatePhone() {
             const field = document.getElementById('phoneNumber');
             const error = document.getElementById('phoneError');
-            field.value = field.value.replace(/\D/g, ''); // Allow only numbers
-            if (field.value.length < 7) {
-                 error.textContent = 'El número de teléfono parece muy corto.';
+            field.value = field.value.replace(/\D/g, ''); // Permitir solo números
+            if (field.value.length < 10) {
+                 error.textContent = 'El número de teléfono parece incorrecto.';
                  error.style.display = 'block';
                  return false;
             }
@@ -889,66 +249,54 @@
             return true;
         }
 
-        function validateReference() {
-            const field = document.getElementById('referenceNumber');
-            const error = document.getElementById('referenceError');
-            field.value = field.value.replace(/\D/g, '');
-            if (field.value.length > 0 && field.value.length !== 6) {
-                error.style.display = 'block';
-                return false;
-            }
-            error.style.display = 'none';
-            return true;
-        }
-
-        function validateStep2() {
-            const quantity = parseInt(document.getElementById('ticketQuantityInput').value);
-            if (!quantity || quantity < 2) {
-                alert('La cantidad mínima de boletos es 2.');
-                return false;
-            }
-            return true;
-        }
-
-        function validateStep3() {
+        function validateForm() {
             const isNameValid = validateField('fullName', 'fullNameError', 'El nombre es requerido.');
             const isIdValid = validateField('idNumber', 'idNumberError', 'La cédula es requerida.');
             const isPhoneValid = validatePhone();
-            const isEmailValid = validateEmail();
-            return isNameValid && isIdValid && isPhoneValid && isEmailValid;
-        }
-        
-        function validateStep4() {
-             const isRefValid = validateReference();
-             const refValue = document.getElementById('referenceNumber').value;
-             if(refValue.length !== 6){
-                document.getElementById('referenceError').style.display = 'block';
-                return false;
-             }
-             return isRefValid;
+            const isSocialUserValid = validateField('socialUser', 'socialUserError', 'El usuario de tu red social es requerido.');
+            return isNameValid && isIdValid && isPhoneValid && isSocialUserValid;
         }
 
-        // --- API & DATA HANDLING ---
-        async function handleWhatsappSubmit() {
-            if (!validateStep3() || !validateStep4()) {
-                alert("Por favor, corrige los errores en el formulario.");
+        // --- LÓGICA DE ENVÍO Y VERIFICACIÓN ---
+        async function handleParticipationSubmit() {
+            const participateBtn = document.getElementById('participateBtn');
+            participateBtn.disabled = true;
+            participateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+            if (!validateForm()) {
+                alert("Por favor, completa todos los campos correctamente.");
+                participateBtn.disabled = false;
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
                 return;
             }
 
-            const reference = document.getElementById('referenceNumber').value;
-            const refExists = await checkReferenceExists(reference);
-            if (refExists) {
-                alert("¡Esta referencia ya ha sido utilizada! Por favor, verifica el número o usa uno diferente.");
+            const idNumber = document.getElementById('idNumber').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+            const idExists = await checkIfExists('id_number', idNumber);
+            if (idExists) {
+                alert("¡Esta cédula ya ha sido registrada! Solo se permite una participación por persona.");
+                participateBtn.disabled = false;
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
+                return;
+            }
+            
+            const phoneExists = await checkIfExists('phone', phoneNumber);
+            if (phoneExists) {
+                alert("¡Este número de teléfono ya ha sido registrado! Solo se permite un registro por número.");
+                participateBtn.disabled = false;
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
                 return;
             }
 
             const saveDataSuccess = await saveData();
             if (saveDataSuccess) {
-                openWhatsApp();
-                document.getElementById('reportReference').textContent = reference;
-                goToStep(5);
+                document.getElementById('confirmationId').textContent = idNumber;
+                goToStep('step-confirmation');
             } else {
                 alert("Hubo un error al guardar tu información. Por favor, intenta de nuevo.");
+                participateBtn.disabled = false;
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
             }
         }
 
@@ -956,10 +304,10 @@
             const data = {
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
-                phone: `+${document.getElementById('countryCode').value}${document.getElementById('phoneNumber').value}`,
-                email: document.getElementById('email').value,
-                tickets: parseInt(document.getElementById('ticketQuantityInput').value),
-                reference: document.getElementById('referenceNumber').value,
+                phone: document.getElementById('phoneNumber').value,
+                email: document.getElementById('socialUser').value, // Usamos el campo email para el usuario
+                tickets: 0, // El admin asignará la cantidad
+                reference: 'GRATIS', // Referencia genérica
                 status: "PENDIENTE"
             };
 
@@ -980,46 +328,20 @@
             }
         }
         
-        async function checkReferenceExists(reference) {
+        async function checkIfExists(column, value) {
             try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?reference=eq.${reference}&select=reference`, {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?${column}=eq.${value}&select=${column}`, {
                     headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
                 });
                 const data = await response.json();
                 return data.length > 0;
             } catch (error) {
-                console.error("Error verificando referencia:", error);
-                return false; // Assume not exists on error to avoid blocking user
+                console.error(`Error verificando ${column}:`, error);
+                return false;
             }
         }
 
-        function openWhatsApp() {
-            const name = document.getElementById('fullName').value;
-            const id = document.getElementById('idNumber').value;
-            const phone = `+${document.getElementById('countryCode').value}${document.getElementById('phoneNumber').value}`;
-            const email = document.getElementById('email').value;
-            const quantity = document.getElementById('ticketQuantityInput').value;
-            const reference = document.getElementById('referenceNumber').value;
-            const method = document.getElementById('paymentMethod').options[document.getElementById('paymentMethod').selectedIndex].text;
-            const amount = parseInt(quantity) * CONFIG.pricePerTicket;
-
-            const message = encodeURIComponent(
-                `*NUEVO PAGO REPORTADO - RIFA EXCLUSIVE*\n\n` +
-                `👤 *Nombre:* ${name}\n` +
-                `🆔 *Cédula:* ${id}\n` +
-                `📱 *Teléfono:* ${phone}\n` +
-                `📧 *Email:* ${email}\n\n` +
-                `--- DETALLES DEL PAGO ---\n` +
-                `🎟️ *Boletos:* ${quantity}\n` +
-                `💳 *Método:* ${method}\n` +
-                `🔢 *Referencia:* ${reference}\n` +
-                `💰 *Monto:* ${amount.toLocaleString('es-VE')} Bs.\n\n` +
-                `_Adjunto mi comprobante de pago._`
-            );
-            
-            window.open(`https://wa.me/${CONFIG.adminWhatsApp}?text=${message}`, '_blank');
-        }
-
+        // --- VERIFICACIÓN DE BOLETOS (SIN CAMBIOS) ---
         async function verifyUserTickets() {
             const idNumber = document.getElementById('verifyId').value.trim();
             if (!idNumber) {
@@ -1052,15 +374,14 @@
             
             container.innerHTML = transactions.map(t => `
                 <div class="ticket-result-card">
-                    <p><strong>Fecha:</strong> ${new Date(t.created_at).toLocaleDateString('es-VE')}</p>
-                    <p><strong>Referencia:</strong> ${t.reference}</p>
+                    <p><strong>Fecha de Registro:</strong> ${new Date(t.created_at).toLocaleDateString('es-VE')}</p>
                     <p><strong>Estado:</strong> <span style="font-weight: bold; color: ${t.status === 'VERIFICADO' ? '#2ecc71' : '#f39c12'};">${t.status}</span></p>
                     ${t.tickets && t.tickets.length > 0 ? `
                         <p><strong>Boletos Asignados:</strong></p>
                         <div class="ticket-numbers-grid">
                             ${t.tickets.map(ticket => `<span class="ticket-number-badge">${String(ticket.ticket_number).padStart(5, '0')}</span>`).join('')}
                         </div>
-                    ` : '<p><em>Aún no se han asignado números de boleto.</em></p>'}
+                    ` : '<p><em>Tus boletos serán asignados y enviados por WhatsApp una vez verifiquemos tu participación.</em></p>'}
                 </div>
             `).join('');
         }
