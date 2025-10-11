@@ -169,11 +169,15 @@
                 { icon: "fa-dollar-sign", text: "</strong>" },
                 { icon: "fa-trophy", text: " </strong>" }
             ],
+            // --- CONFIGURACIÓN DE LÍMITES ACTUALIZADA ---
+            MAX_GLOBAL_REGISTRATIONS: 8000, // LÍMITE TOTAL DE 8000 PARTICIPACIONES
+            MAX_REGISTRATIONS_PER_USER: 2 // Límite de 2 registros por cédula/teléfono
         };
 
         document.addEventListener('DOMContentLoaded', () => {
             setupInitialConfig();
             setupEventListeners();
+            checkGlobalLimitAndDisableIfFull(); // Verifica el límite total al cargar
         });
 
         function setupInitialConfig() {
@@ -233,9 +237,9 @@
             return isNameValid && isIdValid && isPhoneValid;
         }
 
-        // --- LÓGICA DE ENVÍO Y VERIFICACIÓN (MANTENIDA PARA 4 REGISTROS) ---
+        // --- LÓGICA DE LÍMITES ---
         
-        // Función para contar registros existentes
+        // Función para contar registros existentes por columna (Para límite por persona)
         async function checkExistingCount(column, value) {
             try {
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?${column}=eq.${value}&select=${column}`, {
@@ -249,13 +253,71 @@
             }
         }
         
+        // Función para contar el total de participaciones (Para límite global)
+        async function getGlobalCount() {
+             try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=count`, {
+                    headers: { 
+                        'apikey': CONFIG.supabaseKey, 
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+                        'Prefer': 'count=exact'
+                    }
+                });
+                // Supabase devuelve el conteo en el encabezado 'content-range'
+                const contentRange = response.headers.get('content-range');
+                if (contentRange) {
+                    const total = parseInt(contentRange.split('/')[1]);
+                    return isNaN(total) ? 0 : total;
+                }
+                return 0;
+            } catch (error) {
+                console.error('Error obteniendo conteo global:', error);
+                return 0;
+            }
+        }
+        
+        // Función para verificar el límite global y deshabilitar el formulario si está lleno
+        async function checkGlobalLimitAndDisableIfFull() {
+             const participateBtn = document.getElementById('participateBtn');
+             const currentCount = await getGlobalCount();
+             
+             if (currentCount >= CONFIG.MAX_GLOBAL_REGISTRATIONS) {
+                 participateBtn.disabled = true;
+                 participateBtn.textContent = '¡REGISTROS CERRADOS! Límite Alcanzado.';
+                 participateBtn.style.backgroundColor = '#e74c3c'; // Rojo
+                 
+                 const messageElement = document.createElement('p');
+                 messageElement.style.textAlign = 'center';
+                 messageElement.style.color = '#e74c3c';
+                 messageElement.style.fontWeight = 'bold';
+                 messageElement.style.fontSize = '1.1rem';
+                 messageElement.innerHTML = '<i class="fas fa-times-circle"></i> ¡Lo sentimos! Se ha alcanzado el límite máximo de participaciones (Boletos Agotados).';
+                 
+                 const form = document.getElementById('step-form');
+                 // Buscar si ya existe la alerta para no duplicarla
+                 if (!document.getElementById('global-limit-alert')) {
+                     messageElement.id = 'global-limit-alert';
+                     // Insertar antes del primer input
+                     form.insertBefore(messageElement, form.querySelector('.input-group'));
+                 }
+
+                 return true;
+             }
+             return false;
+        }
+
+        // --- LÓGICA PRINCIPAL DE ENVÍO ---
         async function handleParticipationSubmit() {
             const participateBtn = document.getElementById('participateBtn');
             participateBtn.disabled = true;
             participateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
 
-            const MAX_REGISTRATIONS = 4; // Límite de 4 registros por persona
-
+            // 1. VERIFICACIÓN DE LÍMITE GLOBAL (8000)
+            const isLimitReached = await checkGlobalLimitAndDisableIfFull();
+            if (isLimitReached) {
+                return; 
+            }
+            
             if (!validateForm()) {
                 alert("Por favor, completa todos los campos correctamente.");
                 participateBtn.disabled = false;
@@ -266,7 +328,9 @@
             const idNumber = document.getElementById('idNumber').value.trim();
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
 
-            // 1. Verificar cuántos registros existen con esta cédula
+            const MAX_REGISTRATIONS = CONFIG.MAX_REGISTRATIONS_PER_USER; // 2 participaciones por persona
+
+            // 2. Verificar cuántos registros existen con esta cédula (Límite por usuario)
             const idCount = await checkExistingCount('id_number', idNumber);
             if (idCount >= MAX_REGISTRATIONS) {
                 alert(`¡Ya has alcanzado el límite de ${MAX_REGISTRATIONS} registros! Tu cédula (${idNumber}) ya tiene ${idCount} participaciones.`);
@@ -275,7 +339,7 @@
                 return;
             }
             
-            // 2. Verificar cuántos registros existen con este teléfono
+            // 3. Verificar cuántos registros existen con este teléfono (Límite por usuario)
             const phoneCount = await checkExistingCount('phone', phoneNumber);
             if (phoneCount >= MAX_REGISTRATIONS) {
                 alert(`¡Ya has alcanzado el límite de ${MAX_REGISTRATIONS} registros! Tu teléfono (${phoneNumber}) ya tiene ${phoneCount} participaciones.`);
@@ -323,7 +387,7 @@
             }
         }
         
-        // --- VERIFICACIÓN DE BOLETOS (SIN CAMBIOS) ---
+        // --- VERIFICACIÓN DE BOLETOS (Sin cambios) ---
         async function verifyUserTickets() {
             const idNumber = document.getElementById('verifyId').value.trim();
             if (!idNumber) {
