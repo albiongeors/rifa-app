@@ -112,6 +112,7 @@
 
     <script>
         const CONFIG = {
+            // !!! ADVERTENCIA DE SEGURIDAD: ESTA CLAVE DEBE PROTEGERSE !!!
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
@@ -127,7 +128,9 @@
         }
 
         async function loadTransactions() {
+            const tbody = document.querySelector("#transactionsTable tbody");
             try {
+                // Se usa 'date.desc' para ordenar (basado en el error de la columna)
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
                 if (currentFilter === 'pending') url += `&status=eq.PENDIENTE`;
                 else if (currentFilter === 'verified') url += `&status=eq.VERIFICADO`;
@@ -135,37 +138,88 @@
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
                 }
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+                
+                // Manejo de errores HTTP
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    throw new Error(`Error HTTP ${response.status}: ${response.statusText}. Detalles: ${errorDetails.substring(0, 100)}...`);
+                }
+                
                 const transactions = await response.json();
-                findDuplicates(transactions);
-                renderTransactions(transactions);
-                await updateStats(transactions);
+                
+                if (Array.isArray(transactions)) {
+                    findDuplicates(transactions);
+                    renderTransactions(transactions);
+                    await updateStats(transactions);
+                } else {
+                     throw new Error("El servidor no devolvió una lista de transacciones válida.");
+                }
+                
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
+                tbody.innerHTML = `
+                    <tr><td colspan="8" style="text-align:center; padding:30px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle"></i> Error al cargar datos. Verifica la clave y el URL de Supabase.
+                        <br><small style="color: #f44336; margin-top: 5px; display: block;">${error.message || 'Error de conexión no especificado.'}</small>
+                    </td></tr>`;
             }
         }
 
         function findDuplicates(transactions) {
-            const phones = {};
-            const ids = {};
+            const phones = {}; 
+            const ids = {};     
             duplicatePhones = new Set();
             duplicateIds = new Set();
+            
             transactions.forEach(t => {
                 if (t.phone) {
                     const cleanPhone = t.phone.replace(/\D/g, '');
-                    if (phones[cleanPhone]) { duplicatePhones.add(cleanPhone); } else { phones[cleanPhone] = 1; }
+                    if (phones[cleanPhone]) { 
+                        duplicatePhones.add(cleanPhone); 
+                    }
+                    phones[cleanPhone] = (phones[cleanPhone] || 0) + 1;
                 }
+                
                 if (t.id_number) {
-                    if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
+                    if (ids[t.id_number]) { 
+                        duplicateIds.add(t.id_number); 
+                    }
+                    ids[t.id_number] = (ids[t.id_number] || 0) + 1;
                 }
             });
         }
         
+        // *** FUNCIÓN CORREGIDA PARA CONTAR TODOS LOS BOLETOS ASIGNADOS ***
+        async function getAllExistingTickets() {
+            // Se usa 'Prefer: count=exact' para forzar a la API a devolver el conteo total 
+            // en los encabezados, ignorando el límite de 1000 registros por defecto.
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { 
+                headers: { 
+                    'apikey': CONFIG.supabaseKey, 
+                    'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+                    'Prefer': 'count=exact' 
+                } 
+            });
+            
+            if (!response.ok) throw new Error(`Error ${response.status} al acceder a la tabla 'tickets'.`);
+
+            // El conteo total viene en el encabezado 'Content-Range'
+            const contentRange = response.headers.get('Content-Range');
+            // Si Content-Range existe (ej: 0-999/10000), extraemos el número total (10000)
+            const totalCount = contentRange ? parseInt(contentRange.split('/')[1]) : 0;
+            
+            return totalCount;
+        }
+
+        // *** FUNCIÓN MODIFICADA PARA USAR EL CONTEO TOTAL ***
         async function updateStats(transactions) {
             try {
-                const existingTickets = await getAllExistingTickets();
-                const soldTickets = existingTickets.size;
+                // Ahora obtiene el número total de boletos asignados (no limitado a 1000)
+                const soldTickets = await getAllExistingTickets(); 
+                
                 document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
                 document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
+                
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
             } catch (error) {
@@ -183,7 +237,7 @@
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
-                const date = new Date(t.date).toLocaleString('es-VE');
+                const date = new Date(t.date || t.created_at).toLocaleString('es-VE'); 
                 const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
                 const isDuplicatePhone = duplicatePhones.has(cleanPhone);
@@ -208,16 +262,27 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 2;
+            const ticketQuantityStr = prompt("¿Cuántos boletos deseas asignar a este participante?", "2");
+            if (!ticketQuantityStr) return;
+            
+            const ticketQuantity = parseInt(ticketQuantityStr);
+            
+            if (isNaN(ticketQuantity) || ticketQuantity <= 0) {
+                alert("Por favor, introduce una cantidad válida de boletos.");
+                return;
+            }
+
             if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) {
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     if (!tickets) return;
+                    
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
                         body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketQuantity })
                     });
+                    
                     showTicketsModal(tickets, phone);
                     loadTransactions();
                 } catch (error) {
@@ -241,34 +306,67 @@
             }
         }
         
-        async function getAllExistingTickets() {
-            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-            if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'.`);
+        // NOTA: Esta función sigue siendo ineficiente para grandes volúmenes, pero es necesaria para la lógica de selección de números aleatorios en el cliente.
+        // Se mantiene para no romper la funcionalidad.
+        async function _getAllTicketsForCheck() {
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { 
+                headers: { 
+                    'apikey': CONFIG.supabaseKey, 
+                    'Authorization': `Bearer ${CONFIG.supabaseKey}` 
+                    // No se usa Prefer: count=exact aquí, necesitamos los números
+                } 
+            });
+            if (!response.ok) throw new Error(`Error ${response.status} al acceder a la tabla 'tickets' para revisión.`);
             const ticketsData = await response.json();
             return new Set(ticketsData.map(ticket => ticket.ticket_number));
         }
 
         async function generateTickets(transactionId, quantity) {
             try {
-                const existingTickets = await getAllExistingTickets();
-                // ***** LÍNEA CORREGIDA *****
-                const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
-                const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
-                if (availableTickets.length < quantity) {
-                    alert("No hay suficientes boletos disponibles.");
+                // Usa la versión que trae los números para verificar duplicados
+                const existingTicketNumbers = await _getAllTicketsForCheck(); 
+                
+                if (existingTicketNumbers.size + quantity > CONFIG.totalTickets) {
+                    alert("No hay suficientes boletos disponibles para esta asignación.");
                     return false;
                 }
+
                 const ticketsToInsert = [];
-                for (let i = 0; i < quantity; i++) {
-                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
-                    const newTicket = availableTickets.splice(randomIndex, 1)[0];
-                    ticketsToInsert.push({ transaction_id: transactionId, ticket_number: newTicket, status: "ACTIVO" });
+                let numbersFound = 0;
+                let attempts = 0;
+                const maxAttempts = CONFIG.totalTickets * 2; 
+                
+                while (numbersFound < quantity && attempts < maxAttempts) {
+                    const newTicketNumber = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
+                    
+                    if (!existingTicketNumbers.has(newTicketNumber)) {
+                        ticketsToInsert.push({ 
+                            transaction_id: transactionId, 
+                            ticket_number: newTicketNumber, 
+                            status: "ACTIVO" 
+                        });
+                        existingTicketNumbers.add(newTicketNumber);
+                        numbersFound++;
+                    }
+                    attempts++;
                 }
-                await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+
+                if (numbersFound < quantity) {
+                    alert("Error: No se pudo encontrar el número requerido de boletos únicos después de varios intentos.");
+                    return false;
+                }
+
+                const postResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
                     body: JSON.stringify(ticketsToInsert)
                 });
+                
+                if (!postResponse.ok) {
+                    const errorText = await postResponse.text();
+                    throw new Error(`Error ${postResponse.status} al insertar boletos. ${errorText.substring(0, 100)}...`);
+                }
+                
                 return ticketsToInsert;
             } catch (error) {
                 console.error("Error generando boletos:", error);
@@ -296,6 +394,10 @@
 
         async function viewTransactionTickets(transactionId, name) {
             const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+            if (!response.ok) {
+                 alert(`Error ${response.status} al cargar boletos. Verifica permisos.`);
+                 return;
+            }
             const tickets = await response.json();
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -329,7 +431,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTransactions();
-            setInterval(loadTransactions, 120000);
+            setInterval(loadTransactions, 120000); 
         });
     </script>
 </body>
