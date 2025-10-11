@@ -413,7 +413,7 @@
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
             const cleanPhone = phone.replace(/\D/g, '');
-            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀`);
+            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀\n\n*RECUERDA SEGUIRME EN TIKTOK PARA PODER PARTICIPAR*\nhttps://www.tiktok.com/@yair_troya1`);
             window.open(`https://wa.me/58${cleanPhone.slice(-10)}?text=${message}`, '_blank');
         }
 
@@ -435,4 +435,5 @@
         });
     </script>
 </body>
+
 </html>
