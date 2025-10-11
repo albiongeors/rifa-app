@@ -315,8 +315,8 @@
             return new Set(ticketsData.map(ticket => ticket.ticket_number));
         }
 
-        // FUNCIÓN MODIFICADA CON MECANISMO DE RETRIES (REINTENTO)
-        async function generateTickets(transactionId, quantity, retries = 3) {
+        // FUNCIÓN MODIFICADA CON 5 REINTENTOS Y PAUSA (AJUSTE POR ERROR 409 PERSISTENTE)
+        async function generateTickets(transactionId, quantity, retries = 5) { // Aumentado a 5 reintentos
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     // 1. Obtener números existentes (Punto de riesgo de concurrencia)
@@ -366,7 +366,6 @@
                         // Si el error es un conflicto (409), reintentar
                         if (postResponse.status === 409) {
                             console.warn(`Intento ${attempt} fallido debido a conflicto (409). Reintentando...`);
-                            // Lanzar error para que el 'catch' lo maneje y continúe el bucle 'for'
                             throw new Error(`Conflict ${postResponse.status} - ${errorText.substring(0, 100)}...`);
                         }
                         
@@ -379,16 +378,19 @@
 
                 } catch (error) {
                     console.error("Error generando boletos:", error);
+                    
                     if (attempt === retries) {
                         // Si es el último intento fallido, mostrar alerta final
                         alert(`Error al generar boletos: Falló después de ${retries} intentos. El error original es: ${error.message}`);
                         return false;
                     }
-                    // Si no es el último intento, el bucle continúa
+                    
+                    // Pausa de 500ms antes de reintentar
+                    await new Promise(resolve => setTimeout(resolve, 500)); 
                 }
             }
         }
-        // FIN FUNCIÓN MODIFICADA CON MECANISMO DE RETRIES
+        // FIN FUNCIÓN MODIFICADA
         
         function showTicketsModal(tickets, phone) {
             const modal = document.createElement('div');
