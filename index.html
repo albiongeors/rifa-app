@@ -40,6 +40,13 @@
         .btn:disabled { background: var(--secondary-color); cursor: not-allowed; }
         .btn.btn-secondary { background: var(--secondary-color); color: var(--bg-color); box-shadow: none; border: 1px solid var(--border-color); }
         .btn.btn-secondary:hover { background: var(--text-secondary); }
+        .btn.btn-tiktok { 
+            background: linear-gradient(145deg, #00f2ea, #ff0050); /* Colores de TikTok */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn.btn-tiktok:hover {
+            filter: brightness(1.2);
+        }
         .input-group { margin-bottom: 25px; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-secondary); }
         input { width: 100%; padding: 15px 18px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem; transition: var(--transition); background-color: var(--bg-color); color: var(--text-primary); }
@@ -52,12 +59,7 @@
         .prizes-container li i { color: var(--accent-color); font-size: 1.2rem; }
         .confirmation-icon i { font-size: 80px; color: #2ecc71; animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
         @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .normativas-container { margin-top: 25px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); }
-        .btn-normativas { width: 100%; padding: 16px; background: var(--bg-color); border: none; text-align: left; font-weight: 600; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: var(--transition); }
-        .btn-normativas i { transition: var(--transition); }
-        .btn-normativas.active i { transform: rotate(180deg); }
-        .normativas-content { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
-        .normativas-content.active { padding: 25px; max-height: 1000px; }
+        /* .normativas-container se elimina */
         .error-message { color: #e74c3c; font-size: 0.9rem; margin-top: 5px; display: none; }
         .ticket-result-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: left; }
         .ticket-result-card p { margin-bottom: 8px; }
@@ -86,7 +88,7 @@
 
             <h2 class="step-title"><i class="fas fa-user-check"></i> ¡Participa Gratis!</h2>
             <p style="text-align: center; color: var(--text-secondary); margin-top: -20px; margin-bottom: 20px;">
-                Sigue las reglas y llena tus datos para recibir tus boletos.
+                Debes seguir la cuenta de TikTok de abajo para participar. Máximo 4 registros por persona.
             </p>
 
             <div class="input-group">
@@ -104,36 +106,20 @@
                  <input type="tel" id="phoneNumber" placeholder="04121234567" required>
                  <div class="error-message" id="phoneError"></div>
             </div>
-            <div class="input-group">
-                <label for="socialUser">Usuario de Red Social (Ej: TikTok, Instagram)</label>
-                <input type="text" id="socialUser" placeholder="@usuario" required>
-                <div class="error-message" id="socialUserError"></div>
-            </div>
+            
+            <a href="https://www.tiktok.com/@yair_troya1" target="_blank" class="btn btn-tiktok" style="text-decoration: none; margin-bottom: 5px;">
+                <i class="fab fa-tiktok"></i> PASO 1: ¡SÍGUEME EN TIKTOK! @yair_troya1
+            </a>
 
             <button id="participateBtn" class="btn">
-                <i class="fas fa-paper-plane"></i> Enviar mis Datos
+                <i class="fas fa-paper-plane"></i> PASO 2: Enviar mis Datos
             </button>
             
             <button id="checkTicketsBtn" class="btn btn-secondary" onclick="goToStep('step-verify')">
                 <i class="fas fa-search"></i> Verificar mis Boletos
             </button>
 
-            <div class="normativas-container">
-                <button id="toggleNormativas" class="btn-normativas">
-                    <span>Reglas para Participar</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div id="normativasContent" class="normativas-content">
-                    <p>Para garantizar una participación válida, debes cumplir con lo siguiente:</p>
-                    <ul>
-                        <li><strong>Seguir la cuenta:</strong> Debes seguir nuestra cuenta oficial en la red social del video.</li>
-                        <li><strong>Comentar el video:</strong> Tienes que dejar un comentario en el video promocional de la rifa.</li>
-                        <li><strong>Datos Únicos:</strong> Tu cédula y número de teléfono solo pueden ser registrados una vez.</li>
-                        <li><strong>Un registro por persona:</strong> Solo se permite una participación por persona.</li>
-                    </ul>
-                </div>
             </div>
-        </div>
 
         <div id="step-confirmation" class="step-container">
              <div style="text-align:center; padding:40px 20px;">
@@ -141,8 +127,8 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h2 class="step-title" style="font-size: 2rem;">¡Registro Enviado!</h2>
-                <p style="margin:20px 0 30px; font-size:1.1rem; line-height:1.7;">
-                    ¡Gracias por participar! Verificaremos que cumplas las reglas (seguir y comentar) y te enviaremos tus boletos por WhatsApp muy pronto.
+                <p style="margin:20px 0 30px; font-size:1.1rem; line-height:1.7; font-weight: 600;">
+                    ¡GRACIAS POR PARTICIPAR! Tus boletos se asignarán solo después de verificar que sigues nuestra cuenta de TikTok. ¡Estate atento a WhatsApp!
                 </p>
                 <p style="font-size:1rem; margin-bottom: 10px;">Tu identificador de registro es tu cédula:</p>
                 <div style="background: var(--bg-color); padding:15px; border-radius:12px; margin:10px auto; font-size:1.8rem; font-weight:bold; max-width: 250px; border: 2px dashed #2ecc71;">
@@ -199,13 +185,11 @@
         function setupEventListeners() {
             document.getElementById('participateBtn').addEventListener('click', handleParticipationSubmit);
             document.getElementById('verifyTicketsBtn').addEventListener('click', verifyUserTickets);
-            document.getElementById('toggleNormativas').addEventListener('click', toggleNormativas);
             
             // Listeners para validación en tiempo real
             document.getElementById('fullName').addEventListener('input', () => validateField('fullName', 'fullNameError', 'El nombre es requerido.'));
             document.getElementById('idNumber').addEventListener('input', () => validateField('idNumber', 'idNumberError', 'La cédula es requerida.'));
             document.getElementById('phoneNumber').addEventListener('input', () => validatePhone());
-            document.getElementById('socialUser').addEventListener('input', () => validateField('socialUser', 'socialUserError', 'El usuario de tu red social es requerido.'));
         }
         
         function goToStep(stepId) {
@@ -214,13 +198,6 @@
             });
             document.getElementById(stepId).classList.add('active');
             window.scrollTo(0, 0);
-        }
-
-        function toggleNormativas(e) {
-            const btn = e.currentTarget;
-            const content = document.getElementById('normativasContent');
-            btn.classList.toggle('active');
-            content.classList.toggle('active');
         }
 
         // --- VALIDACIÓN ---
@@ -253,39 +230,57 @@
             const isNameValid = validateField('fullName', 'fullNameError', 'El nombre es requerido.');
             const isIdValid = validateField('idNumber', 'idNumberError', 'La cédula es requerida.');
             const isPhoneValid = validatePhone();
-            const isSocialUserValid = validateField('socialUser', 'socialUserError', 'El usuario de tu red social es requerido.');
-            return isNameValid && isIdValid && isPhoneValid && isSocialUserValid;
+            return isNameValid && isIdValid && isPhoneValid;
         }
 
-        // --- LÓGICA DE ENVÍO Y VERIFICACIÓN ---
+        // --- LÓGICA DE ENVÍO Y VERIFICACIÓN (MANTENIDA PARA 4 REGISTROS) ---
+        
+        // Función para contar registros existentes
+        async function checkExistingCount(column, value) {
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?${column}=eq.${value}&select=${column}`, {
+                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
+                });
+                const data = await response.json();
+                return data.length;
+            } catch (error) {
+                console.error(`Error verificando ${column}:`, error);
+                return 0; 
+            }
+        }
+        
         async function handleParticipationSubmit() {
             const participateBtn = document.getElementById('participateBtn');
             participateBtn.disabled = true;
             participateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
 
+            const MAX_REGISTRATIONS = 4; // Límite de 4 registros por persona
+
             if (!validateForm()) {
                 alert("Por favor, completa todos los campos correctamente.");
                 participateBtn.disabled = false;
-                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PASO 2: Enviar mis Datos';
                 return;
             }
 
             const idNumber = document.getElementById('idNumber').value.trim();
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
 
-            const idExists = await checkIfExists('id_number', idNumber);
-            if (idExists) {
-                alert("¡Esta cédula ya ha sido registrada! Solo se permite una participación por persona.");
+            // 1. Verificar cuántos registros existen con esta cédula
+            const idCount = await checkExistingCount('id_number', idNumber);
+            if (idCount >= MAX_REGISTRATIONS) {
+                alert(`¡Ya has alcanzado el límite de ${MAX_REGISTRATIONS} registros! Tu cédula (${idNumber}) ya tiene ${idCount} participaciones.`);
                 participateBtn.disabled = false;
-                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PASO 2: Enviar mis Datos';
                 return;
             }
             
-            const phoneExists = await checkIfExists('phone', phoneNumber);
-            if (phoneExists) {
-                alert("¡Este número de teléfono ya ha sido registrado! Solo se permite un registro por número.");
+            // 2. Verificar cuántos registros existen con este teléfono
+            const phoneCount = await checkExistingCount('phone', phoneNumber);
+            if (phoneCount >= MAX_REGISTRATIONS) {
+                alert(`¡Ya has alcanzado el límite de ${MAX_REGISTRATIONS} registros! Tu teléfono (${phoneNumber}) ya tiene ${phoneCount} participaciones.`);
                 participateBtn.disabled = false;
-                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PASO 2: Enviar mis Datos';
                 return;
             }
 
@@ -296,7 +291,7 @@
             } else {
                 alert("Hubo un error al guardar tu información. Por favor, intenta de nuevo.");
                 participateBtn.disabled = false;
-                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mis Datos';
+                participateBtn.innerHTML = '<i class="fas fa-paper-plane"></i> PASO 2: Enviar mis Datos';
             }
         }
 
@@ -305,9 +300,9 @@
                 name: document.getElementById('fullName').value,
                 id_number: document.getElementById('idNumber').value,
                 phone: document.getElementById('phoneNumber').value,
-                email: document.getElementById('socialUser').value, // Usamos el campo email para el usuario
-                tickets: 0, // El admin asignará la cantidad
-                reference: 'GRATIS', // Referencia genérica
+                email: 'N/A', 
+                tickets: 0, 
+                reference: 'GRATIS', 
                 status: "PENDIENTE"
             };
 
@@ -328,19 +323,6 @@
             }
         }
         
-        async function checkIfExists(column, value) {
-            try {
-                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?${column}=eq.${value}&select=${column}`, {
-                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
-                });
-                const data = await response.json();
-                return data.length > 0;
-            } catch (error) {
-                console.error(`Error verificando ${column}:`, error);
-                return false;
-            }
-        }
-
         // --- VERIFICACIÓN DE BOLETOS (SIN CAMBIOS) ---
         async function verifyUserTickets() {
             const idNumber = document.getElementById('verifyId').value.trim();
