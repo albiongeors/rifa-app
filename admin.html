@@ -189,8 +189,10 @@
             });
         }
         
-        // Función para contar todos los boletos asignados (usa encabezado 'Content-Range')
+        // *** FUNCIÓN CORREGIDA PARA CONTAR TODOS LOS BOLETOS ASIGNADOS ***
         async function getAllExistingTickets() {
+            // Se usa 'Prefer: count=exact' para forzar a la API a devolver el conteo total 
+            // en los encabezados, ignorando el límite de 1000 registros por defecto.
             const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { 
                 headers: { 
                     'apikey': CONFIG.supabaseKey, 
@@ -201,15 +203,18 @@
             
             if (!response.ok) throw new Error(`Error ${response.status} al acceder a la tabla 'tickets'.`);
 
+            // El conteo total viene en el encabezado 'Content-Range'
             const contentRange = response.headers.get('Content-Range');
+            // Si Content-Range existe (ej: 0-999/10000), extraemos el número total (10000)
             const totalCount = contentRange ? parseInt(contentRange.split('/')[1]) : 0;
             
             return totalCount;
         }
 
-        // Función para actualizar las tarjetas de estadísticas
+        // *** FUNCIÓN MODIFICADA PARA USAR EL CONTEO TOTAL ***
         async function updateStats(transactions) {
             try {
+                // Ahora obtiene el número total de boletos asignados (no limitado a 1000)
                 const soldTickets = await getAllExistingTickets(); 
                 
                 document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
@@ -257,7 +262,8 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantityStr = prompt("¿Cuántos boletos deseas asignar a este participante?", "2");
+            // *** CAMBIO APLICADO AQUÍ: Valor predeterminado cambiado de "2" a "5" ***
+            const ticketQuantityStr = prompt("¿Cuántos boletos deseas asignar a este participante?", "5");
             if (!ticketQuantityStr) return;
             
             const ticketQuantity = parseInt(ticketQuantityStr);
@@ -269,7 +275,6 @@
 
             if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) {
                 try {
-                    // Se llama a generateTickets, que ahora maneja los reintentos
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     if (!tickets) return;
                     
@@ -302,12 +307,14 @@
             }
         }
         
-        // Función auxiliar para traer todos los números de boletos para el chequeo de unicidad
+        // NOTA: Esta función sigue siendo ineficiente para grandes volúmenes, pero es necesaria para la lógica de selección de números aleatorios en el cliente.
+        // Se mantiene para no romper la funcionalidad.
         async function _getAllTicketsForCheck() {
             const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { 
                 headers: { 
                     'apikey': CONFIG.supabaseKey, 
                     'Authorization': `Bearer ${CONFIG.supabaseKey}` 
+                    // No se usa Prefer: count=exact aquí, necesitamos los números
                 } 
             });
             if (!response.ok) throw new Error(`Error ${response.status} al acceder a la tabla 'tickets' para revisión.`);
@@ -315,83 +322,60 @@
             return new Set(ticketsData.map(ticket => ticket.ticket_number));
         }
 
-        // FUNCIÓN MODIFICADA CON 5 REINTENTOS Y PAUSA (AJUSTE POR ERROR 409 PERSISTENTE)
-        async function generateTickets(transactionId, quantity, retries = 5) { // Aumentado a 5 reintentos
-            for (let attempt = 1; attempt <= retries; attempt++) {
-                try {
-                    // 1. Obtener números existentes (Punto de riesgo de concurrencia)
-                    const existingTicketNumbers = await _getAllTicketsForCheck(); 
-                    
-                    if (existingTicketNumbers.size + quantity > CONFIG.totalTickets) {
-                        alert("No hay suficientes boletos disponibles para esta asignación.");
-                        return false;
-                    }
-
-                    const ticketsToInsert = [];
-                    let numbersFound = 0;
-                    let innerAttempts = 0;
-                    const maxAttempts = CONFIG.totalTickets * 2; 
-                    
-                    // 2. Generar números únicos localmente
-                    while (numbersFound < quantity && innerAttempts < maxAttempts) {
-                        const newTicketNumber = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
-                        
-                        if (!existingTicketNumbers.has(newTicketNumber)) {
-                            ticketsToInsert.push({ 
-                                transaction_id: transactionId, 
-                                ticket_number: newTicketNumber, 
-                                status: "ACTIVO" 
-                            });
-                            existingTicketNumbers.add(newTicketNumber);
-                            numbersFound++;
-                        }
-                        innerAttempts++;
-                    }
-
-                    if (numbersFound < quantity) {
-                        alert("Error: No se pudo encontrar el número requerido de boletos únicos después de varios intentos.");
-                        return false;
-                    }
-
-                    // 3. Insertar en la base de datos (Punto donde ocurre el 409)
-                    const postResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
-                        body: JSON.stringify(ticketsToInsert)
-                    });
-                    
-                    if (!postResponse.ok) {
-                        const errorText = await postResponse.text();
-                        
-                        // Si el error es un conflicto (409), reintentar
-                        if (postResponse.status === 409) {
-                            console.warn(`Intento ${attempt} fallido debido a conflicto (409). Reintentando...`);
-                            throw new Error(`Conflict ${postResponse.status} - ${errorText.substring(0, 100)}...`);
-                        }
-                        
-                        // Otros errores no se reintentan
-                        throw new Error(`Error ${postResponse.status} al insertar boletos. ${errorText.substring(0, 100)}...`);
-                    }
-                    
-                    // Éxito: retorna los boletos insertados y sale del bucle
-                    return ticketsToInsert;
-
-                } catch (error) {
-                    console.error("Error generando boletos:", error);
-                    
-                    if (attempt === retries) {
-                        // Si es el último intento fallido, mostrar alerta final
-                        alert(`Error al generar boletos: Falló después de ${retries} intentos. El error original es: ${error.message}`);
-                        return false;
-                    }
-                    
-                    // Pausa de 500ms antes de reintentar
-                    await new Promise(resolve => setTimeout(resolve, 500)); 
+        async function generateTickets(transactionId, quantity) {
+            try {
+                // Usa la versión que trae los números para verificar duplicados
+                const existingTicketNumbers = await _getAllTicketsForCheck(); 
+                
+                if (existingTicketNumbers.size + quantity > CONFIG.totalTickets) {
+                    alert("No hay suficientes boletos disponibles para esta asignación.");
+                    return false;
                 }
+
+                const ticketsToInsert = [];
+                let numbersFound = 0;
+                let attempts = 0;
+                const maxAttempts = CONFIG.totalTickets * 2; 
+                
+                while (numbersFound < quantity && attempts < maxAttempts) {
+                    const newTicketNumber = Math.floor(Math.random() * CONFIG.totalTickets) + 1;
+                    
+                    if (!existingTicketNumbers.has(newTicketNumber)) {
+                        ticketsToInsert.push({ 
+                            transaction_id: transactionId, 
+                            ticket_number: newTicketNumber, 
+                            status: "ACTIVO" 
+                        });
+                        existingTicketNumbers.add(newTicketNumber);
+                        numbersFound++;
+                    }
+                    attempts++;
+                }
+
+                if (numbersFound < quantity) {
+                    alert("Error: No se pudo encontrar el número requerido de boletos únicos después de varios intentos.");
+                    return false;
+                }
+
+                const postResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
+                    body: JSON.stringify(ticketsToInsert)
+                });
+                
+                if (!postResponse.ok) {
+                    const errorText = await postResponse.text();
+                    throw new Error(`Error ${postResponse.status} al insertar boletos. ${errorText.substring(0, 100)}...`);
+                }
+                
+                return ticketsToInsert;
+            } catch (error) {
+                console.error("Error generando boletos:", error);
+                alert(`Error al generar boletos: ${error.message}`);
+                return false;
             }
         }
-        // FIN FUNCIÓN MODIFICADA
-        
+
         function showTicketsModal(tickets, phone) {
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -428,10 +412,9 @@
             document.body.appendChild(modal);
         }
         
-        // FUNCIÓN MODIFICADA: Se agrega el mensaje de TikTok
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
             const cleanPhone = phone.replace(/\D/g, '');
-            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀\n\n*RECUERDA SEGUIRME EN TIKTOK PARA PODER PARTICIPAR*\nhttps://www.tiktok.com/@yair_troya1`);
+            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀`);
             window.open(`https://wa.me/58${cleanPhone.slice(-10)}?text=${message}`, '_blank');
         }
 
@@ -454,3 +437,4 @@
     </script>
 </body>
 </html>
+
