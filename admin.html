@@ -79,7 +79,7 @@
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="searchTransactions()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="filterAndRender()">
             </div>
             
             <div class="filters">
@@ -104,7 +104,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="8" style="text-align:center; padding:30px;">Cargando participantes...</td></tr>
+                    <tr><td colspan="8" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Cargando participantes...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -113,12 +113,12 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
         };
 
         let currentFilter = 'all';
-        let currentSearch = '';
+        let allTransactions = []; // Almacena todas las transacciones para filtrar rápidamente
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
 
@@ -126,30 +126,25 @@
             return String(number).padStart(5, '0');
         }
 
-        async function loadTransactions() {
+        async function loadAllData() {
             try {
+                // ========= CAMBIO 1: Se usa "created_at" para ordenar =========
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=created_at.desc`;
-                if (currentFilter === 'pending') url += `&status=eq.PENDIENTE`;
-                else if (currentFilter === 'verified') url += `&status=eq.VERIFICADO`;
                 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                let transactions = await response.json();
                 
-                // Filtrado por búsqueda del lado del cliente para mayor flexibilidad
-                if (currentSearch) {
-                    const searchTerm = currentSearch.toLowerCase();
-                    transactions = transactions.filter(t =>
-                        (t.name && t.name.toLowerCase().includes(searchTerm)) ||
-                        (t.id_number && t.id_number.toLowerCase().includes(searchTerm)) ||
-                        (t.email && t.email.toLowerCase().includes(searchTerm))
-                    );
+                if (!response.ok) {
+                    throw new Error(`Error en la respuesta de la red: ${response.statusText}`);
                 }
 
-                findDuplicates(transactions);
-                renderTransactions(transactions);
-                await updateStats(transactions);
+                allTransactions = await response.json();
+                
+                findDuplicates(allTransactions);
+                filterAndRender(); // Muestra los datos iniciales
+                await updateStats();
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
+                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;">Error al cargar los datos. Verifique la consola.</td></tr>`;
             }
         }
 
@@ -178,7 +173,7 @@
             });
         }
         
-        async function updateStats(allTransactions) {
+        async function updateStats() {
              try {
                 const existingTickets = await getAllExistingTickets();
                 const soldTickets = existingTickets.size;
@@ -191,16 +186,39 @@
             }
         }
 
+        function filterAndRender() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = allTransactions;
+
+            if (currentFilter === 'pending') {
+                filtered = filtered.filter(t => t.status === 'PENDIENTE');
+            } else if (currentFilter === 'verified') {
+                filtered = filtered.filter(t => t.status === 'VERIFICADO');
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(t =>
+                    (t.name && t.name.toLowerCase().includes(searchTerm)) ||
+                    (t.id_number && t.id_number.toLowerCase().includes(searchTerm)) ||
+                    (t.email && t.email.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            renderTransactions(filtered);
+        }
+
         function renderTransactions(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
             if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes que coincidan con la búsqueda.</td></tr>`;
                 return;
             }
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
+                // ========= CAMBIO 2: Se usa "created_at" para mostrar la fecha =========
                 const date = new Date(t.created_at).toLocaleString('es-VE', {dateStyle: 'short', timeStyle: 'short'});
                 const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
@@ -237,7 +255,7 @@
                         body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketQuantity })
                     });
                     showTicketsModal(tickets, phone);
-                    loadTransactions();
+                    loadAllData();
                 } catch (error) {
                     console.error("Error verificando participante:", error);
                     alert("Ocurrió un error al verificar al participante.");
@@ -251,7 +269,7 @@
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                     alert("Participante eliminado correctamente.");
-                    loadTransactions();
+                    loadAllData();
                 } catch (error) {
                     console.error("Error eliminando:", error);
                     alert("Ocurrió un error al eliminar.");
@@ -259,42 +277,25 @@
             }
         }
         
-        // ========= FUNCIÓN CORREGIDA PARA EL CONTEO DE BOLETOS =========
-        // Esta función obtiene TODOS los boletos, sin el límite de 1000 que tiene la API por defecto.
         async function getAllExistingTickets() {
             const allTickets = new Set();
             let offset = 0;
-            const limit = 1000; // Tamaño de página por defecto de la API de Supabase
+            const limit = 1000;
 
             while (true) {
                 const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&offset=${offset}&limit=${limit}`;
-                const response = await fetch(url, {
-                    headers: { 
-                        'apikey': CONFIG.supabaseKey, 
-                        'Authorization': `Bearer ${CONFIG.supabaseKey}` 
-                    }
-                });
+                const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }});
 
-                if (!response.ok) {
-                    throw new Error(`No se pudo acceder a la tabla 'tickets'. Status: ${response.status}`);
-                }
-
-                const ticketsData = await response.json();
+                if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'. Status: ${response.status}`);
                 
-                if (ticketsData.length === 0) {
-                    break; // Salimos del bucle si ya no hay más boletos que cargar
-                }
+                const ticketsData = await response.json();
+                if (ticketsData.length === 0) break;
 
                 ticketsData.forEach(ticket => allTickets.add(ticket.ticket_number));
-                
-                // Si la cantidad de boletos recibidos es menor que el límite, significa que es la última página.
-                if (ticketsData.length < limit) {
-                    break;
-                }
+                if (ticketsData.length < limit) break;
                 
                 offset += ticketsData.length;
             }
-
             return allTickets;
         }
 
@@ -371,17 +372,12 @@
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            loadTransactions();
-        }
-
-        function searchTransactions() {
-            currentSearch = document.getElementById('searchInput').value;
-            loadTransactions();
+            filterAndRender();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadTransactions();
-            setInterval(loadTransactions, 120000); // Actualiza cada 2 minutos
+            loadAllData();
+            setInterval(loadAllData, 120000); // Actualiza cada 2 minutos
         });
     </script>
 </body>
