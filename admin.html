@@ -6,6 +6,7 @@
     <title>Panel de Administración - Rifa Gratuita</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- ESTILOS (Sin cambios, se mantienen los originales para la apariencia) --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a2a6c, #3a0ca3, #4361ee); color: #333; margin: 0; padding: 20px; min-height: 100vh; }
         .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 25px; position: relative; overflow: hidden; }
@@ -208,7 +209,8 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 2;
+            // ========= CAMBIO: NÚMERO DE BOLETOS A 5 =========
+            const ticketQuantity = 5;
             if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) {
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
@@ -251,7 +253,6 @@
         async function generateTickets(transactionId, quantity) {
             try {
                 const existingTickets = await getAllExistingTickets();
-                // ***** LÍNEA CORREGIDA *****
                 const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
                 const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
                 if (availableTickets.length < quantity) {
@@ -311,7 +312,8 @@
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
             const cleanPhone = phone.replace(/\D/g, '');
-            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀`);
+            // ========= CAMBIO: MENSAJE DE WHATSAPP CON REGLA OBLIGATORIA =========
+            const message = encodeURIComponent(`*¡Felicidades! Aquí tienes tus boletos para la Rifa Exclusive de GANA CON YAIR™* 🥳\n\nRecibiste los siguientes números:\n\n*${ticketNumbers}*\n\n*IMPORTANTE:* Para que tu participación sea válida, es OBLIGATORIO que nos sigas en TikTok. ¡Verificaremos esto antes del sorteo!\n\nSigue a Yair aquí:\nhttps://www.tiktok.com/@yair_troya1\n\n¡Mucha suerte! 🍀`);
             window.open(`https://wa.me/58${cleanPhone.slice(-10)}?text=${message}`, '_blank');
         }
 
