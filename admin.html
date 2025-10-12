@@ -113,7 +113,6 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            // ========= ESTA ES LA CLAVE CORRECTA =========
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
         };
@@ -129,7 +128,8 @@
 
         async function loadAllData() {
             try {
-                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=created_at.desc`;
+                // ========= CAMBIO PRINCIPAL: Se elimina el `order` de la petición =========
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
                 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 
@@ -138,6 +138,9 @@
                 }
 
                 allTransactions = await response.json();
+                
+                // ========= Ahora ordenamos los datos aquí, en el navegador =========
+                allTransactions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 
                 findDuplicates(allTransactions);
                 filterAndRender(); 
@@ -381,3 +384,4 @@
     </script>
 </body>
 </html>
+
