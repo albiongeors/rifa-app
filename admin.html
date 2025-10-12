@@ -113,12 +113,13 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            // ========= CLAVE DE API CORREGIDA =========
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 10000,
         };
 
         let currentFilter = 'all';
-        let allTransactions = []; // Almacena todas las transacciones para filtrar rápidamente
+        let allTransactions = []; 
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
 
@@ -128,23 +129,22 @@
 
         async function loadAllData() {
             try {
-                // ========= CAMBIO 1: Se usa "created_at" para ordenar =========
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=created_at.desc`;
                 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 
                 if (!response.ok) {
-                    throw new Error(`Error en la respuesta de la red: ${response.statusText}`);
+                    throw new Error(`Error de red: ${response.status} ${response.statusText}`);
                 }
 
                 allTransactions = await response.json();
                 
                 findDuplicates(allTransactions);
-                filterAndRender(); // Muestra los datos iniciales
+                filterAndRender(); 
                 await updateStats();
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
-                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;">Error al cargar los datos. Verifique la consola.</td></tr>`;
+                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;">Error al cargar datos. Verifique la clave de API y la conexión.</td></tr>`;
             }
         }
 
@@ -212,13 +212,12 @@
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
             if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes que coincidan con la búsqueda.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes que coincidan.</td></tr>`;
                 return;
             }
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
-                // ========= CAMBIO 2: Se usa "created_at" para mostrar la fecha =========
                 const date = new Date(t.created_at).toLocaleString('es-VE', {dateStyle: 'short', timeStyle: 'short'});
                 const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
@@ -377,8 +376,9 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAllData();
-            setInterval(loadAllData, 120000); // Actualiza cada 2 minutos
+            setInterval(loadAllData, 120000); 
         });
     </script>
 </body>
 </html>
+
