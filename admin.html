@@ -6,7 +6,6 @@
     <title>Panel de Administración - Rifa Gratuita</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- ESTILOS (Sin cambios, se mantienen los originales para la apariencia) --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a2a6c, #3a0ca3, #4361ee); color: #333; margin: 0; padding: 20px; min-height: 100vh; }
         .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 25px; position: relative; overflow: hidden; }
@@ -129,14 +128,23 @@
 
         async function loadTransactions() {
             try {
-                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=created_at.desc`;
                 if (currentFilter === 'pending') url += `&status=eq.PENDIENTE`;
                 else if (currentFilter === 'verified') url += `&status=eq.VERIFICADO`;
-                if (currentSearch) {
-                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
-                }
+                
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                const transactions = await response.json();
+                let transactions = await response.json();
+                
+                // Filtrado por búsqueda del lado del cliente para mayor flexibilidad
+                if (currentSearch) {
+                    const searchTerm = currentSearch.toLowerCase();
+                    transactions = transactions.filter(t =>
+                        (t.name && t.name.toLowerCase().includes(searchTerm)) ||
+                        (t.id_number && t.id_number.toLowerCase().includes(searchTerm)) ||
+                        (t.email && t.email.toLowerCase().includes(searchTerm))
+                    );
+                }
+
                 findDuplicates(transactions);
                 renderTransactions(transactions);
                 await updateStats(transactions);
@@ -146,27 +154,36 @@
         }
 
         function findDuplicates(transactions) {
-            const phones = {};
-            const ids = {};
-            duplicatePhones = new Set();
-            duplicateIds = new Set();
+            const phones = new Map();
+            const ids = new Map();
+            duplicatePhones.clear();
+            duplicateIds.clear();
+
             transactions.forEach(t => {
                 if (t.phone) {
                     const cleanPhone = t.phone.replace(/\D/g, '');
-                    if (phones[cleanPhone]) { duplicatePhones.add(cleanPhone); } else { phones[cleanPhone] = 1; }
+                    if (phones.has(cleanPhone)) {
+                        duplicatePhones.add(cleanPhone);
+                    } else {
+                        phones.set(cleanPhone, true);
+                    }
                 }
                 if (t.id_number) {
-                    if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
+                    if (ids.has(t.id_number)) {
+                        duplicateIds.add(t.id_number);
+                    } else {
+                        ids.set(t.id_number, true);
+                    }
                 }
             });
         }
         
-        async function updateStats(transactions) {
-            try {
+        async function updateStats(allTransactions) {
+             try {
                 const existingTickets = await getAllExistingTickets();
                 const soldTickets = existingTickets.size;
-                document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
-                document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
+                document.getElementById('pendingCount').textContent = allTransactions.filter(t => t.status === 'PENDIENTE').length;
+                document.getElementById('verifiedCount').textContent = allTransactions.filter(t => t.status === 'VERIFICADO').length;
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
             } catch (error) {
@@ -184,7 +201,7 @@
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
-                const date = new Date(t.date).toLocaleString('es-VE');
+                const date = new Date(t.created_at).toLocaleString('es-VE', {dateStyle: 'short', timeStyle: 'short'});
                 const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
                 const isDuplicatePhone = duplicatePhones.has(cleanPhone);
@@ -209,7 +226,6 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            // ========= CAMBIO: NÚMERO DE BOLETOS A 5 =========
             const ticketQuantity = 5;
             if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) {
                 try {
@@ -243,11 +259,43 @@
             }
         }
         
+        // ========= FUNCIÓN CORREGIDA PARA EL CONTEO DE BOLETOS =========
+        // Esta función obtiene TODOS los boletos, sin el límite de 1000 que tiene la API por defecto.
         async function getAllExistingTickets() {
-            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-            if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'.`);
-            const ticketsData = await response.json();
-            return new Set(ticketsData.map(ticket => ticket.ticket_number));
+            const allTickets = new Set();
+            let offset = 0;
+            const limit = 1000; // Tamaño de página por defecto de la API de Supabase
+
+            while (true) {
+                const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&offset=${offset}&limit=${limit}`;
+                const response = await fetch(url, {
+                    headers: { 
+                        'apikey': CONFIG.supabaseKey, 
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}` 
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`No se pudo acceder a la tabla 'tickets'. Status: ${response.status}`);
+                }
+
+                const ticketsData = await response.json();
+                
+                if (ticketsData.length === 0) {
+                    break; // Salimos del bucle si ya no hay más boletos que cargar
+                }
+
+                ticketsData.forEach(ticket => allTickets.add(ticket.ticket_number));
+                
+                // Si la cantidad de boletos recibidos es menor que el límite, significa que es la última página.
+                if (ticketsData.length < limit) {
+                    break;
+                }
+                
+                offset += ticketsData.length;
+            }
+
+            return allTickets;
         }
 
         async function generateTickets(transactionId, quantity) {
@@ -255,16 +303,19 @@
                 const existingTickets = await getAllExistingTickets();
                 const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
                 const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
+                
                 if (availableTickets.length < quantity) {
-                    alert("No hay suficientes boletos disponibles.");
+                    alert("¡Error Crítico! No hay suficientes boletos disponibles para generar.");
                     return false;
                 }
+
                 const ticketsToInsert = [];
                 for (let i = 0; i < quantity; i++) {
                     const randomIndex = Math.floor(Math.random() * availableTickets.length);
                     const newTicket = availableTickets.splice(randomIndex, 1)[0];
                     ticketsToInsert.push({ transaction_id: transactionId, ticket_number: newTicket, status: "ACTIVO" });
                 }
+
                 await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
@@ -312,7 +363,6 @@
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
             const cleanPhone = phone.replace(/\D/g, '');
-            // ========= CAMBIO: MENSAJE DE WHATSAPP CON REGLA OBLIGATORIA =========
             const message = encodeURIComponent(`*¡Felicidades! Aquí tienes tus boletos para la Rifa Exclusive de GANA CON YAIR™* 🥳\n\nRecibiste los siguientes números:\n\n*${ticketNumbers}*\n\n*IMPORTANTE:* Para que tu participación sea válida, es OBLIGATORIO que nos sigas en TikTok. ¡Verificaremos esto antes del sorteo!\n\nSigue a Yair aquí:\nhttps://www.tiktok.com/@yair_troya1\n\n¡Mucha suerte! 🍀`);
             window.open(`https://wa.me/58${cleanPhone.slice(-10)}?text=${message}`, '_blank');
         }
@@ -331,7 +381,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTransactions();
-            setInterval(loadTransactions, 120000);
+            setInterval(loadTransactions, 120000); // Actualiza cada 2 minutos
         });
     </script>
 </body>
