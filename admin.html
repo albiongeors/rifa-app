@@ -54,7 +54,7 @@
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Gratuita</h1>
-            <button class="btn-refresh" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
+            <button class="btn-refresh" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
         </div>
         
         <div class="stats">
@@ -127,24 +127,38 @@
         }
 
         async function loadAllData() {
+            document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Cargando todos los participantes...</td></tr>`;
             try {
-                // ========= CAMBIO PRINCIPAL: Se elimina el `order` de la petición =========
-                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*`;
-                
-                const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                
-                if (!response.ok) {
-                    throw new Error(`Error de red: ${response.status} ${response.statusText}`);
+                // ========= ESTA ES LA FUNCIÓN CORREGIDA PARA CARGAR TODO =========
+                const fetchedTransactions = [];
+                let offset = 0;
+                const limit = 1000;
+
+                while (true) {
+                    const url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&offset=${offset}&limit=${limit}`;
+                    const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Error de red: ${response.status} ${response.statusText}`);
+                    }
+
+                    const batch = await response.json();
+                    fetchedTransactions.push(...batch);
+
+                    if (batch.length < limit) {
+                        break; // Salimos del bucle si es la última página de resultados
+                    }
+
+                    offset += batch.length;
                 }
 
-                allTransactions = await response.json();
-                
-                // ========= Ahora ordenamos los datos aquí, en el navegador =========
+                allTransactions = fetchedTransactions;
                 allTransactions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 
                 findDuplicates(allTransactions);
                 filterAndRender(); 
                 await updateStats();
+
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;">Error al cargar datos. Verifique la clave de API y la conexión.</td></tr>`;
@@ -379,9 +393,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAllData();
-            setInterval(loadAllData, 120000); 
         });
     </script>
 </body>
 </html>
-
