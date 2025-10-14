@@ -309,23 +309,29 @@
         }
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
-            const cleanPhone = phone.replace(/\D/g, '');
-            // --- INICIO DE LA MODIFICACIÓN ---
-            const message = encodeURIComponent(
-`🎉 *¡Felicidades por participar en la Rifa Gratuita!* 🎉
-
-Hemos registrado tu participación y te hemos asignado los siguientes boletos. ¡Guarda muy bien este mensaje!
-
-🎫 *Tus Números de la Suerte:*
------------------------------------
-*${ticketNumbers}*
------------------------------------
-
-Te deseamos la mejor de las suertes. ¡Mantente atento a nuestros anuncios sobre el sorteo! 🍀`
-            );
-            // --- FIN DE LA MODIFICACIÓN ---
+            let cleanPhone = phone.replace(/\D/g, ''); // Limpia el número (ej: +58412...)
+            
+            // Lógica para añadir el prefijo '58' si el número parece ser venezolano sin código de país.
+            if (cleanPhone.length > 0) {
+                // 1. Si NO empieza con '58' (ya tiene el código) Y (empieza con '0' O tiene 10 dígitos)
+                if (!cleanPhone.startsWith('58') && (cleanPhone.startsWith('0') || cleanPhone.length === 10)) {
+                    
+                    // Si empieza con '0', lo quita para añadir '58' (ej: '0412...' -> '58412...')
+                    if (cleanPhone.startsWith('0')) {
+                        cleanPhone = '58' + cleanPhone.substring(1);
+                    } else {
+                        // Si tiene 10 dígitos y no empieza por '0' ni '58' (ej: '412...'), asume '58'
+                        cleanPhone = '58' + cleanPhone;
+                    }
+                }
+                // Nota: Si el número ya tiene un código de país diferente a '58' (ej: '57...', '54...'), se mantiene como está.
+            }
+            
+            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀`);
+            // Se usa el número limpio directamente, asumiendo que incluye el código de país
             window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
         }
+        
 
         function setFilter(filter) {
             currentFilter = filter;
