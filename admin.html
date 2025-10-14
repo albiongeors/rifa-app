@@ -54,7 +54,7 @@
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Gratuita</h1>
-            <button class="btn-refresh" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
+            <button class="btn-refresh" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
         </div>
         
         <div class="stats">
@@ -79,7 +79,7 @@
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="filterAndRender()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="searchTransactions()">
             </div>
             
             <div class="filters">
@@ -104,7 +104,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="8" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Cargando participantes...</td></tr>
+                    <tr><td colspan="8" style="text-align:center; padding:30px;">Cargando participantes...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -114,88 +114,58 @@
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 10000,
+            totalTickets: 9999, // Ajustado para 4 dígitos (0001-9999)
         };
 
         let currentFilter = 'all';
-        let allTransactions = []; 
+        let currentSearch = '';
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
 
         function formatTicketNumber(number) {
-            return String(number).padStart(5, '0');
+            return String(number).padStart(4, '0'); // Ajustado a 4 dígitos
         }
 
-        async function loadAllData() {
-            document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Cargando todos los participantes...</td></tr>`;
+        async function loadTransactions() {
             try {
-                // ========= ESTA ES LA FUNCIÓN CORREGIDA PARA CARGAR TODO =========
-                const fetchedTransactions = [];
-                let offset = 0;
-                const limit = 1000;
-
-                while (true) {
-                    const url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&offset=${offset}&limit=${limit}`;
-                    const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Error de red: ${response.status} ${response.statusText}`);
-                    }
-
-                    const batch = await response.json();
-                    fetchedTransactions.push(...batch);
-
-                    if (batch.length < limit) {
-                        break; // Salimos del bucle si es la última página de resultados
-                    }
-
-                    offset += batch.length;
+                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
+                if (currentFilter === 'pending') url += `&status=eq.PENDIENTE`;
+                else if (currentFilter === 'verified') url += `&status=eq.VERIFICADO`;
+                if (currentSearch) {
+                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
                 }
-
-                allTransactions = fetchedTransactions;
-                allTransactions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                
-                findDuplicates(allTransactions);
-                filterAndRender(); 
-                await updateStats();
-
+                const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+                const transactions = await response.json();
+                findDuplicates(transactions);
+                renderTransactions(transactions);
+                await updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
-                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;">Error al cargar datos. Verifique la clave de API y la conexión.</td></tr>`;
             }
         }
 
         function findDuplicates(transactions) {
-            const phones = new Map();
-            const ids = new Map();
-            duplicatePhones.clear();
-            duplicateIds.clear();
-
+            const phones = {};
+            const ids = {};
+            duplicatePhones = new Set();
+            duplicateIds = new Set();
             transactions.forEach(t => {
                 if (t.phone) {
                     const cleanPhone = t.phone.replace(/\D/g, '');
-                    if (phones.has(cleanPhone)) {
-                        duplicatePhones.add(cleanPhone);
-                    } else {
-                        phones.set(cleanPhone, true);
-                    }
+                    if (phones[cleanPhone]) { duplicatePhones.add(cleanPhone); } else { phones[cleanPhone] = 1; }
                 }
                 if (t.id_number) {
-                    if (ids.has(t.id_number)) {
-                        duplicateIds.add(t.id_number);
-                    } else {
-                        ids.set(t.id_number, true);
-                    }
+                    if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
                 }
             });
         }
         
-        async function updateStats() {
-             try {
+        async function updateStats(transactions) {
+            try {
                 const existingTickets = await getAllExistingTickets();
                 const soldTickets = existingTickets.size;
-                document.getElementById('pendingCount').textContent = allTransactions.filter(t => t.status === 'PENDIENTE').length;
-                document.getElementById('verifiedCount').textContent = allTransactions.filter(t => t.status === 'VERIFICADO').length;
+                document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
+                document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
             } catch (error) {
@@ -203,39 +173,17 @@
             }
         }
 
-        function filterAndRender() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            let filtered = allTransactions;
-
-            if (currentFilter === 'pending') {
-                filtered = filtered.filter(t => t.status === 'PENDIENTE');
-            } else if (currentFilter === 'verified') {
-                filtered = filtered.filter(t => t.status === 'VERIFICADO');
-            }
-
-            if (searchTerm) {
-                filtered = filtered.filter(t =>
-                    (t.name && t.name.toLowerCase().includes(searchTerm)) ||
-                    (t.id_number && t.id_number.toLowerCase().includes(searchTerm)) ||
-                    (t.email && t.email.toLowerCase().includes(searchTerm))
-                );
-            }
-
-            renderTransactions(filtered);
-        }
-
         function renderTransactions(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
             if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes que coincidan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes.</td></tr>`;
                 return;
             }
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
-                const date = new Date(t.created_at).toLocaleString('es-VE', {dateStyle: 'short', timeStyle: 'short'});
+                const date = new Date(t.date).toLocaleString('es-VE');
                 const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
                 const isDuplicatePhone = duplicatePhones.has(cleanPhone);
@@ -260,8 +208,8 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 5;
-            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) {
+            const ticketQuantity = 1; // Ajustado a 1 boleto por defecto
+            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boleto para este participante?`)) {
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     if (!tickets) return;
@@ -271,7 +219,7 @@
                         body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketQuantity })
                     });
                     showTicketsModal(tickets, phone);
-                    loadAllData();
+                    loadTransactions();
                 } catch (error) {
                     console.error("Error verificando participante:", error);
                     alert("Ocurrió un error al verificar al participante.");
@@ -285,7 +233,7 @@
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                     alert("Participante eliminado correctamente.");
-                    loadAllData();
+                    loadTransactions();
                 } catch (error) {
                     console.error("Error eliminando:", error);
                     alert("Ocurrió un error al eliminar.");
@@ -294,25 +242,10 @@
         }
         
         async function getAllExistingTickets() {
-            const allTickets = new Set();
-            let offset = 0;
-            const limit = 1000;
-
-            while (true) {
-                const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&offset=${offset}&limit=${limit}`;
-                const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }});
-
-                if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'. Status: ${response.status}`);
-                
-                const ticketsData = await response.json();
-                if (ticketsData.length === 0) break;
-
-                ticketsData.forEach(ticket => allTickets.add(ticket.ticket_number));
-                if (ticketsData.length < limit) break;
-                
-                offset += ticketsData.length;
-            }
-            return allTickets;
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+            if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'.`);
+            const ticketsData = await response.json();
+            return new Set(ticketsData.map(ticket => ticket.ticket_number));
         }
 
         async function generateTickets(transactionId, quantity) {
@@ -320,19 +253,16 @@
                 const existingTickets = await getAllExistingTickets();
                 const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
                 const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
-                
                 if (availableTickets.length < quantity) {
-                    alert("¡Error Crítico! No hay suficientes boletos disponibles para generar.");
+                    alert("No hay suficientes boletos disponibles.");
                     return false;
                 }
-
                 const ticketsToInsert = [];
                 for (let i = 0; i < quantity; i++) {
                     const randomIndex = Math.floor(Math.random() * availableTickets.length);
                     const newTicket = availableTickets.splice(randomIndex, 1)[0];
                     ticketsToInsert.push({ transaction_id: transactionId, ticket_number: newTicket, status: "ACTIVO" });
                 }
-
                 await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
@@ -379,20 +309,27 @@
         }
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
-            const cleanPhone = phone.replace(/\D/g, '');
-            const message = encodeURIComponent(`*¡Felicidades! Aquí tienes tus boletos para la Rifa Exclusive de GANA CON YAIR™* 🥳\n\nRecibiste los siguientes números:\n\n*${ticketNumbers}*\n\n*IMPORTANTE:* Para que tu participación sea válida, es OBLIGATORIO que nos sigas en TikTok. ¡Verificaremos esto antes del sorteo!\n\nSigue a Yair aquí:\nhttps://www.tiktok.com/@yair_troya1\n\n¡Mucha suerte! 🍀`);
-            window.open(`https://wa.me/58${cleanPhone.slice(-10)}?text=${message}`, '_blank');
+            const cleanPhone = phone.replace(/\D/g, ''); // Limpia el número (ej: +58412...)
+            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀`);
+            // Se usa el número limpio directamente, asumiendo que incluye el código de país
+            window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
         }
 
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            filterAndRender();
+            loadTransactions();
+        }
+
+        function searchTransactions() {
+            currentSearch = document.getElementById('searchInput').value;
+            loadTransactions();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadAllData();
+            loadTransactions();
+            setInterval(loadTransactions, 120000);
         });
     </script>
 </body>
