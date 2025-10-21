@@ -118,7 +118,8 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDYL5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            // ¡¡ESTA ES LA LLAVE CORREGIDA!!
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 9999,
         };
 
@@ -153,6 +154,7 @@
 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 if (!response.ok) {
+                    // Ahora el error 401 (Unauthorized) se mostrará aquí
                     throw new Error(`Error de Supabase: ${response.statusText}`);
                 }
                 allTransactionsCache = await response.json();
@@ -168,7 +170,7 @@
 
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
-                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;"><b>Error al cargar:</b> ${error.message}<br>¿Ejecutaste el comando SQL para cambiar el "Max Rows"?</td></tr>`;
+                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;"><b>Error al cargar:</b> ${error.message}<br>Si el error es "Unauthorized", la SupabaseKey es incorrecta.</td></tr>`;
             }
         }
 
@@ -252,7 +254,7 @@
                 document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
-            } catch (error) { // <-- ¡¡AQUÍ ESTÁ LA CORRECCIÓN!!
+            } catch (error) { // <-- Aquí estaba la corrección de sintaxis
                 console.error("Error actualizando estadísticas:", error);
             }
         }
@@ -374,7 +376,7 @@
                 }
                 const ticketsToInsert = [];
                 for (let i = 0; i < quantity; i++) {
-                    const randomIndex = Math.floor(Math.random() * availableTICKETS.length);
+                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
                     const newTicket = availableTickets.splice(randomIndex, 1)[0];
                     ticketsToInsert.push({ transaction_id: transactionId, ticket_number: newTicket, status: "ACTIVO" });
                 }
@@ -475,3 +477,4 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
     </script>
 </body>
 </html>
+
