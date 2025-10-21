@@ -75,10 +75,83 @@
         .trust-message { background-color: var(--bg-color); padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; box-shadow: var(--shadow); }
         .trust-message p { font-style: italic; color: var(--text-secondary); margin: 0 0 10px; }
         .trust-message strong { color: var(--text-primary); }
+
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Fondo semi-transparente que respeta el modo oscuro/claro */
+            background-color: color-mix(in srgb, var(--bg-color) 70%, transparent); 
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-content h2 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        .modal-content p {
+            margin-bottom: 25px;
+            color: var(--text-secondary);
+        }
+        .btn-whatsapp-modal {
+            background: #25d366 !important; /* WhatsApp Green */
+            box-shadow: 5px 5px 10px rgba(37, 211, 102, 0.4), -5px -5px 10px #ffffff; /* Neumorphic green glow */
+            color: white !important;
+            text-decoration: none;
+        }
+        .btn-whatsapp-modal:hover {
+            background: #128c7e !important;
+        }
+        .btn-close-modal {
+            margin-top: 10px !important;
+            background: var(--bg-color) !important;
+            box-shadow: var(--inset-shadow) !important;
+            color: var(--text-secondary) !important;
+        }
     </style>
 </head>
 <body>
     
+    <div id="whatsappModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2><i class="fab fa-whatsapp" style="color: #25d366;"></i> ¡Únete a la Comunidad!</h2>
+            <p>Para recibir tu **Bendición Gratis** y estar al tanto de todas las notificaciones, es **OBLIGATORIO** unirte a nuestro grupo exclusivo de WhatsApp.</p>
+            <a href="https://chat.whatsapp.com/G6BIrlPb1ofLeVbPNa7fpr" target="_blank" class="btn btn-whatsapp-modal">
+                <i class="fab fa-whatsapp"></i> Unirme al Grupo Ahora
+            </a>
+            <button id="closeModalBtn" class="btn btn-secondary btn-close-modal">
+                <i class="fas fa-times"></i> Continuar sin Unirme
+            </button>
+        </div>
+    </div>
     <div class="container">
         <header>
             <div class="theme-switcher" id="themeSwitcher"><i class="fas fa-moon"></i></div>
@@ -91,10 +164,12 @@
             <div id="step-form" class="step-container active">
                 
                 <div style="text-align: center;">
-                    <div id="participantsCounter" class="participants-counter">
-                        <i class="fas fa-spinner fa-spin"></i> Cargando...
+                    <a href="https://chat.whatsapp.com/G6BIrlPb1ofLeVbPNa7fpr" target="_blank" style="text-decoration: none;">
+                        <div id="participantsCounter" class="participants-counter">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando...
+                        </div>
+                    </a>
                     </div>
-                </div>
 
                 <div class="steps-guide">
                     <div class="step-guide-item">
@@ -182,22 +257,30 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Se quita la redirección automática y se llama al modal.
+            setTimeout(showModal, 1000); // Muestra el modal después de 1 segundo
+
             document.getElementById('prizeImage').src = CONFIG.prizeImageUrl;
             setupEventListeners();
             initializeTheme();
-            fetchParticipantCount(); // <-- LLAMADA A LA NUEVA FUNCIÓN
+            fetchParticipantCount(); 
         });
 
-        // ***** NUEVA FUNCIÓN PARA EL CONTADOR *****
+        function showModal() {
+            document.getElementById('whatsappModal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('whatsappModal').classList.remove('active');
+        }
+
         async function fetchParticipantCount() {
             const counterElement = document.getElementById('participantsCounter');
             try {
-                // Hacemos una llamada especial para contar filas, es más eficiente
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?select=count`, {
                     headers: { 
                         'apikey': CONFIG.supabaseKey, 
                         'Authorization': `Bearer ${CONFIG.supabaseKey}`,
-                        'Prefer': 'count=exact' // Pedimos a Supabase que cuente las filas
+                        'Prefer': 'count=exact' 
                     }
                 });
                 if (!response.ok) throw new Error('Error al obtener el conteo');
@@ -206,15 +289,21 @@
                 counterElement.innerHTML = `<i class="fas fa-users"></i> +${count} Personas ya se han unido`;
             } catch (error) {
                 console.error("Error cargando el contador:", error);
-                counterElement.innerHTML = `<i class="fas fa-users"></i> ¡Únete a la comunidad!`;
+                counterElement.innerHTML = `<i class="fas fa-users"></i> <strong>¡Únete a la comunidad!</strong>`;
             }
         }
-
 
         function setupEventListeners() {
             document.getElementById('participateBtn').addEventListener('click', handleParticipationSubmit);
             document.getElementById('verifyTicketsBtn').addEventListener('click', verifyUserTickets);
             document.getElementById('themeSwitcher').addEventListener('click', toggleTheme);
+            document.getElementById('closeModalBtn').addEventListener('click', closeModal); // Botón de cerrar modal
+            document.getElementById('whatsappModal').addEventListener('click', (e) => {
+                if (e.target.id === 'whatsappModal') {
+                    closeModal(); // Cierra si se hace clic en el overlay (fondo negro)
+                }
+            });
+
             ['fullName', 'idNumber', 'socialUser'].forEach(id => document.getElementById(id).addEventListener('input', () => validateField(id)));
             document.getElementById('phoneNumber').addEventListener('input', validatePhone);
         }
@@ -284,7 +373,6 @@
             const [idExists, phoneExists] = await Promise.all([ checkIfExists('id_number', idNumber), checkIfExists('phone', phoneNumber) ]);
 
             if (idExists || phoneExists) {
-                // <-- MODIFICADO: Mensaje de alerta actualizado al nuevo límite de 2
                 alert(idExists ? "¡Esta cédula ya ha sido registrada el máximo de 2 veces!" : "¡Este teléfono ya ha sido registrado el máximo de 2 veces!");
                 setButtonLoading(btn, false, originalContent);
                 return;
@@ -330,7 +418,6 @@
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?${column}=eq.${value}&select=${column}`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 if (!response.ok) return false;
                 const data = await response.json();
-                // <-- MODIFICADO: Comprueba si ya hay 2 o más registros
                 return data.length >= 2;
             } catch (error) { 
                 console.error(`Error verificando si existe ${column}:`, error); 
