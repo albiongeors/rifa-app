@@ -118,7 +118,7 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDYL5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 9999,
         };
 
@@ -252,7 +252,7 @@
                 document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
-            } catch (error)
+            } catch (error) { // <-- ¡¡AQUÍ ESTÁ LA CORRECCIÓN!!
                 console.error("Error actualizando estadísticas:", error);
             }
         }
@@ -374,7 +374,7 @@
                 }
                 const ticketsToInsert = [];
                 for (let i = 0; i < quantity; i++) {
-                    const randomIndex = Math.floor(Math.random() * availableTickets.length);
+                    const randomIndex = Math.floor(Math.random() * availableTICKETS.length);
                     const newTicket = availableTickets.splice(randomIndex, 1)[0];
                     ticketsToInsert.push({ transaction_id: transactionId, ticket_number: newTicket, status: "ACTIVO" });
                 }
