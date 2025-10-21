@@ -284,7 +284,8 @@
             const [idExists, phoneExists] = await Promise.all([ checkIfExists('id_number', idNumber), checkIfExists('phone', phoneNumber) ]);
 
             if (idExists || phoneExists) {
-                alert(idExists ? "¡Esta cédula ya ha sido registrada!" : "¡Este teléfono ya ha sido registrado!");
+                // <-- MODIFICADO: Mensaje de alerta actualizado al nuevo límite de 2
+                alert(idExists ? "¡Esta cédula ya ha sido registrada el máximo de 2 veces!" : "¡Este teléfono ya ha sido registrado el máximo de 2 veces!");
                 setButtonLoading(btn, false, originalContent);
                 return;
             }
@@ -329,7 +330,8 @@
                 const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?${column}=eq.${value}&select=${column}`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 if (!response.ok) return false;
                 const data = await response.json();
-                return data.length > 0;
+                // <-- MODIFICADO: Comprueba si ya hay 2 o más registros
+                return data.length >= 2;
             } catch (error) { 
                 console.error(`Error verificando si existe ${column}:`, error); 
                 return false; 

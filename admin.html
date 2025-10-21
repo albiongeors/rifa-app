@@ -208,8 +208,8 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 1; // Ajustado a 1 boleto por defecto
-            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boleto para este participante?`)) {
+            const ticketQuantity = 4; // <-- MODIFICADO: 1 a 4 boletos por defecto
+            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) { // <-- MODIFICADO: 'boleto' a 'boletos'
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     if (!tickets) return;
