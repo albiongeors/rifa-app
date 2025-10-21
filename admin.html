@@ -79,7 +79,7 @@
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="searchTransactions()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="debouncedSearch()">
             </div>
             
             <div class="filters">
@@ -114,41 +114,81 @@
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
-            totalTickets: 9999, // Ajustado para 4 dígitos (0001-9999)
+            totalTickets: 9999,
         };
 
         let currentFilter = 'all';
         let currentSearch = '';
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
+        let duplicateNames = new Set();
+        let searchTimer; // <-- CORRECCIÓN 2: Variable para el temporizador de búsqueda
 
         function formatTicketNumber(number) {
-            return String(number).padStart(4, '0'); // Ajustado a 4 dígitos
+            return String(number).padStart(4, '0');
         }
 
         async function loadTransactions() {
             try {
+                // <-- CORRECCIÓN 1: Límite movido al final. Se quita de aquí.
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
+                
                 if (currentFilter === 'pending') url += `&status=eq.PENDIENTE`;
                 else if (currentFilter === 'verified') url += `&status=eq.VERIFICADO`;
+                
                 if (currentSearch) {
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
                 }
+
+                // <-- CORRECCIÓN 1: Límite añadido al FINAL de la URL para asegurar que se aplique.
+                url += `&limit=10000`;
+
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 const transactions = await response.json();
-                findDuplicates(transactions);
+                
+                findDuplicates(transactions); 
+
+                transactions.sort((a, b) => {
+                    const aName = (a.name || '').toLowerCase().trim();
+                    const bName = (b.name || '').toLowerCase().trim();
+                    const aPhone = (a.phone || '').replace(/\D/g, '');
+                    const bPhone = (b.phone || '').replace(/\D/g, '');
+
+                    const aIsDup = duplicateIds.has(a.id_number) || duplicatePhones.has(aPhone) || duplicateNames.has(aName);
+                    const bIsDup = duplicateIds.has(b.id_number) || duplicatePhones.has(bPhone) || duplicateNames.has(bName);
+
+                    if (aIsDup && !bIsDup) return -1;
+                    if (!aIsDup && bIsDup) return 1;
+
+                    if (aIsDup && bIsDup) {
+                        if (duplicateIds.has(a.id_number) || duplicateIds.has(b.id_number)) {
+                            return (a.id_number || '').localeCompare(b.id_number || '');
+                        }
+                        if (duplicateNames.has(aName) || duplicateNames.has(bName)) {
+                            return aName.localeCompare(bName);
+                        }
+                        return (aPhone).localeCompare(bPhone);
+                    }
+
+                    return new Date(b.date) - new Date(a.date);
+                });
+
                 renderTransactions(transactions);
                 await updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
+                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;"><b>Error al cargar:</b> ${error.message}</td></tr>`;
             }
         }
 
         function findDuplicates(transactions) {
             const phones = {};
             const ids = {};
+            const names = {};
             duplicatePhones = new Set();
             duplicateIds = new Set();
+            duplicateNames = new Set();
+            
             transactions.forEach(t => {
                 if (t.phone) {
                     const cleanPhone = t.phone.replace(/\D/g, '');
@@ -156,6 +196,10 @@
                 }
                 if (t.id_number) {
                     if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
+                }
+                if (t.name) {
+                    const lowerName = t.name.toLowerCase().trim();
+                    if (names[lowerName]) { duplicateNames.add(lowerName); } else { names[lowerName] = 1; }
                 }
             });
         }
@@ -184,12 +228,16 @@
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
                 const date = new Date(t.date).toLocaleString('es-VE');
+                
                 const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
                 const isDuplicatePhone = duplicatePhones.has(cleanPhone);
+                const lowerName = (t.name || '').toLowerCase().trim();
+                const isDuplicateName = duplicateNames.has(lowerName);
+
                 row.innerHTML = `
                     <td>${date}</td>
-                    <td><strong>${t.name}</strong></td>
+                    <td class="${isDuplicateName ? 'duplicate' : ''}"><strong>${t.name}</strong></td>
                     <td class="${isDuplicateId ? 'duplicate' : ''}">${t.id_number}</td>
                     <td class="${isDuplicatePhone ? 'duplicate' : ''}">${t.phone}</td>
                     <td><a href="https://www.tiktok.com/@${(t.email || '').replace('@','')}" target="_blank" class="social-link"><i class="fas fa-external-link-alt"></i> ${t.email || 'N/A'}</a></td>
@@ -208,7 +256,7 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 4; // Boletos a asignar
+            const ticketQuantity = 4;
             if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) { 
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
@@ -241,10 +289,6 @@
             }
         }
         
-        /**
-         * CORRECCIÓN: Soluciona el problema de que el sistema no pasa de 1000 boletos.
-         * Se añade &limit=10000 para asegurar que Supabase devuelva todos los registros.
-         */
         async function getAllExistingTickets() {
             const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&limit=10000`; 
             const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
@@ -313,21 +357,15 @@
             document.body.appendChild(modal);
         }
         
-        /**
-         * FUNCIÓN ACTUALIZADA: Mensaje profesional y manejo de números de 10/11 dígitos (VE).
-         */
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
-            let cleanPhone = phone.replace(/\D/g, ''); // Deja solo los dígitos
+            let cleanPhone = phone.replace(/\D/g, ''); 
             
-            // Si tiene 11 dígitos y empieza con '0' (ej: 04121234567), lo quita y añade '58'.
             if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
                 cleanPhone = '58' + cleanPhone.substring(1); 
             } 
-            // Si tiene 10 dígitos (ej: 4121234567), asume que es Venezuela y añade '58'.
             else if (cleanPhone.length === 10) {
                 cleanPhone = '58' + cleanPhone; 
             }
-            // En cualquier otro caso (ej: ya empieza con 58, 57, o es un número con prefijo largo), se usa como está.
 
             const messageTemplate = `
 *🎟️ ¡BOLETOS DE RIFA ASIGNADOS! 🎟️*
@@ -346,12 +384,9 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
             `.trim();
             
             const message = encodeURIComponent(messageTemplate);
-
-            // Abre WhatsApp con el número procesado.
             window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
         }
         
-
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -359,6 +394,16 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
             loadTransactions();
         }
 
+        // <-- CORRECCIÓN 2: Función de búsqueda reemplazada por la versión con retraso
+        function debouncedSearch() {
+            clearTimeout(searchTimer); // Cancela el temporizador anterior
+            searchTimer = setTimeout(() => { // Inicia uno nuevo
+                currentSearch = document.getElementById('searchInput').value;
+                loadTransactions(); // Llama a la función de carga
+            }, 500); // 500 milisegundos de espera
+        }
+
+        // Esta función ya no se usa directamente desde el HTML
         function searchTransactions() {
             currentSearch = document.getElementById('searchInput').value;
             loadTransactions();
@@ -366,7 +411,7 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTransactions();
-            setInterval(loadTransactions, 120000);
+            // setInterval(loadTransactions, 120000); // Puedes descomentar esto si quieres recarga automática
         });
     </script>
 </body>
