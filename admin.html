@@ -208,8 +208,8 @@
         }
 
         async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 4; // <-- MODIFICADO: 1 a 4 boletos por defecto
-            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) { // <-- MODIFICADO: 'boleto' a 'boletos'
+            const ticketQuantity = 4; // Boletos a asignar
+            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) { 
                 try {
                     const tickets = await generateTickets(transactionId, ticketQuantity);
                     if (!tickets) return;
@@ -241,8 +241,13 @@
             }
         }
         
+        /**
+         * CORRECCIÓN: Soluciona el problema de que el sistema no pasa de 1000 boletos.
+         * Se añade &limit=10000 para asegurar que Supabase devuelva todos los registros.
+         */
         async function getAllExistingTickets() {
-            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+            const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&limit=10000`; 
+            const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
             if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'.`);
             const ticketsData = await response.json();
             return new Set(ticketsData.map(ticket => ticket.ticket_number));
@@ -294,7 +299,7 @@
         }
 
         async function viewTransactionTickets(transactionId, name) {
-            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number&limit=10000`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
             const tickets = await response.json();
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -308,27 +313,41 @@
             document.body.appendChild(modal);
         }
         
+        /**
+         * FUNCIÓN ACTUALIZADA: Mensaje profesional y manejo de números de 10/11 dígitos (VE).
+         */
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
-            let cleanPhone = phone.replace(/\D/g, ''); // Limpia el número (ej: +58412...)
+            let cleanPhone = phone.replace(/\D/g, ''); // Deja solo los dígitos
             
-            // Lógica para añadir el prefijo '58' si el número parece ser venezolano sin código de país.
-            if (cleanPhone.length > 0) {
-                // 1. Si NO empieza con '58' (ya tiene el código) Y (empieza con '0' O tiene 10 dígitos)
-                if (!cleanPhone.startsWith('58') && (cleanPhone.startsWith('0') || cleanPhone.length === 10)) {
-                    
-                    // Si empieza con '0', lo quita para añadir '58' (ej: '0412...' -> '58412...')
-                    if (cleanPhone.startsWith('0')) {
-                        cleanPhone = '58' + cleanPhone.substring(1);
-                    } else {
-                        // Si tiene 10 dígitos y no empieza por '0' ni '58' (ej: '412...'), asume '58'
-                        cleanPhone = '58' + cleanPhone;
-                    }
-                }
-                // Nota: Si el número ya tiene un código de país diferente a '58' (ej: '57...', '54...'), se mantiene como está.
+            // Si tiene 11 dígitos y empieza con '0' (ej: 04121234567), lo quita y añade '58'.
+            if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
+                cleanPhone = '58' + cleanPhone.substring(1); 
+            } 
+            // Si tiene 10 dígitos (ej: 4121234567), asume que es Venezuela y añade '58'.
+            else if (cleanPhone.length === 10) {
+                cleanPhone = '58' + cleanPhone; 
             }
+            // En cualquier otro caso (ej: ya empieza con 58, 57, o es un número con prefijo largo), se usa como está.
+
+            const messageTemplate = `
+*🎟️ ¡BOLETOS DE RIFA ASIGNADOS! 🎟️*
+
+¡Felicitaciones! Ya tienes tus números para participar en la Rifa Gratuita.
+
+*➡️ TUS NÚMEROS SON:*
+${ticketNumbers}
+
+*---*
+*📣 ¡ÚNETE A LA COMUNIDAD!*
+Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuevas dinámicas, únete a nuestro grupo:
+🔗 https://chat.whatsapp.com/BZ8b01SXEjVGLlqav3gACB?mode=ww
+
+¡Mucha suerte! 🍀
+            `.trim();
             
-            const message = encodeURIComponent(`*TUS BOLETOS PARA LA RIFA*\n\n¡Gracias por participar! Aquí están tus números:\n\n*${ticketNumbers}*\n\n¡Mucha suerte! 🍀`);
-            // Se usa el número limpio directamente, asumiendo que incluye el código de país
+            const message = encodeURIComponent(messageTemplate);
+
+            // Abre WhatsApp con el número procesado.
             window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
         }
         
