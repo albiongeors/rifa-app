@@ -38,6 +38,10 @@
         .btn-delete { background-color: #dc3545; }
         .filter-btn { background: #e9ecef; color: #495057; border: 1px solid #dee2e6; padding: 10px 20px; }
         .filter-btn.active { background: #4361ee; color: white; border-color: #4361ee; }
+        /* NUEVO ESTILO PARA EL BOTÓN DE DUPLICADOS */
+        .filter-btn-duplicates { background: #fdf2e2; color: #c26b03; border: 1px solid #f9c784; }
+        .filter-btn-duplicates.active { background: #f44336; color: white; border-color: #f44336; }
+        
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 800px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25); animation: modalIn 0.4s ease-out; max-height: 90vh; overflow-y: auto; }
         @keyframes modalIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; translateY(0); } }
@@ -54,7 +58,7 @@
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Gratuita</h1>
-            <button class="btn-refresh" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
+            <button class="btn-refresh" onclick="loadTransactions()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
         </div>
         
         <div class="stats">
@@ -83,9 +87,10 @@
             </div>
             
             <div class="filters">
-                <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
-                <button class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
-                <button class="filter-btn" onclick="setFilter('verified')">Verificados</button>
+                <button id="filter-all" class="filter-btn active" onclick="setFilter('all')">Todos</button>
+                <button id="filter-pending" class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
+                <button id="filter-verified" class="filter-btn" onclick="setFilter('verified')">Verificados</button>
+                <button id="filter-duplicates" class="filter-btn filter-btn-duplicates" onclick="setFilter('duplicates')"><i class="fas fa-exclamation-triangle"></i> Duplicados</button>
             </div>
         </div>
         
@@ -122,106 +127,144 @@
         let duplicatePhones = new Set();
         let duplicateIds = new Set();
         let duplicateNames = new Set();
-        let searchTimer; // <-- CORRECCIÓN 2: Variable para el temporizador de búsqueda
+        let searchTimer;
+        
+        // Almacenaremos todas las transacciones aquí para filtrar en el navegador
+        let allTransactionsCache = [];
 
         function formatTicketNumber(number) {
             return String(number).padStart(4, '0');
         }
 
+        // --- NUEVA LÓGICA DE CARGA Y FILTRADO ---
+
         async function loadTransactions() {
             try {
-                // <-- CORRECCIÓN 1: Límite movido al final. Se quita de aquí.
+                // 1. Construir la URL base. Ya no incluye el filtro de 'status'.
+                //    El filtro se aplica DESPUÉS de recibir los datos.
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
-                
-                if (currentFilter === 'pending') url += `&status=eq.PENDIENTE`;
-                else if (currentFilter === 'verified') url += `&status=eq.VERIFICADO`;
                 
                 if (currentSearch) {
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
                 }
 
-                // <-- CORRECCIÓN 1: Límite añadido al FINAL de la URL para asegurar que se aplique.
-                url += `&limit=10000`;
+                // 2. Añadir el límite de 10000 (¡requiere el cambio en el panel de Supabase!)
+                url += `&limit=10000`; 
 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                const transactions = await response.json();
+                if (!response.ok) {
+                    throw new Error(`Error de Supabase: ${response.statusText}`);
+                }
+                allTransactionsCache = await response.json();
                 
-                findDuplicates(transactions); 
+                // 3. Encontrar duplicados en TODA la lista
+                findDuplicates(allTransactionsCache);
+                
+                // 4. Actualizar estadísticas basadas en TODA la lista
+                await updateStats(allTransactionsCache);
 
-                transactions.sort((a, b) => {
-                    const aName = (a.name || '').toLowerCase().trim();
-                    const bName = (b.name || '').toLowerCase().trim();
-                    const aPhone = (a.phone || '').replace(/\D/g, '');
-                    const bPhone = (b.phone || '').replace(/\D/g, '');
+                // 5. Renderizar la lista filtrada y ordenada
+                renderFilteredList();
 
-                    const aIsDup = duplicateIds.has(a.id_number) || duplicatePhones.has(aPhone) || duplicateNames.has(aName);
-                    const bIsDup = duplicateIds.has(b.id_number) || duplicatePhones.has(bPhone) || duplicateNames.has(bName);
-
-                    if (aIsDup && !bIsDup) return -1;
-                    if (!aIsDup && bIsDup) return 1;
-
-                    if (aIsDup && bIsDup) {
-                        if (duplicateIds.has(a.id_number) || duplicateIds.has(b.id_number)) {
-                            return (a.id_number || '').localeCompare(b.id_number || '');
-                        }
-                        if (duplicateNames.has(aName) || duplicateNames.has(bName)) {
-                            return aName.localeCompare(bName);
-                        }
-                        return (aPhone).localeCompare(bPhone);
-                    }
-
-                    return new Date(b.date) - new Date(a.date);
-                });
-
-                renderTransactions(transactions);
-                await updateStats(transactions);
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
-                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;"><b>Error al cargar:</b> ${error.message}</td></tr>`;
+                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;"><b>Error al cargar:</b> ${error.message}<br>¿Ejecutaste el comando SQL para cambiar el "Max Rows"?</td></tr>`;
             }
         }
 
-        function findDuplicates(transactions) {
-            const phones = {};
-            const ids = {};
-            const names = {};
-            duplicatePhones = new Set();
-            duplicateIds = new Set();
-            duplicateNames = new Set();
-            
-            transactions.forEach(t => {
-                if (t.phone) {
-                    const cleanPhone = t.phone.replace(/\D/g, '');
-                    if (phones[cleanPhone]) { duplicatePhones.add(cleanPhone); } else { phones[cleanPhone] = 1; }
+        /**
+         * Nueva función para filtrar y renderizar la lista cacheads
+         */
+        function renderFilteredList() {
+            let transactionsToRender = [];
+
+            // 1. Filtrar la lista
+            if (currentFilter === 'pending') {
+                transactionsToRender = allTransactionsCache.filter(t => t.status === 'PENDIENTE');
+            } else if (currentFilter === 'verified') {
+                transactionsToRender = allTransactionsCache.filter(t => t.status === 'VERIFICADO');
+            } else if (currentFilter === 'duplicates') {
+                transactionsToRender = allTransactionsCache.filter(t => isDuplicate(t));
+            } else {
+                transactionsToRender = allTransactionsCache; // "all"
+            }
+
+            // 2. Ordenar la lista
+            sortTransactions(transactionsToRender, currentFilter);
+
+            // 3. Renderizar la tabla
+            renderTable(transactionsToRender);
+        }
+
+        /**
+         * Nueva función de ordenamiento
+         */
+        function sortTransactions(transactions, filter) {
+            transactions.sort((a, b) => {
+                const aIsDup = isDuplicate(a);
+                const bIsDup = isDuplicate(b);
+
+                // Si estamos en la pestaña "Duplicados", agruparlos
+                if (filter === 'duplicates') {
+                    // Agrupar por Cédula primero
+                    if (duplicateIds.has(a.id_number) || duplicateIds.has(b.id_number)) {
+                        return (a.id_number || '').localeCompare(b.id_number || '');
+                    }
+                    // Luego agrupar por Nombre
+                    if (duplicateNames.has((a.name || '').toLowerCase().trim()) || duplicateNames.has((b.name || '').toLowerCase().trim())) {
+                        return (a.name || '').toLowerCase().trim().localeCompare((b.name || '').toLowerCase().trim());
+                    }
+                    // Luego agrupar por Teléfono
+                    const aPhone = (a.phone || '').replace(/\D/g, '');
+                    const bPhone = (b.phone || '').replace(/\D/g, '');
+                    return aPhone.localeCompare(bPhone);
                 }
-                if (t.id_number) {
-                    if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
-                }
-                if (t.name) {
-                    const lowerName = t.name.toLowerCase().trim();
-                    if (names[lowerName]) { duplicateNames.add(lowerName); } else { names[lowerName] = 1; }
-                }
+
+                // Lógica anterior: Poner duplicados arriba en las otras pestañas
+                if (aIsDup && !bIsDup) return -1;
+                if (!aIsDup && bIsDup) return 1;
+
+                // Si ambos son (o no son) duplicados, ordenar por fecha
+                return new Date(b.date) - new Date(a.date);
             });
         }
         
+        /**
+         * Función auxiliar para saber si una entrada es duplicada
+         */
+        function isDuplicate(t) {
+            const cleanName = (t.name || '').toLowerCase().trim();
+            const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
+            // Asegurarse de que la cédula no esté vacía antes de considerarla duplicada
+            const idIsDup = t.id_number && duplicateIds.has(t.id_number);
+            return idIsDup || duplicatePhones.has(cleanPhone) || duplicateNames.has(cleanName);
+        }
+
+        /**
+         * Esta función ahora solo actualiza las estadísticas
+         */
         async function updateStats(transactions) {
             try {
                 const existingTickets = await getAllExistingTickets();
                 const soldTickets = existingTickets.size;
+                // Las estadísticas AHORA se basan en la lista completa
                 document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
                 document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
-            } catch (error) {
+            } catch (error)
                 console.error("Error actualizando estadísticas:", error);
             }
         }
 
-        function renderTransactions(transactions) {
+        /**
+         * Esta función ahora solo dibuja la tabla
+         */
+        function renderTable(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
             if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes para este filtro.</td></tr>`;
                 return;
             }
             transactions.forEach(t => {
@@ -229,17 +272,14 @@
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
                 const date = new Date(t.date).toLocaleString('es-VE');
                 
-                const isDuplicateId = duplicateIds.has(t.id_number);
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
-                const isDuplicatePhone = duplicatePhones.has(cleanPhone);
-                const lowerName = (t.name || '').toLowerCase().trim();
-                const isDuplicateName = duplicateNames.has(lowerName);
+                const cleanName = (t.name || '').toLowerCase().trim();
 
                 row.innerHTML = `
                     <td>${date}</td>
-                    <td class="${isDuplicateName ? 'duplicate' : ''}"><strong>${t.name}</strong></td>
-                    <td class="${isDuplicateId ? 'duplicate' : ''}">${t.id_number}</td>
-                    <td class="${isDuplicatePhone ? 'duplicate' : ''}">${t.phone}</td>
+                    <td class="${duplicateNames.has(cleanName) ? 'duplicate' : ''}"><strong>${t.name}</strong></td>
+                    <td class="${(t.id_number && duplicateIds.has(t.id_number)) ? 'duplicate' : ''}">${t.id_number}</td>
+                    <td class="${duplicatePhones.has(cleanPhone) ? 'duplicate' : ''}">${t.phone}</td>
                     <td><a href="https://www.tiktok.com/@${(t.email || '').replace('@','')}" target="_blank" class="social-link"><i class="fas fa-external-link-alt"></i> ${t.email || 'N/A'}</a></td>
                     <td>${t.status}</td>
                     <td>
@@ -255,6 +295,32 @@
             });
         }
 
+        // --- FUNCIONES DE AYUDA (Sin cambios mayores) ---
+
+        function findDuplicates(transactions) {
+            const phones = {};
+            const ids = {};
+            const names = {};
+            duplicatePhones = new Set();
+            duplicateIds = new Set();
+            duplicateNames = new Set();
+            
+            transactions.forEach(t => {
+                if (t.phone) {
+                    const cleanPhone = t.phone.replace(/\D/g, '');
+                    if (phones[cleanPhone]) { duplicatePhones.add(cleanPhone); } else { phones[cleanPhone] = 1; }
+                }
+                // Solo contar cédulas si no están vacías
+                if (t.id_number) {
+                    if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
+                }
+                if (t.name) {
+                    const lowerName = t.name.toLowerCase().trim();
+                    if (names[lowerName]) { duplicateNames.add(lowerName); } else { names[lowerName] = 1; }
+                }
+            });
+        }
+
         async function verifyParticipant(transactionId, phone) {
             const ticketQuantity = 4;
             if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) { 
@@ -267,7 +333,7 @@
                         body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketQuantity })
                     });
                     showTicketsModal(tickets, phone);
-                    loadTransactions();
+                    loadTransactions(); // Recargar todo
                 } catch (error) {
                     console.error("Error verificando participante:", error);
                     alert("Ocurrió un error al verificar al participante.");
@@ -281,7 +347,7 @@
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                     alert("Participante eliminado correctamente.");
-                    loadTransactions();
+                    loadTransactions(); // Recargar todo
                 } catch (error) {
                     console.error("Error eliminando:", error);
                     alert("Ocurrió un error al eliminar.");
@@ -358,15 +424,12 @@
         }
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
-            let cleanPhone = phone.replace(/\D/g, ''); 
-            
+            let cleanPhone = phone ? phone.replace(/\D/g, '') : ''; 
             if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
                 cleanPhone = '58' + cleanPhone.substring(1); 
-            } 
-            else if (cleanPhone.length === 10) {
+            } else if (cleanPhone.length === 10) {
                 cleanPhone = '58' + cleanPhone; 
             }
-
             const messageTemplate = `
 *🎟️ ¡BOLETOS DE RIFA ASIGNADOS! 🎟️*
 
@@ -382,36 +445,32 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
 
 ¡Mucha suerte! 🍀
             `.trim();
-            
             const message = encodeURIComponent(messageTemplate);
             window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
         }
         
         function setFilter(filter) {
             currentFilter = filter;
+            // Actualizar UI de botones
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            loadTransactions();
+            document.getElementById(`filter-${filter}`).classList.add('active');
+            
+            // Renderizar la lista con el nuevo filtro (ya no recarga desde la red)
+            renderFilteredList();
         }
 
-        // <-- CORRECCIÓN 2: Función de búsqueda reemplazada por la versión con retraso
         function debouncedSearch() {
-            clearTimeout(searchTimer); // Cancela el temporizador anterior
-            searchTimer = setTimeout(() => { // Inicia uno nuevo
+            clearTimeout(searchTimer); 
+            searchTimer = setTimeout(() => { 
                 currentSearch = document.getElementById('searchInput').value;
-                loadTransactions(); // Llama a la función de carga
-            }, 500); // 500 milisegundos de espera
-        }
-
-        // Esta función ya no se usa directamente desde el HTML
-        function searchTransactions() {
-            currentSearch = document.getElementById('searchInput').value;
-            loadTransactions();
+                loadTransactions(); // La búsqueda SÍ recarga desde lared
+            }, 500); 
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTransactions();
-            // setInterval(loadTransactions, 120000); // Puedes descomentar esto si quieres recarga automática
+            // Recarga automática cada 2 minutos
+            // setInterval(loadTransactions, 120000);
         });
     </script>
 </body>
