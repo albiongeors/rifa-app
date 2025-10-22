@@ -4,61 +4,423 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Rifa Gratuita</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a2a6c, #3a0ca3, #4361ee); color: #333; margin: 0; padding: 20px; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 25px; position: relative; overflow: hidden; }
-        .container::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(to right, #3a0ca3, #4361ee, #4cc9f0); }
-        h1 { color: #3a0ca3; margin-bottom: 25px; font-size: 32px; display: flex; align-items: center; gap: 15px; }
-        h1 i { background: #3a0ca3; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        
+        :root {
+            --color-primary: #4361ee;
+            --color-primary-dark: #3a0ca3;
+            --color-secondary: #4a5568;
+            --color-success: #28a745;
+            --color-danger: #dc3545;
+            --color-warning: #ffc107;
+            --color-info: #17a2b8;
+            --color-bg: #f8f9fa;
+            --color-bg-container: #ffffff;
+            --color-text: #212529;
+            --color-text-muted: #6c757d;
+            --color-border: #dee2e6;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-bg); 
+            color: var(--color-text); 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container { 
+            max-width: 1600px; /* Más ancho para pantallas grandes */
+            margin: 0 auto; 
+            background: var(--color-bg-container); 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--shadow-md); 
+            padding: 30px; 
+            border: 1px solid var(--color-border);
+        }
+        
+        h1 { 
+            color: var(--color-primary-dark); 
+            margin-bottom: 25px; 
+            font-size: 28px; 
+            font-weight: 700;
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        h1 i { 
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: white; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+        
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 20px; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); padding: 20px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid #4361ee; }
-        .stat-value { font-size: 32px; font-weight: 700; color: #3a0ca3; margin: 10px 0; }
-        .stat-label { color: #6c757d; font-size: 16px; font-weight: 500; }
+        .header-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+        .stat-card { 
+            background: var(--color-bg-container); 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--shadow-sm);
+            padding: 25px; 
+            transition: all 0.3s ease; 
+            border: 1px solid var(--color-border);
+            border-left: 5px solid var(--color-primary);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-value { 
+            font-size: 36px; 
+            font-weight: 700; 
+            color: var(--color-primary-dark); 
+            margin-bottom: 5px; 
+        }
+        .stat-label { 
+            color: var(--color-text-muted); 
+            font-size: 14px; 
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Stats con colores diferentes */
+        .stats .stat-card:nth-child(1) { border-left-color: var(--color-warning); }
+        .stats .stat-card:nth-child(1) .stat-value { color: #d68000; }
+        
+        .stats .stat-card:nth-child(2) { border-left-color: var(--color-success); }
+        .stats .stat-card:nth-child(2) .stat-value { color: #1e7e34; }
+        
+        .stats .stat-card:nth-child(3) { border-left-color: var(--color-primary); }
+        .stats .stat-card:nth-child(3) .stat-value { color: var(--color-primary); }
+        
+        .stats .stat-card:nth-child(4) { border-left-color: var(--color-secondary); }
+        .stats .stat-card:nth-child(4) .stat-value { color: var(--color-secondary); }
+
         .controls { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; }
+        
         .search-container { flex: 1; min-width: 300px; position: relative; }
-        .search-container input { width: 100%; padding: 14px 20px 14px 50px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        .search-container i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #6c757d; font-size: 18px; }
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
-        .table-container { overflow-x: auto; border-radius: 10px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-        th, td { padding: 15px 18px; text-align: left; }
-        thead { background: linear-gradient(to right, #3a0ca3, #4361ee); color: white; }
-        tbody tr { border-bottom: 1px solid #e9ecef; }
+        .search-container input { 
+            width: 100%; 
+            padding: 14px 20px 14px 50px; 
+            border: 1px solid var(--color-border); 
+            border-radius: var(--border-radius); 
+            font-size: 16px; 
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .search-container input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+        }
+        .search-container i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); font-size: 18px; }
+        
+        .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        
+        .table-container { 
+            overflow: auto; /* Habilita scroll H y V */
+            max-height: 70vh; /* Altura máxima, ajusta si es necesario */
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius); 
+            box-shadow: var(--shadow-sm); 
+            margin-bottom: 30px; 
+            background: var(--color-bg-container);
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 1200px; /* Ancho mínimo para forzar scroll H si es necesario */
+        }
+        
+        th, td { 
+            padding: 16px 20px; 
+            text-align: left; 
+            vertical-align: middle;
+            font-size: 15px;
+            white-space: nowrap; /* Evita que el texto se rompa */
+        }
+        
+        thead { 
+            background: var(--color-bg-container);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        thead th {
+            color: var(--color-text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky; /* <-- MEJORA CLAVE 1: HEADER FIJO */
+            top: 0;          /* <-- MEJORA CLAVE 1: HEADER FIJO */
+            z-index: 10;
+            background: var(--color-bg-container); /* Fondo para que no se vea el scroll detrás */
+        }
+        
+        tbody tr { 
+            border-bottom: 1px solid var(--color-border); 
+            transition: background-color 0.2s ease;
+        }
+        tbody tr:last-child { border-bottom: 0; }
+        tbody tr:hover {
+            background-color: #f0f4ff;
+        }
+        
         .verified td { background-color: #e8f5e9; }
         .pending td { background-color: #fffde7; }
-        .duplicate { background-color: #ffebee !important; border-left: 3px solid #f44336; border-right: 3px solid #f44336; }
-        button { background-color: #4361ee; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        button:hover { background-color: #3a0ca3; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        .btn-refresh { background: #4a5568; }
-        .btn-verify { background-color: #28a745; }
-        .btn-verified { background-color: #6c757d; cursor: default; }
-        .btn-delete { background-color: #dc3545; }
-        .filter-btn { background: #e9ecef; color: #495057; border: 1px solid #dee2e6; padding: 10px 20px; }
-        .filter-btn.active { background: #4361ee; color: white; border-color: #4361ee; }
-        /* NUEVO ESTILO PARA EL BOTÓN DE DUPLICADOS */
-        .filter-btn-duplicates { background: #fdf2e2; color: #c26b03; border: 1px solid #f9c784; }
-        .filter-btn-duplicates.active { background: #f44336; color: white; border-color: #f44336; }
+        .duplicate { 
+            background-color: #ffebee !important; 
+            border-left: 3px solid var(--color-danger); 
+            border-right: 3px solid var(--color-danger); 
+            font-weight: 600;
+        }
+        .duplicate::before {
+            content: "⚠️ ";
+        }
+
+        /* --- MEJORA CLAVE 2: COLUMNA DE ACCIONES FIJA --- */
+        .sticky-col {
+            position: sticky !important;
+            right: 0;
+            z-index: 5;
+            min-width: 180px; /* Ancho para que quepan los botones */
+        }
         
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 800px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25); animation: modalIn 0.4s ease-out; max-height: 90vh; overflow-y: auto; }
-        @keyframes modalIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; translateY(0); } }
-        .modal-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        thead th.sticky-col {
+            z-index: 11; /* Encima de las celdas y del header normal */
+        }
+
+        tbody td.sticky-col {
+            background: var(--color-bg-container);
+            border-left: 1px solid var(--color-border);
+        }
+
+        /* Mantener colores de estado en la columna fija */
+        tbody tr:hover td.sticky-col { background-color: #e6edff; }
+        .verified td.sticky-col { background-color: #e0f0e2; }
+        .pending td.sticky-col { background-color: #fbfbea; }
+        /* --- FIN MEJORA CLAVE 2 --- */
+
+        .action-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        button { 
+            background-color: var(--color-primary); 
+            color: white; 
+            border: none; 
+            padding: 9px 15px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: 600; 
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        button:hover { 
+            background-color: var(--color-primary-dark); 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        
+        /* Botones pequeños para acciones de tabla */
+        .btn-verify, .btn-verified, .btn-delete, .btn-edit, .btn-regenerate {
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+        .btn-verify i, .btn-verified i, .btn-delete i, .btn-edit i, .btn-regenerate i {
+            font-size: 16px; /* Icono más grande */
+            margin: 0; /* Quitar gap, el botón es solo icono */
+        }
+
+        .btn-refresh { background: var(--color-secondary); }
+        .btn-add-manual { background-color: var(--color-success); }
+        .btn-add-manual:hover { background-color: #218838; }
+        
+        .btn-verify { background-color: var(--color-success); }
+        .btn-verified { background-color: var(--color-secondary); cursor: default; }
+        .btn-delete { background-color: var(--color-danger); }
+        .btn-edit { background-color: var(--color-warning); color: #333; }
+        .btn-edit:hover { background-color: #e0a800; }
+        .btn-regenerate { background-color: var(--color-info); }
+        .btn-regenerate:hover { background-color: #138496; }
+        
+        .filter-btn { 
+            background: #e9ecef; 
+            color: #495057; 
+            border: 1px solid #dee2e6; 
+            font-weight: 600;
+        }
+        .filter-btn.active { 
+            background: var(--color-primary); 
+            color: white; 
+            border-color: var(--color-primary); 
+        }
+        .filter-btn-duplicates { 
+            background: #fff3e0; 
+            color: #e65100; 
+            border: 1px solid #ffe0b2; 
+        }
+        .filter-btn-duplicates.active { 
+            background: var(--color-danger); 
+            color: white; 
+            border-color: var(--color-danger); 
+        }
+        
+        .modal { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+            backdrop-filter: blur(5px); 
+            padding: 20px;
+        }
+        .modal-content { 
+            background: white; 
+            padding: 30px 35px; 
+            border-radius: var(--border-radius); 
+            width: 90%; 
+            max-width: 800px; 
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25); 
+            animation: modalIn 0.4s ease-out; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+        }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(-30px) scale(0.98); } to { opacity: 1; translateY(0) scale(1); } }
+        
+        .modal-buttons { display: flex; gap: 15px; margin-top: 20px; justify-content: flex-end; }
         .btn-whatsapp { background: #25D366; }
-        textarea { width: 100%; height: 120px; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-family: monospace; font-size: 16px; resize: vertical; margin: 15px 0; }
-        .ticket-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 8px; }
-        .ticket-number { background: #f0f4ff; border: 1px solid #4361ee; border-radius: 4px; padding: 5px 10px; font-weight: bold; font-family: monospace; }
-        .social-link { color: #3a0ca3; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .social-link:hover { text-decoration: underline; }
+        .btn-whatsapp:hover { background: #1da851; }
+        .btn-cancel { background-color: var(--color-secondary); }
+        .btn-cancel:hover { background-color: #3e4a5c; }
+        
+        textarea { 
+            width: 100%; 
+            height: 120px; 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: 1px solid var(--color-border); 
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 16px; 
+            resize: vertical; 
+            margin: 15px 0; 
+        }
+        textarea:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+        }
+        .ticket-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto; padding: 15px; background: #f8f9fa; border: 1px solid var(--color-border); border-radius: 8px; }
+        .ticket-number { background: #e7ebfd; border: 1px solid var(--color-primary); color: var(--color-primary-dark); border-radius: 4px; padding: 5px 10px; font-weight: 700; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+        
+        .social-link { 
+            color: var(--color-primary); 
+            font-weight: 500; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        .social-link:hover { text-decoration: underline; color: var(--color-primary-dark); }
+        .social-link i { font-size: 13px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #495057; font-size: 15px; }
+        .form-group input { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1px solid var(--color-border); 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+        }
+        
+        .modal-footer { border-top: 1px solid #e9ecef; padding-top: 20px; margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
+        
+        .form-divider { border-top: 1px solid #eee; margin: 25px 0; padding-top: 20px; }
+        
+        .form-group-radio { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 10px; 
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+        .form-group-radio:hover {
+            background-color: #f8f9fa;
+        }
+        .form-group-radio input { width: auto; height: 1.2em; width: 1.2em; }
+        .form-group-radio label { margin-bottom: 0; font-weight: 500; }
+        
+        .form-sub-group { padding-left: 30px; margin-top: -5px; margin-bottom: 15px; }
+        #manual-ticket-group { display: none; /* Oculto por defecto */ }
+        #random-ticket-group { display: block; /* Visible por defecto */ }
+        
+        #manual-ticket-numbers { height: 100px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-crown"></i> Panel de Administración - Rifa Gratuita</h1>
-            <button class="btn-refresh" onclick="loadTransactions()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
+            <div class="header-buttons">
+                <button class="btn-add-manual" onclick="openManualAddModal()"><i class="fas fa-plus-circle"></i> Añadir Participante</button>
+                <button class="btn-refresh" onclick="loadTransactions()"><i class="fas fa-sync-alt"></i> Actualizar Datos</button>
+            </div>
         </div>
         
         <div class="stats">
@@ -85,7 +447,6 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="debouncedSearch()">
             </div>
-            
             <div class="filters">
                 <button id="filter-all" class="filter-btn active" onclick="setFilter('all')">Todos</button>
                 <button id="filter-pending" class="filter-btn" onclick="setFilter('pending')">Pendientes</button>
@@ -96,6 +457,7 @@
         
         <div class="table-container">
             <table id="transactionsTable">
+                
                 <thead>
                     <tr>
                         <th>Fecha</th>
@@ -104,12 +466,11 @@
                         <th>Teléfono</th>
                         <th>Usuario Social</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
-                        <th>Eliminar</th>
-                    </tr>
+                        <th class="sticky-col">Acciones</th> </tr>
                 </thead>
+                
                 <tbody>
-                    <tr><td colspan="8" style="text-align:center; padding:30px;">Cargando participantes...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; padding:30px;">Cargando participantes...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -118,7 +479,9 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            // ¡¡ESTA ES LA LLAVE CORREGIDA!!
+            // ==========================================================
+            // ¡ESTA ES LA LLAVE CORREGIDA! (Mi error de la vez pasada)
+            // ==========================================================
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 9999,
         };
@@ -130,57 +493,45 @@
         let duplicateNames = new Set();
         let searchTimer;
         
-        // Almacenaremos todas las transacciones aquí para filtrar en el navegador
         let allTransactionsCache = [];
 
         function formatTicketNumber(number) {
-            return String(number).padStart(4, '0');
+            // Ajusta el padding al número total de boletos
+            return String(number).padStart(String(CONFIG.totalTickets).length, '0');
         }
-
-        // --- NUEVA LÓGICA DE CARGA Y FILTRADO ---
 
         async function loadTransactions() {
             try {
-                // 1. Construir la URL base. Ya no incluye el filtro de 'status'.
-                //    El filtro se aplica DESPUÉS de recibir los datos.
                 let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
-                
                 if (currentSearch) {
                     url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
                 }
-
-                // 2. Añadir el límite de 10000 (¡requiere el cambio en el panel de Supabase!)
                 url += `&limit=10000`; 
 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 if (!response.ok) {
-                    // Ahora el error 401 (Unauthorized) se mostrará aquí
-                    throw new Error(`Error de Supabase: ${response.statusText}`);
+                    throw new Error(`Error de Supabase (${response.status}): ${response.statusText}`);
                 }
                 allTransactionsCache = await response.json();
-                
-                // 3. Encontrar duplicados en TODA la lista
                 findDuplicates(allTransactionsCache);
-                
-                // 4. Actualizar estadísticas basadas en TODA la lista
                 await updateStats(allTransactionsCache);
-
-                // 5. Renderizar la lista filtrada y ordenada
                 renderFilteredList();
 
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
-                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color: red;"><b>Error al cargar:</b> ${error.message}<br>Si el error es "Unauthorized", la SupabaseKey es incorrecta.</td></tr>`;
+                let errorMsg = `<b>Error al cargar:</b> ${error.message}`;
+                if (error.message.includes("Failed to fetch")) {
+                    errorMsg += `<br><br><b>¡SOLUCIÓN!</b> Este error (Failed to fetch / CORS) ocurre por abrir el archivo localmente. Debes usar la extensión <b>"Live Server"</b> en VS Code.`;
+                } else if (error.message.includes("401")) {
+                     errorMsg = `<b>Error al cargar: Error de Supabase (401)</b><br>Si el error es "Unauthorized", la SupabaseKey es incorrecta. Por favor, verifica la llave en el código.`;
+                }
+                // COLSPAN ACTUALIZADO A 7
+                document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color: red;">${errorMsg}</td></tr>`;
             }
         }
 
-        /**
-         * Nueva función para filtrar y renderizar la lista cacheads
-         */
         function renderFilteredList() {
             let transactionsToRender = [];
-
-            // 1. Filtrar la lista
             if (currentFilter === 'pending') {
                 transactionsToRender = allTransactionsCache.filter(t => t.status === 'PENDIENTE');
             } else if (currentFilter === 'verified') {
@@ -188,116 +539,105 @@
             } else if (currentFilter === 'duplicates') {
                 transactionsToRender = allTransactionsCache.filter(t => isDuplicate(t));
             } else {
-                transactionsToRender = allTransactionsCache; // "all"
+                transactionsToRender = allTransactionsCache;
             }
-
-            // 2. Ordenar la lista
             sortTransactions(transactionsToRender, currentFilter);
-
-            // 3. Renderizar la tabla
             renderTable(transactionsToRender);
         }
 
-        /**
-         * Nueva función de ordenamiento
-         */
         function sortTransactions(transactions, filter) {
             transactions.sort((a, b) => {
                 const aIsDup = isDuplicate(a);
                 const bIsDup = isDuplicate(b);
-
-                // Si estamos en la pestaña "Duplicados", agruparlos
                 if (filter === 'duplicates') {
-                    // Agrupar por Cédula primero
                     if (duplicateIds.has(a.id_number) || duplicateIds.has(b.id_number)) {
                         return (a.id_number || '').localeCompare(b.id_number || '');
                     }
-                    // Luego agrupar por Nombre
                     if (duplicateNames.has((a.name || '').toLowerCase().trim()) || duplicateNames.has((b.name || '').toLowerCase().trim())) {
                         return (a.name || '').toLowerCase().trim().localeCompare((b.name || '').toLowerCase().trim());
                     }
-                    // Luego agrupar por Teléfono
                     const aPhone = (a.phone || '').replace(/\D/g, '');
                     const bPhone = (b.phone || '').replace(/\D/g, '');
                     return aPhone.localeCompare(bPhone);
                 }
-
-                // Lógica anterior: Poner duplicados arriba en las otras pestañas
                 if (aIsDup && !bIsDup) return -1;
                 if (!aIsDup && bIsDup) return 1;
-
-                // Si ambos son (o no son) duplicados, ordenar por fecha
                 return new Date(b.date) - new Date(a.date);
             });
         }
         
-        /**
-         * Función auxiliar para saber si una entrada es duplicada
-         */
         function isDuplicate(t) {
             const cleanName = (t.name || '').toLowerCase().trim();
             const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
-            // Asegurarse de que la cédula no esté vacía antes de considerarla duplicada
             const idIsDup = t.id_number && duplicateIds.has(t.id_number);
             return idIsDup || duplicatePhones.has(cleanPhone) || duplicateNames.has(cleanName);
         }
 
-        /**
-         * Esta función ahora solo actualiza las estadísticas
-         */
         async function updateStats(transactions) {
             try {
                 const existingTickets = await getAllExistingTickets();
                 const soldTickets = existingTickets.size;
-                // Las estadísticas AHORA se basan en la lista completa
                 document.getElementById('pendingCount').textContent = transactions.filter(t => t.status === 'PENDIENTE').length;
                 document.getElementById('verifiedCount').textContent = transactions.filter(t => t.status === 'VERIFICADO').length;
                 document.getElementById('soldTickets').textContent = soldTickets.toLocaleString();
                 document.getElementById('availableTickets').textContent = (CONFIG.totalTickets - soldTickets).toLocaleString();
-            } catch (error) { // <-- Aquí estaba la corrección de sintaxis
+            } catch (error) { 
                 console.error("Error actualizando estadísticas:", error);
             }
         }
 
-        /**
-         * Esta función ahora solo dibuja la tabla
-         */
+        // ==========================================================
+        // ¡INICIO DE LA FUNCIÓN renderTable() MODIFICADA!
+        // (7 Columnas + Sticky Action Column)
+        // ==========================================================
         function renderTable(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
             if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron participantes para este filtro.</td></tr>`;
+                // Colspan actualizado a 7
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px;">No se encontraron participantes para este filtro.</td></tr>`;
                 return;
             }
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
-                const date = new Date(t.date).toLocaleString('es-VE');
+                // Formato de fecha más corto
+                const date = new Date(t.date).toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' });
                 
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
                 const cleanName = (t.name || '').toLowerCase().trim();
+                
+                const ticketCount = t.tickets || 4; 
 
+                // HTML de la fila actualizado a 7 columnas
                 row.innerHTML = `
                     <td>${date}</td>
                     <td class="${duplicateNames.has(cleanName) ? 'duplicate' : ''}"><strong>${t.name}</strong></td>
-                    <td class="${(t.id_number && duplicateIds.has(t.id_number)) ? 'duplicate' : ''}">${t.id_number}</td>
-                    <td class="${duplicatePhones.has(cleanPhone) ? 'duplicate' : ''}">${t.phone}</td>
+                    <td class="${(t.id_number && duplicateIds.has(t.id_number)) ? 'duplicate' : ''}">${t.id_number || 'N/A'}</td>
+                    <td class="${duplicatePhones.has(cleanPhone) ? 'duplicate' : ''}">${t.phone || 'N/A'}</td>
                     <td><a href="https://www.tiktok.com/@${(t.email || '').replace('@','')}" target="_blank" class="social-link"><i class="fas fa-external-link-alt"></i> ${t.email || 'N/A'}</a></td>
                     <td>${t.status}</td>
-                    <td>
-                        ${t.status !== "VERIFICADO" ? 
-                            `<button class="btn-verify" onclick="verifyParticipant(${t.id}, '${t.phone}')"><i class="fas fa-check-circle"></i> Verificar</button>` : 
-                            `<button class="btn-verified" onclick="viewTransactionTickets(${t.id}, '${t.name}')"><i class="fas fa-ticket-alt"></i> Ver Boletos</button>`}
-                    </td>
-                    <td>
-                        <button class="btn-delete" onclick="deleteTransaction(${t.id})"><i class="fas fa-trash-alt"></i></button>
+                    
+                    <td class="sticky-col">
+                        <div class="action-group">
+                            ${t.status !== "VERIFICADO" ? 
+                                `<button class="btn-verify" onclick="verifyParticipant(${t.id}, '${t.phone}')" title="Verificar Participante"><i class="fas fa-check-circle"></i></button>` : 
+                                `
+                                    <button class="btn-verified" onclick="viewTransactionTickets(${t.id}, '${t.name.replace(/'/g, "&apos;")}')" title="Ver Boletos (${ticketCount})"><i class="fas fa-ticket-alt"></i></button>
+                                    <button class="btn-regenerate" onclick="regenerateParticipantTickets(${t.id}, '${t.name.replace(/'/g, "&apos;")}', ${ticketCount}, '${t.phone}')" title="Regenerar Boletos"><i class="fas fa-sync-alt"></i></button>
+                                `
+                            }
+                            <button class="btn-edit" onclick="openEditModal(${t.id})" title="Editar Participante"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn-delete" onclick="deleteTransaction(${t.id})" title="Eliminar Participante"><i class="fas fa-trash-alt"></i></button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
         }
-
-        // --- FUNCIONES DE AYUDA (Sin cambios mayores) ---
+        // ==========================================================
+        // ¡FIN DE LA FUNCIÓN renderTable() MODIFICADA!
+        // ==========================================================
 
         function findDuplicates(transactions) {
             const phones = {};
@@ -312,7 +652,6 @@
                     const cleanPhone = t.phone.replace(/\D/g, '');
                     if (phones[cleanPhone]) { duplicatePhones.add(cleanPhone); } else { phones[cleanPhone] = 1; }
                 }
-                // Solo contar cédulas si no están vacías
                 if (t.id_number) {
                     if (ids[t.id_number]) { duplicateIds.add(t.id_number); } else { ids[t.id_number] = 1; }
                 }
@@ -323,39 +662,327 @@
             });
         }
 
-        async function verifyParticipant(transactionId, phone) {
-            const ticketQuantity = 4;
-            if (confirm(`¿Confirmas que quieres generar ${ticketQuantity} boletos para este participante?`)) { 
-                try {
-                    const tickets = await generateTickets(transactionId, ticketQuantity);
-                    if (!tickets) return;
-                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
-                        body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketQuantity })
-                    });
-                    showTicketsModal(tickets, phone);
-                    loadTransactions(); // Recargar todo
-                } catch (error) {
-                    console.error("Error verificando participante:", error);
-                    alert("Ocurrió un error al verificar al participante.");
+        async function completeVerification(transactionId, phone, ticketQuantity, isNewParticipant = false) {
+            let tickets = null;
+            try {
+                if (isNaN(ticketQuantity) || ticketQuantity < 1) {
+                    alert("La cantidad de boletos debe ser un número mayor a 0.");
+                    return false;
                 }
+
+                tickets = await generateTickets(transactionId, ticketQuantity);
+                if (!tickets) return false; 
+
+                const patchResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Prefer': 'return=representation' },
+                    body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketQuantity })
+                });
+
+                if (!patchResponse.ok) throw new Error('No se pudo actualizar la transacción.');
+                
+                const updatedTransaction = (await patchResponse.json())[0];
+
+                if (isNewParticipant) {
+                    allTransactionsCache.unshift(updatedTransaction);
+                } else {
+                    const participantIndex = allTransactionsCache.findIndex(t => t.id === transactionId);
+                    if (participantIndex !== -1) {
+                        allTransactionsCache[participantIndex] = updatedTransaction;
+                    }
+                }
+                
+                renderFilteredList();
+                await updateStats(allTransactionsCache); 
+                showTicketsModal(tickets, phone, false);
+                return true;
+
+            } catch (error) {
+                console.error("Error en completeVerification:", error);
+                alert(`Ocurrió un error al verificar: ${error.message}`);
+                loadTransactions();
+                return false;
             }
         }
         
-        async function deleteTransaction(transactionId) {
-            if (confirm("¿Estás seguro de eliminar este participante? Los boletos asociados también se eliminarán.")) {
-                try {
-                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-                    alert("Participante eliminado correctamente.");
-                    loadTransactions(); // Recargar todo
-                } catch (error) {
-                    console.error("Error eliminando:", error);
-                    alert("Ocurrió un error al eliminar.");
+        // ==========================================================
+        // ¡NUEVA FUNCIÓN DE MODALES PROFESIONALES!
+        // ==========================================================
+        
+        /**
+         * Muestra un modal personalizado en lugar de prompt() o confirm()
+         * Devuelve una Promesa que se resuelve con el valor (si es 'prompt') o true (si es 'confirm')
+         * Se resuelve con 'null' si el usuario cancela.
+         */
+        function showModal({ title, message, type = 'confirm', confirmText = 'Aceptar', cancelText = 'Cancelar', defaultValue = '', inputType = 'text', inputPlaceholder = '', confirmClass = '' }) {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                
+                let inputHtml = '';
+                if (type === 'prompt') {
+                    // Reutilizamos los estilos de .form-group que ya existen
+                    inputHtml = `
+                        <div class="form-group" style="margin-top: 20px;">
+                            <input type="${inputType}" id="modal-input" value="${defaultValue}" placeholder="${inputPlaceholder}">
+                        </div>
+                    `;
                 }
+
+                modal.innerHTML = `
+                    <div class="modal-content" style="max-width: 500px;">
+                        <h2>${title}</h2>
+                        <p style="margin-top: 10px; font-size: 16px; color: var(--color-text); line-height: 1.6;">${message}</p>
+                        ${inputHtml}
+                        <div class="modal-footer">
+                            <button class="btn-cancel" id="modal-cancel">${cancelText}</button>
+                            <button id="modal-confirm" class="${confirmClass}">${confirmText}</button>
+                        </div>
+                    </div>`;
+                
+                document.body.appendChild(modal);
+                
+                const inputEl = modal.querySelector('#modal-input');
+                const confirmBtn = modal.querySelector('#modal-confirm');
+                const cancelBtn = modal.querySelector('#modal-cancel');
+                
+                if (inputEl) {
+                    inputEl.focus(); // Auto-focus en el input si existe
+                    // Permitir presionar Enter en el input
+                    inputEl.onkeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            confirmBtn.click();
+                        }
+                    };
+                }
+
+                const closeModal = (resolvedValue) => {
+                    modal.remove();
+                    resolve(resolvedValue);
+                };
+
+                confirmBtn.onclick = () => {
+                    closeModal(type === 'prompt' ? inputEl.value : true);
+                };
+
+                cancelBtn.onclick = () => {
+                    closeModal(null); // Resuelve con null si cancela
+                };
+            });
+        }
+        
+        // ==========================================================
+        // ¡FUNCIONES MODIFICADAS PARA USAR showModal()!
+        // ==========================================================
+
+        async function verifyParticipant(transactionId, phone) {
+            const quantityInput = await showModal({
+                title: '<i class="fas fa-ticket-alt" style="color: var(--color-primary);"></i> Asignar Boletos',
+                message: '¿Cuántos boletos aleatorios deseas generar para este participante?',
+                type: 'prompt',
+                inputType: 'number',
+                defaultValue: '4',
+                confirmText: 'Generar Boletos'
+            });
+            
+            if (quantityInput === null) return; // Usuario canceló
+
+            const ticketQuantity = parseInt(quantityInput);
+            
+            if (isNaN(ticketQuantity) || ticketQuantity < 1) {
+                alert("Por favor, introduce un número válido mayor a 0."); // Un 'alert' de error simple está bien aquí
+                return;
+            }
+            
+            const confirmed = await showModal({
+                title: '<i class="fas fa-question-circle" style="color: var(--color-info);"></i> Confirmar Verificación',
+                message: `¿Estás seguro de que quieres generar <strong>${ticketQuantity} boletos</strong> para este participante?`,
+                confirmText: 'Sí, generar',
+                cancelText: 'No, cancelar'
+            });
+
+            if (!confirmed) return; // Usuario canceló la confirmación
+            
+            await completeVerification(transactionId, phone, ticketQuantity, false); 
+        }
+        
+        async function deleteTransaction(transactionId) {
+            const confirmed = await showModal({
+                title: '<i class="fas fa-trash-alt" style="color: var(--color-danger);"></i> Eliminar Participante',
+                message: '¿Estás seguro de eliminar este participante? Sus boletos asociados también se eliminarán. <strong>Esta acción no se puede deshacer.</strong>',
+                confirmText: 'Sí, Eliminar',
+                cancelText: 'Cancelar',
+                confirmClass: 'btn-delete' // Esto hace que el botón de confirmar sea rojo
+            });
+
+            if (!confirmed) return; // Usuario canceló
+            
+            try {
+                await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+                await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+
+                allTransactionsCache = allTransactionsCache.filter(t => t.id !== transactionId);
+                renderFilteredList(); 
+                await updateStats(allTransactionsCache); 
+                alert("Participante eliminado correctamente.");
+                
+            } catch (error) {
+                console.error("Error eliminando:", error);
+                alert("Ocurrió un error al eliminar.");
+                loadTransactions();
             }
         }
+
+        function openEditModal(transactionId) {
+            const participant = allTransactionsCache.find(t => t.id === transactionId);
+            if (!participant) {
+                alert("Error: No se encontró al participante.");
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-pencil-alt"></i> Editar Participante</h2>
+                    <p>Estás editando a: <strong>${participant.name}</strong></p>
+                    
+                    <form id="editForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="edit-name">Nombre Completo</label>
+                            <input type="text" id="edit-name" value='${participant.name.replace(/'/g, "&apos;")}'>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-id_number">Cédula</label>
+                            <input type="text" id="edit-id_number" value="${participant.id_number || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-phone">Teléfono</label>
+                            <input type="text" id="edit-phone" value="${participant.phone || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email">Usuario Social (TikTok/IG)</label>
+                            <input type="text" id="edit-email" value="${participant.email || ''}">
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="this.closest('.modal').remove()"><i class="fas fa-times"></i> Cancelar</button>
+                        <button onclick="saveParticipantChanges(${transactionId})"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+
+        async function saveParticipantChanges(transactionId) {
+            const newName = document.getElementById('edit-name').value;
+            const newIdNumber = document.getElementById('edit-id_number').value;
+            const newPhone = document.getElementById('edit-phone').value;
+            const newEmail = document.getElementById('edit-email').value;
+
+            if (!newName) {
+                alert("El nombre no puede estar vacío.");
+                return;
+            }
+
+            const updates = { name: newName, id_number: newIdNumber, phone: newPhone, email: newEmail };
+
+            try {
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
+                    body: JSON.stringify(updates)
+                });
+
+                if (!response.ok) throw new Error(`Error al actualizar: ${response.statusText}`);
+
+                const participantIndex = allTransactionsCache.findIndex(t => t.id === transactionId);
+                if (participantIndex !== -1) {
+                    allTransactionsCache[participantIndex].name = newName;
+                    allTransactionsCache[participantIndex].id_number = newIdNumber;
+                    allTransactionsCache[participantIndex].phone = newPhone;
+                    allTransactionsCache[participantIndex].email = newEmail;
+                }
+
+                renderFilteredList();
+                document.querySelector('.modal').remove();
+                alert("¡Participante actualizado con éxito!");
+
+            } catch (error) {
+                console.error("Error guardando cambios:", error);
+                alert(`Ocurrió un error al guardar: ${error.message}`);
+            }
+        }
+        
+        async function regenerateParticipantTickets(transactionId, name, oldTicketQuantity, phone) {
+            
+            const quantityInput = await showModal({
+                title: '<i class="fas fa-sync-alt" style="color: var(--color-info);"></i> Regenerar Boletos',
+                message: `¿Cuántos boletos aleatorios deseas generar para <strong>${name}</strong>? (Actualmente tiene ${oldTicketQuantity} boletos).`,
+                type: 'prompt',
+                inputType: 'number',
+                defaultValue: oldTicketQuantity.toString(),
+                confirmText: 'Continuar'
+            });
+
+            if (quantityInput === null) return; // Usuario canceló
+            
+            const newTicketQuantity = parseInt(quantityInput);
+            
+            if (isNaN(newTicketQuantity) || newTicketQuantity < 1) {
+                alert("Por favor, introduce un número válido mayor a 0.");
+                return;
+            }
+
+            const confirmed = await showModal({
+                title: '<i class="fas fa-exclamation-triangle" style="color: var(--color-danger);"></i> ¡ACCIÓN PELIGROSA!',
+                message: `¿Estás SEGURO de regenerar los boletos de <strong>${name}</strong>?<br><br>Sus ${oldTicketQuantity} boletos actuales se <strong>ELIMINARÁN PERMANENTEMENTE</strong> y se le asignarán <strong>${newTicketQuantity}</strong> nuevos boletos aleatorios.<br><br>Esta acción no se puede deshacer.`,
+                confirmText: 'Sí, Regenerar Ahora',
+                cancelText: 'Cancelar',
+                confirmClass: 'btn-delete' // Botón rojo para acción destructiva
+            });
+
+            if (!confirmed) return; // Usuario canceló la confirmación final
+
+            try {
+                const deleteResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { 
+                    method: 'DELETE', 
+                    headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } 
+                });
+                
+                if (!deleteResponse.ok) throw new Error("No se pudieron eliminar los boletos antiguos.");
+
+                const newTickets = await generateTickets(transactionId, newTicketQuantity);
+                if (!newTickets) throw new Error("No se pudieron generar nuevos boletos.");
+                
+                await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${transactionId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
+                    body: JSON.stringify({ tickets: newTicketQuantity })
+                });
+
+                const participantIndex = allTransactionsCache.findIndex(t => t.id === transactionId);
+                if (participantIndex !== -1) {
+                    allTransactionsCache[participantIndex].tickets = newTicketQuantity;
+                }
+                
+                renderFilteredList(); 
+                await updateStats(allTransactionsCache);
+                
+                showTicketsModal(newTickets, phone, true); 
+
+            } catch (error) {
+                console.error("Error regenerando boletos:", error);
+                alert(`Ocurrió un error: ${error.message}\nSe recomienda recargar la página.`);
+                loadTransactions();
+            }
+        }
+        
+        // ==========================================================
+        // (Resto de funciones sin cambios)
+        // ==========================================================
         
         async function getAllExistingTickets() {
             const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&limit=10000`; 
@@ -370,21 +997,25 @@
                 const existingTickets = await getAllExistingTickets();
                 const allPossibleTickets = Array.from({ length: CONFIG.totalTickets }, (_, i) => i + 1);
                 const availableTickets = allPossibleTickets.filter(num => !existingTickets.has(num));
+                
                 if (availableTickets.length < quantity) {
-                    alert("No hay suficientes boletos disponibles.");
+                    alert(`No hay suficientes boletos disponibles. \nSe necesitan: ${quantity} \nDisponibles: ${availableTickets.length}`);
                     return false;
                 }
+                
                 const ticketsToInsert = [];
                 for (let i = 0; i < quantity; i++) {
                     const randomIndex = Math.floor(Math.random() * availableTickets.length);
                     const newTicket = availableTickets.splice(randomIndex, 1)[0];
                     ticketsToInsert.push({ transaction_id: transactionId, ticket_number: newTicket, status: "ACTIVO" });
                 }
-                await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                
+                const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
                     body: JSON.stringify(ticketsToInsert)
                 });
+                if (!response.ok) throw new Error('No se pudieron insertar los boletos en la base de datos.');
                 return ticketsToInsert;
             } catch (error) {
                 console.error("Error generando boletos:", error);
@@ -392,15 +1023,228 @@
                 return false;
             }
         }
+        
+        function openManualAddModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2><i class="fas fa-plus-circle"></i> Añadir Nuevo Participante</h2>
+                    <p>Completa la información del participante.</p>
+                    
+                    <form id="addManualForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="manual-name">Nombre Completo *</label>
+                            <input type="text" id="manual-name" placeholder="Ej: Maria Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label for="manual-id_number">Cédula</label>
+                            <input type="text" id="manual-id_number" placeholder="Ej: V-12345678">
+                        </div>
+                        <div class="form-group">
+                            <label for="manual-phone">Teléfono</label>
+                            <input type="text" id="manual-phone" placeholder="Ej: 04121234567">
+                        </div>
+                        <div class="form-group">
+                            <label for="manual-email">Usuario Social (TikTok/IG)</label>
+                            <input type="text" id="manual-email" placeholder="Ej: @mariaperez">
+                        </div>
 
-        function showTicketsModal(tickets, phone) {
+                        <div class="form-divider">
+                            <label>Asignación de Boletos *</label>
+                            
+                            <div class="form-group-radio" onclick="toggleManualTicket('random')">
+                                <input type="radio" id="type-random" name="ticketType" value="random" checked>
+                                <label for="type-random">Asignar boletos aleatorios</label>
+                            </div>
+                            
+                            <div class="form-group form-sub-group" id="random-ticket-group">
+                                <label for="manual-random-quantity">Cantidad de Boletos *</label>
+                                <input type="number" id="manual-random-quantity" value="4" style="max-width: 150px;">
+                            </div>
+                            
+                            <div class="form-group-radio" onclick="toggleManualTicket('manual')">
+                                <input type="radio" id="type-manual" name="ticketType" value="manual">
+                                <label for="type-manual">Asignar boletos manuales (Para ganadores / casos especiales)</label>
+                            </div>
+
+                            <div class="form-group form-sub-group" id="manual-ticket-group">
+                                <label for="manual-ticket-numbers">Números de Boleto (separados por coma, espacio o línea) *</label>
+                                <textarea id="manual-ticket-numbers" placeholder="Ej: 0255, 0054, 1254"></textarea>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="this.closest('.modal').remove()"><i class="fas fa-times"></i> Cancelar</button>
+                        <button class="btn-add-manual" onclick="saveManualParticipant()"><i class="fas fa-save"></i> Guardar Participante</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+
+        function toggleManualTicket(selection) {
+            document.getElementById('random-ticket-group').style.display = (selection === 'random') ? 'block' : 'none';
+            document.getElementById('manual-ticket-group').style.display = (selection === 'manual') ? 'block' : 'none';
+        }
+
+        async function saveManualParticipant() {
+            const newName = document.getElementById('manual-name').value;
+            const newIdNumber = document.getElementById('manual-id_number').value || null;
+            const newPhone = document.getElementById('manual-phone').value || null;
+            const newEmail = document.getElementById('manual-email').value || null;
+            const assignmentType = document.querySelector('input[name="ticketType"]:checked').value;
+
+            if (!newName) {
+                alert("El Nombre Completo es obligatorio.");
+                return;
+            }
+
+            if (newPhone || newIdNumber) {
+                let orFilter = [];
+                if (newPhone) orFilter.push(`phone.eq.${newPhone}`);
+                if (newIdNumber) orFilter.push(`id_number.eq.${newIdNumber}`);
+                
+                try {
+                    const checkResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(${orFilter.join(',')})&select=id`, {
+                        headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Accept': 'application/vnd.pgrst.object+json' }
+                    });
+                    if (checkResponse.ok) {
+                        alert("¡Error! Un participante con ese número de teléfono o cédula ya existe.\nBúscalo en la lista para editarlo.");
+                        return;
+                    }
+                } catch (e) { /* Está bien si no lo encuentra */ }
+            }
+
+            const newTransactionData = {
+                name: newName,
+                id_number: newIdNumber,
+                phone: newPhone,
+                email: newEmail,
+                status: 'PENDIENTE', 
+                date: new Date().toISOString()
+            };
+
+            let newTransactionId = null;
+            try {
+                const transResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Prefer': 'return=representation' },
+                    body: JSON.stringify(newTransactionData)
+                });
+                
+                if (!transResponse.ok) throw new Error('No se pudo crear la transacción.');
+                
+                const newTransaction = (await transResponse.json())[0];
+                newTransactionId = newTransaction.id;
+
+                if (assignmentType === 'random') {
+                    const ticketQuantity = parseInt(document.getElementById('manual-random-quantity').value);
+
+                    if (isNaN(ticketQuantity) || ticketQuantity < 1) {
+                        alert("La cantidad de boletos aleatorios debe ser un número válido mayor a 0.");
+                        throw new Error("Cantidad inválida"); 
+                    }
+
+                    document.querySelector('.modal').remove();
+                    await completeVerification(newTransactionId, newPhone, ticketQuantity, true); 
+
+                } else {
+                    const ticketsInput = document.getElementById('manual-ticket-numbers').value;
+                    if (!ticketsInput) {
+                        alert("Debes escribir al menos un número de boleto manual.");
+                        throw new Error("Boletos manuales vacíos");
+                    }
+                    
+                    const ticketStrings = ticketsInput.replace(/[\s,]+/g, ' ').trim().split(' ');
+                    const ticketNumbers = ticketStrings.map(Number);
+
+                    let invalidNumbers = [];
+                    let duplicateCheck = new Set();
+                    for (const num of ticketNumbers) {
+                        if (isNaN(num) || num < 1 || num > CONFIG.totalTickets) {
+                            invalidNumbers.push(num || "texto");
+                        }
+                        if (duplicateCheck.has(num)) {
+                            invalidNumbers.push(`${num} (duplicado en tu lista)`);
+                        }
+                        duplicateCheck.add(num);
+                    }
+                    if (invalidNumbers.length > 0) {
+                        alert(`¡Error! Hay números inválidos: \n${invalidNumbers.join(', ')}\n\nAsegúrate de que sean números entre 1 y ${CONFIG.totalTickets}.`);
+                        throw new Error("Números manuales inválidos");
+                    }
+
+                    // Verificar si los boletos están disponibles en la DB
+                    const checkUrl = `${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=in.(${ticketNumbers.join(',')})&select=ticket_number`;
+                    const ticketCheck = await fetch(checkUrl, {
+                        headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
+                    });
+                    const takenTickets = await ticketCheck.json();
+                    
+                    if (takenTickets.length > 0) {
+                        alert(`¡Error! Los siguientes boletos ya están asignados: \n${takenTickets.map(t => formatTicketNumber(t.ticket_number)).join(', ')}`);
+                        throw new Error("Boletos ya asignados");
+                    }
+
+                    // ¡Éxito! Insertar los boletos
+                    const ticketsToInsert = ticketNumbers.map(num => ({
+                        transaction_id: newTransactionId,
+                        ticket_number: num,
+                        status: "ACTIVO"
+                    }));
+                    
+                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` },
+                        body: JSON.stringify(ticketsToInsert)
+                    });
+
+                    // Actualizar la transacción a VERIFICADO
+                    const patchResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${newTransactionId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Prefer': 'return=representation' },
+                        body: JSON.stringify({ status: 'VERIFICADO', tickets: ticketNumbers.length })
+                    });
+                    
+                    const updatedTransaction = (await patchResponse.json())[0];
+                    
+                    allTransactionsCache.unshift(updatedTransaction); 
+                    renderFilteredList(); 
+                    await updateStats(allTransactionsCache); 
+                    
+                    document.querySelector('.modal').remove();
+                    alert(`¡Éxito! Se añadió a "${newName}" con ${ticketNumbers.length} boletos manuales:\n${ticketNumbers.map(formatTicketNumber).join(', ')}`);
+                }
+            
+            } catch (error) {
+                console.error("Error guardando participante manual:", error);
+                if (newTransactionId) {
+                    console.warn("Borrando transacción huérfana...");
+                    // No alertar al usuario, solo limpiar la DB
+                    await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${newTransactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+                }
+                // Solo mostrar alertas de error que no sean las de validación
+                if (error.message !== "Boletos manuales vacíos" && error.message !== "Números manuales inválidos" && error.message !== "Boletos ya asignados" && error.message !== "Cantidad inválida") {
+                    alert(`Ocurrió un error inesperado: ${error.message}`);
+                }
+            }
+        }
+        
+        function showTicketsModal(tickets, phone, isRegeneration = false) {
             const modal = document.createElement('div');
             modal.className = 'modal';
             const formattedTickets = tickets.map(t => formatTicketNumber(t.ticket_number)).join(', ');
+            
+            const modalTitle = isRegeneration ? 
+                '¡Boletos Regenerados con Éxito!' : 
+                'Boletos Generados';
+
             modal.innerHTML = `
                 <div class="modal-content">
-                    <h2><i class="fas fa-ticket-alt"></i> Boletos Generados</h2>
-                    <p>Se han generado <strong>${tickets.length} boletos</strong>:</p>
+                    <h2><i class="fas fa-ticket-alt"></i> ${modalTitle}</h2>
+                    <p>Se han asignado <strong>${tickets.length} boletos</strong>:</p>
                     <textarea readonly>${formattedTickets}</textarea>
                     <div class="modal-buttons">
                         <button class="btn-whatsapp" onclick="sendTicketsByWhatsApp('${phone}', '${formattedTickets}')"><i class="fab fa-whatsapp"></i> Enviar por WhatsApp</button>
@@ -427,9 +1271,9 @@
         
         function sendTicketsByWhatsApp(phone, ticketNumbers) {
             let cleanPhone = phone ? phone.replace(/\D/g, '') : ''; 
-            if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
+            if (cleanPhone && cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
                 cleanPhone = '58' + cleanPhone.substring(1); 
-            } else if (cleanPhone.length === 10) {
+            } else if (cleanPhone && cleanPhone.length === 10) {
                 cleanPhone = '58' + cleanPhone; 
             }
             const messageTemplate = `
@@ -453,11 +1297,8 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
         
         function setFilter(filter) {
             currentFilter = filter;
-            // Actualizar UI de botones
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`filter-${filter}`).classList.add('active');
-            
-            // Renderizar la lista con el nuevo filtro (ya no recarga desde la red)
             renderFilteredList();
         }
 
@@ -465,16 +1306,13 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
             clearTimeout(searchTimer); 
             searchTimer = setTimeout(() => { 
                 currentSearch = document.getElementById('searchInput').value;
-                loadTransactions(); // La búsqueda SÍ recarga desde lared
+                loadTransactions(); 
             }, 500); 
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTransactions();
-            // Recarga automática cada 2 minutos
-            // setInterval(loadTransactions, 120000);
         });
     </script>
 </body>
 </html>
-
