@@ -411,6 +411,127 @@
         #random-ticket-group { display: block; /* Visible por defecto */ }
         
         #manual-ticket-numbers { height: 100px; }
+
+        /* --- Estilos para el modal de Ganador --- */
+        .winner-modal .modal-content {
+            background: linear-gradient(145deg, #f7f3ff, #e0f7fa); /* Degradado suave */
+            max-width: 650px;
+            padding: 40px;
+            border: 3px solid var(--color-primary);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInScale 0.5s ease-out;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .winner-modal h2 {
+            font-size: 38px;
+            color: #3a0ca3; /* Morado oscuro */
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .winner-modal h2::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: var(--color-primary);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            border-radius: 2px;
+        }
+        .winner-modal .winner-info {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-sm);
+        }
+        .winner-modal .winner-info p {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--color-text);
+        }
+        .winner-modal .winner-info p strong {
+            color: var(--color-primary-dark);
+            font-weight: 700;
+        }
+        .winner-modal .highlight-ticket {
+            font-size: 6em; /* Muy grande */
+            font-weight: 900;
+            color: #ff2a6d; /* Rojo vibrante */
+            text-align: center;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.2);
+            margin: 20px 0 30px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+        }
+        .winner-modal .other-tickets {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .winner-modal .other-tickets h3 {
+            font-size: 20px;
+            color: var(--color-secondary);
+            margin-bottom: 15px;
+        }
+        .winner-modal .ticket-list {
+            background: #f0f4ff; /* Fondo más suave para la lista de boletos */
+            border: 1px solid var(--color-primary);
+        }
+        .winner-modal .btn-whatsapp {
+            background-color: #25D366; /* WhatsApp Green */
+            font-size: 16px;
+            padding: 12px 25px;
+        }
+        .winner-modal .btn-whatsapp:hover {
+            background-color: #1da851;
+        }
+        .winner-modal .modal-footer {
+            justify-content: center; /* Centrar botones */
+            margin-top: 30px;
+            padding-top: 25px;
+        }
+        .winner-modal .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .winner-modal .confetti div {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--color-primary); /* Color base de confeti */
+            opacity: 0;
+            animation: confetti-fall 3s ease-out forwards;
+            border-radius: 50%; /* Confeti redondo */
+        }
+        .winner-modal .confetti div:nth-child(2n) { background-color: #ff6f61; animation-delay: 0.2s; } /* Rojo */
+        .winner-modal .confetti div:nth-child(3n) { background-color: #4CAF50; animation-delay: 0.4s; } /* Verde */
+        .winner-modal .confetti div:nth-child(4n) { background-color: #FFC107; animation-delay: 0.6s; } /* Amarillo */
+        .winner-modal .confetti div:nth-child(5n) { background-color: #9C27B0; animation-delay: 0.8s; } /* Morado */
+
+        @keyframes confetti-fall {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: translate(var(--x-start), var(--y-start)) rotate(0deg) scale(1); }
+            100% { transform: translate(var(--x-end), var(--y-end)) rotate(720deg) scale(0.5); opacity: 0; }
+        }
+
     </style>
 </head>
 <body>
@@ -445,7 +566,7 @@
         <div class="controls">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o usuario social..." onkeyup="debouncedSearch()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o número de boleto..." onkeyup="debouncedSearch()">
             </div>
             <div class="filters">
                 <button id="filter-all" class="filter-btn active" onclick="setFilter('all')">Todos</button>
@@ -466,7 +587,8 @@
                         <th>Teléfono</th>
                         <th>Usuario Social</th>
                         <th>Estado</th>
-                        <th class="sticky-col">Acciones</th> </tr>
+                        <th class="sticky-col">Acciones</th>
+                    </tr>
                 </thead>
                 
                 <tbody>
@@ -480,7 +602,7 @@
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
             // ==========================================================
-            // ¡ESTA ES LA LLAVE CORREGIDA! (Mi error de la vez pasada)
+            // ¡ESTA ES LA LLAVE CORRECTA Y COMPLETA!
             // ==========================================================
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 9999,
@@ -496,17 +618,56 @@
         let allTransactionsCache = [];
 
         function formatTicketNumber(number) {
-            // Ajusta el padding al número total de boletos
             return String(number).padStart(String(CONFIG.totalTickets).length, '0');
         }
 
         async function loadTransactions() {
             try {
-                let url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc`;
-                if (currentSearch) {
-                    url += `&or=(name.ilike.*${currentSearch}*,id_number.ilike.*${currentSearch}*,email.ilike.*${currentSearch}*)`;
+                let url;
+                const searchTerm = currentSearch.trim();
+                const isNumeric = /^\d+$/.test(searchTerm) && searchTerm !== '';
+                let transactionIdFromTicket = null;
+                let foundTicketNumber = null; // Guardará el número de boleto si se encuentra
+
+                if (isNumeric) {
+                    // 1. Buscar si este número existe en la tabla 'tickets'
+                    const ticketUrl = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=transaction_id,ticket_number&ticket_number=eq.${parseInt(searchTerm)}`;
+                    const ticketResponse = await fetch(ticketUrl, { 
+                        headers: { 
+                            'apikey': CONFIG.supabaseKey, 
+                            'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+                            'Accept': 'application/vnd.pgrst.object+json'
+                        } 
+                    });
+
+                    if (ticketResponse.ok) {
+                        const ticketData = await ticketResponse.json();
+                        if (ticketData && ticketData.transaction_id) {
+                            transactionIdFromTicket = ticketData.transaction_id;
+                            foundTicketNumber = ticketData.ticket_number; // Capturar el número de boleto encontrado
+                        }
+                    }
+
+                    // 2. Construir la consulta para 'transactions'
+                    let filters = [];
+                    // Siempre buscar por cédula si es un número
+                    filters.push(`id_number.ilike.*${searchTerm}*`); 
+                    
+                    if (transactionIdFromTicket) {
+                        // Si encontramos un boleto, añadimos la ID del dueño a la búsqueda
+                        filters.push(`id.eq.${transactionIdFromTicket}`); 
+                    }
+                    
+                    url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc&or=(${filters.join(',')})&limit=10000`;
+
+                } else if (searchTerm) {
+                    // Es texto: Búsqueda original por nombre, cédula o email
+                    url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc&or=(name.ilike.*${searchTerm}*,id_number.ilike.*${searchTerm}*,email.ilike.*${searchTerm}*)&limit=10000`;
+                
+                } else {
+                    // Búsqueda vacía: Cargar todos
+                    url = `${CONFIG.supabaseUrl}/rest/v1/transactions?select=*&order=date.desc&limit=10000`;
                 }
-                url += `&limit=10000`; 
 
                 const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 if (!response.ok) {
@@ -517,6 +678,22 @@
                 await updateStats(allTransactionsCache);
                 renderFilteredList();
 
+                // NUEVA LÓGICA: Si se encontró un boleto ganador y solo hay 1 resultado
+                if (foundTicketNumber && allTransactionsCache.length === 1 && allTransactionsCache[0].id === transactionIdFromTicket) {
+                    const winner = allTransactionsCache[0];
+                    const allWinnerTickets = await getParticipantTickets(winner.id);
+                    showWinnerTicketModal(winner, foundTicketNumber, allWinnerTickets);
+                    
+                    // Limpiar la búsqueda después de mostrar el ganador
+                    document.getElementById('searchInput').value = '';
+                    currentSearch = '';
+                    // Y recargar la tabla para mostrar todos de nuevo o el filtro actual
+                    // Usamos un pequeño timeout para que el usuario vea el modal antes de que la tabla se recargue
+                    setTimeout(() => {
+                        loadTransactions();
+                    }, 500);
+                }
+
             } catch (error) {
                 console.error("Error cargando transacciones:", error);
                 let errorMsg = `<b>Error al cargar:</b> ${error.message}`;
@@ -525,7 +702,6 @@
                 } else if (error.message.includes("401")) {
                      errorMsg = `<b>Error al cargar: Error de Supabase (401)</b><br>Si el error es "Unauthorized", la SupabaseKey es incorrecta. Por favor, verifica la llave en el código.`;
                 }
-                // COLSPAN ACTUALIZADO A 7
                 document.querySelector("#transactionsTable tbody").innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color: red;">${errorMsg}</td></tr>`;
             }
         }
@@ -586,22 +762,16 @@
             }
         }
 
-        // ==========================================================
-        // ¡INICIO DE LA FUNCIÓN renderTable() MODIFICADA!
-        // (7 Columnas + Sticky Action Column)
-        // ==========================================================
         function renderTable(transactions) {
             const tbody = document.querySelector("#transactionsTable tbody");
             tbody.innerHTML = "";
             if (transactions.length === 0) {
-                // Colspan actualizado a 7
                 tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px;">No se encontraron participantes para este filtro.</td></tr>`;
                 return;
             }
             transactions.forEach(t => {
                 const row = document.createElement("tr");
                 row.className = t.status === "VERIFICADO" ? "verified" : "pending";
-                // Formato de fecha más corto
                 const date = new Date(t.date).toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' });
                 
                 const cleanPhone = t.phone ? t.phone.replace(/\D/g, '') : '';
@@ -609,7 +779,6 @@
                 
                 const ticketCount = t.tickets || 4; 
 
-                // HTML de la fila actualizado a 7 columnas
                 row.innerHTML = `
                     <td>${date}</td>
                     <td class="${duplicateNames.has(cleanName) ? 'duplicate' : ''}"><strong>${t.name}</strong></td>
@@ -635,9 +804,6 @@
                 tbody.appendChild(row);
             });
         }
-        // ==========================================================
-        // ¡FIN DE LA FUNCIÓN renderTable() MODIFICADA!
-        // ==========================================================
 
         function findDuplicates(transactions) {
             const phones = {};
@@ -705,15 +871,6 @@
             }
         }
         
-        // ==========================================================
-        // ¡NUEVA FUNCIÓN DE MODALES PROFESIONALES!
-        // ==========================================================
-        
-        /**
-         * Muestra un modal personalizado en lugar de prompt() o confirm()
-         * Devuelve una Promesa que se resuelve con el valor (si es 'prompt') o true (si es 'confirm')
-         * Se resuelve con 'null' si el usuario cancela.
-         */
         function showModal({ title, message, type = 'confirm', confirmText = 'Aceptar', cancelText = 'Cancelar', defaultValue = '', inputType = 'text', inputPlaceholder = '', confirmClass = '' }) {
             return new Promise((resolve) => {
                 const modal = document.createElement('div');
@@ -721,7 +878,6 @@
                 
                 let inputHtml = '';
                 if (type === 'prompt') {
-                    // Reutilizamos los estilos de .form-group que ya existen
                     inputHtml = `
                         <div class="form-group" style="margin-top: 20px;">
                             <input type="${inputType}" id="modal-input" value="${defaultValue}" placeholder="${inputPlaceholder}">
@@ -747,8 +903,7 @@
                 const cancelBtn = modal.querySelector('#modal-cancel');
                 
                 if (inputEl) {
-                    inputEl.focus(); // Auto-focus en el input si existe
-                    // Permitir presionar Enter en el input
+                    inputEl.focus();
                     inputEl.onkeydown = (e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
@@ -767,15 +922,11 @@
                 };
 
                 cancelBtn.onclick = () => {
-                    closeModal(null); // Resuelve con null si cancela
+                    closeModal(null);
                 };
             });
         }
         
-        // ==========================================================
-        // ¡FUNCIONES MODIFICADAS PARA USAR showModal()!
-        // ==========================================================
-
         async function verifyParticipant(transactionId, phone) {
             const quantityInput = await showModal({
                 title: '<i class="fas fa-ticket-alt" style="color: var(--color-primary);"></i> Asignar Boletos',
@@ -786,12 +937,12 @@
                 confirmText: 'Generar Boletos'
             });
             
-            if (quantityInput === null) return; // Usuario canceló
+            if (quantityInput === null) return;
 
             const ticketQuantity = parseInt(quantityInput);
             
             if (isNaN(ticketQuantity) || ticketQuantity < 1) {
-                alert("Por favor, introduce un número válido mayor a 0."); // Un 'alert' de error simple está bien aquí
+                alert("Por favor, introduce un número válido mayor a 0.");
                 return;
             }
             
@@ -802,7 +953,7 @@
                 cancelText: 'No, cancelar'
             });
 
-            if (!confirmed) return; // Usuario canceló la confirmación
+            if (!confirmed) return;
             
             await completeVerification(transactionId, phone, ticketQuantity, false); 
         }
@@ -813,10 +964,10 @@
                 message: '¿Estás seguro de eliminar este participante? Sus boletos asociados también se eliminarán. <strong>Esta acción no se puede deshacer.</strong>',
                 confirmText: 'Sí, Eliminar',
                 cancelText: 'Cancelar',
-                confirmClass: 'btn-delete' // Esto hace que el botón de confirmar sea rojo
+                confirmClass: 'btn-delete'
             });
 
-            if (!confirmed) return; // Usuario canceló
+            if (!confirmed) return;
             
             try {
                 await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
@@ -927,7 +1078,7 @@
                 confirmText: 'Continuar'
             });
 
-            if (quantityInput === null) return; // Usuario canceló
+            if (quantityInput === null) return;
             
             const newTicketQuantity = parseInt(quantityInput);
             
@@ -941,10 +1092,10 @@
                 message: `¿Estás SEGURO de regenerar los boletos de <strong>${name}</strong>?<br><br>Sus ${oldTicketQuantity} boletos actuales se <strong>ELIMINARÁN PERMANENTEMENTE</strong> y se le asignarán <strong>${newTicketQuantity}</strong> nuevos boletos aleatorios.<br><br>Esta acción no se puede deshacer.`,
                 confirmText: 'Sí, Regenerar Ahora',
                 cancelText: 'Cancelar',
-                confirmClass: 'btn-delete' // Botón rojo para acción destructiva
+                confirmClass: 'btn-delete'
             });
 
-            if (!confirmed) return; // Usuario canceló la confirmación final
+            if (!confirmed) return;
 
             try {
                 const deleteResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}`, { 
@@ -980,16 +1131,20 @@
             }
         }
         
-        // ==========================================================
-        // (Resto de funciones sin cambios)
-        // ==========================================================
-        
         async function getAllExistingTickets() {
             const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?select=ticket_number&limit=10000`; 
             const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
             if (!response.ok) throw new Error(`No se pudo acceder a la tabla 'tickets'.`);
             const ticketsData = await response.json();
             return new Set(ticketsData.map(ticket => ticket.ticket_number));
+        }
+
+        async function getParticipantTickets(transactionId) {
+            const url = `${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number&limit=10000`;
+            const response = await fetch(url, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
+            if (!response.ok) throw new Error(`No se pudieron obtener los boletos del participante.`);
+            const ticketsData = await response.json();
+            return ticketsData.map(t => t.ticket_number);
         }
 
         async function generateTickets(transactionId, quantity) {
@@ -1176,7 +1331,6 @@
                         throw new Error("Números manuales inválidos");
                     }
 
-                    // Verificar si los boletos están disponibles en la DB
                     const checkUrl = `${CONFIG.supabaseUrl}/rest/v1/tickets?ticket_number=in.(${ticketNumbers.join(',')})&select=ticket_number`;
                     const ticketCheck = await fetch(checkUrl, {
                         headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` }
@@ -1188,7 +1342,6 @@
                         throw new Error("Boletos ya asignados");
                     }
 
-                    // ¡Éxito! Insertar los boletos
                     const ticketsToInsert = ticketNumbers.map(num => ({
                         transaction_id: newTransactionId,
                         ticket_number: num,
@@ -1201,7 +1354,6 @@
                         body: JSON.stringify(ticketsToInsert)
                     });
 
-                    // Actualizar la transacción a VERIFICADO
                     const patchResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${newTransactionId}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Prefer': 'return=representation' },
@@ -1222,10 +1374,8 @@
                 console.error("Error guardando participante manual:", error);
                 if (newTransactionId) {
                     console.warn("Borrando transacción huérfana...");
-                    // No alertar al usuario, solo limpiar la DB
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${newTransactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 }
-                // Solo mostrar alertas de error que no sean las de validación
                 if (error.message !== "Boletos manuales vacíos" && error.message !== "Números manuales inválidos" && error.message !== "Boletos ya asignados" && error.message !== "Cantidad inválida") {
                     alert(`Ocurrió un error inesperado: ${error.message}`);
                 }
@@ -1235,7 +1385,9 @@
         function showTicketsModal(tickets, phone, isRegeneration = false) {
             const modal = document.createElement('div');
             modal.className = 'modal';
-            const formattedTickets = tickets.map(t => formatTicketNumber(t.ticket_number)).join(', ');
+            // Corrección: Asegurarse de que 'tickets' sea un array de objetos
+            const ticketNumbers = Array.isArray(tickets) ? tickets.map(t => t.ticket_number) : [];
+            const formattedTickets = ticketNumbers.map(num => formatTicketNumber(num)).join(', ');
             
             const modalTitle = isRegeneration ? 
                 '¡Boletos Regenerados con Éxito!' : 
@@ -1244,7 +1396,7 @@
             modal.innerHTML = `
                 <div class="modal-content">
                     <h2><i class="fas fa-ticket-alt"></i> ${modalTitle}</h2>
-                    <p>Se han asignado <strong>${tickets.length} boletos</strong>:</p>
+                    <p>Se han asignado <strong>${ticketNumbers.length} boletos</strong>:</p>
                     <textarea readonly>${formattedTickets}</textarea>
                     <div class="modal-buttons">
                         <button class="btn-whatsapp" onclick="sendTicketsByWhatsApp('${phone}', '${formattedTickets}')"><i class="fab fa-whatsapp"></i> Enviar por WhatsApp</button>
@@ -1255,11 +1407,10 @@
         }
 
         async function viewTransactionTickets(transactionId, name) {
-            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/tickets?transaction_id=eq.${transactionId}&select=ticket_number&limit=10000`, { headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
-            const tickets = await response.json();
+            const tickets = await getParticipantTickets(transactionId);
             const modal = document.createElement('div');
             modal.className = 'modal';
-            const ticketItems = tickets.map(t => `<span class="ticket-number">${formatTicketNumber(t.ticket_number)}</span>`).join('');
+            const ticketItems = tickets.map(t => `<span class="ticket-number">${formatTicketNumber(t)}</span>`).join('');
             modal.innerHTML = `
                 <div class="modal-content">
                     <h2>Boletos de ${name} (${tickets.length})</h2>
@@ -1268,21 +1419,102 @@
                 </div>`;
             document.body.appendChild(modal);
         }
+
+        // --- NUEVA FUNCIÓN: Modal de Boleto Ganador ---
+        function showWinnerTicketModal(winner, winningTicketNumber, allWinnerTickets) {
+            const modal = document.createElement('div');
+            modal.className = 'modal winner-modal';
+
+            const otherTicketsHtml = allWinnerTickets
+                .filter(num => num !== winningTicketNumber)
+                .map(t => `<span class="ticket-number">${formatTicketNumber(t)}</span>`)
+                .join('');
+            
+            const message = `
+*🎉 ¡FELICITACIONES! ERES UN GANADOR! 🎉*
+
+¡Tu boleto #${formatTicketNumber(winningTicketNumber)} ha sido seleccionado en nuestra Rifa Gratuita!
+
+*Nombre:* ${winner.name}
+*Cédula:* ${winner.id_number || 'No Registrada'}
+*Teléfono:* ${winner.phone || 'No Registrado'}
+*Usuario Social:* ${winner.email || 'No Registrado'}
+
+*---*
+*🎁 RECLAMA TU PREMIO:*
+Comunícate con nosotros lo antes posible para coordinar la entrega de tu premio.
+
+*¡Muchas gracias por participar!* 🍀
+            `.trim();
+
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="confetti"></div>
+                    <h2>🎉 ¡BOLETO GANADOR! 🎉</h2>
+                    <div class="winner-info">
+                        <p><strong>Participante:</strong> ${winner.name}</p>
+                        <p><strong>Cédula:</strong> ${winner.id_number || 'N/A'}</p>
+                        <p><strong>Teléfono:</strong> ${winner.phone || 'N/A'}</p>
+                        <p><strong>Usuario Social:</strong> ${winner.email || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="highlight-ticket">${formatTicketNumber(winningTicketNumber)}</div>
+                    
+                    <div class="other-tickets">
+                        <h3>Otros Boletos del Participante:</h3>
+                        <div class="ticket-list">
+                            ${otherTicketsHtml || 'Este es su único boleto.'}
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn-whatsapp" onclick="sendWinnerMessage('${winner.phone}', \`${message}\`)"><i class="fab fa-whatsapp"></i> Notificar Ganador por WhatsApp</button>
+                        <button onclick="this.closest('.modal').remove()"><i class="fas fa-times"></i> Cerrar</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+
+            // Activar animación de confeti
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.setProperty('--x-start', `${Math.random() * 100 - 50}vw`);
+                confetti.style.setProperty('--y-start', `${Math.random() * 100 - 50}vh`);
+                confetti.style.setProperty('--x-end', `${Math.random() * 200 - 100}vw`);
+                confetti.style.setProperty('--y-end', `${Math.random() * 200 + 50}vh`);
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * 100}%`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                modal.querySelector('.confetti').appendChild(confetti);
+            }
+        }
         
-        function sendTicketsByWhatsApp(phone, ticketNumbers) {
+        // Función wrapper para el mensaje del ganador para evitar problemas con comillas
+        function sendWinnerMessage(phone, message) {
+            sendTicketsByWhatsApp(phone, message);
+        }
+
+        function sendTicketsByWhatsApp(phone, content) {
             let cleanPhone = phone ? phone.replace(/\D/g, '') : ''; 
             if (cleanPhone && cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
                 cleanPhone = '58' + cleanPhone.substring(1); 
             } else if (cleanPhone && cleanPhone.length === 10) {
                 cleanPhone = '58' + cleanPhone; 
             }
-            const messageTemplate = `
+            
+            // Si el contenido (content) no es el mensaje de ganador, es la lista de boletos
+            // y necesita el mensaje de "asignados".
+            let messageTemplate;
+            if (content.includes("¡FELICITACIONES!")) {
+                messageTemplate = content; // Ya es el mensaje de ganador
+            } else {
+                // Es una lista de boletos
+                messageTemplate = `
 *🎟️ ¡BOLETOS DE RIFA ASIGNADOS! 🎟️*
 
 ¡Felicitaciones! Ya tienes tus números para participar en la Rifa Gratuita.
 
 *➡️ TUS NÚMEROS SON:*
-${ticketNumbers}
+${content}
 
 *---*
 *📣 ¡ÚNETE A LA COMUNIDAD!*
@@ -1290,7 +1522,9 @@ Para estar informado sobre la fecha del sorteo, futuros premios y ganar con nuev
 🔗 https://chat.whatsapp.com/BZ8b01SXEjVGLlqav3gACB?mode=ww
 
 ¡Mucha suerte! 🍀
-            `.trim();
+                `.trim();
+            }
+
             const message = encodeURIComponent(messageTemplate);
             window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
         }
