@@ -1243,7 +1243,7 @@
 
         // ==========================================================
         // ¡INICIO DE LA FUNCIÓN MODIFICADA!
-        // Esta es la función que daba el error 406.
+        // Esta es la función que daba el error 400.
         // ==========================================================
         async function saveManualParticipant() {
             const newName = document.getElementById('manual-name').value;
@@ -1257,7 +1257,7 @@
                 return;
             }
 
-            // --- ESTE ES EL BLOQUE CORREGIDO ---
+            // --- Bloque de verificación de duplicados (ya corregido antes para el 406) ---
             if (newPhone || newIdNumber) {
                 let orFilter = [];
                 if (newPhone) orFilter.push(`phone.eq.${newPhone}`);
@@ -1266,10 +1266,9 @@
                 try {
                     const checkUrl = `${CONFIG.supabaseUrl}/rest/v1/transactions?or=(${orFilter.join(',')})&select=id`;
                     const checkResponse = await fetch(checkUrl, {
-                        headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } // QUITÉ EL HEADER 'Accept'
+                        headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } 
                     });
                     
-                    // Si el checkResponse NO está ok, Y TAMPOCO es un 404 (que es "ok" en este caso)
                     if (!checkResponse.ok && checkResponse.status !== 404) {
                         throw new Error(`Error de Supabase (check): ${checkResponse.statusText}`);
                     }
@@ -1277,40 +1276,47 @@
                     const existingData = await checkResponse.json();
 
                     if (existingData.length > 0) {
-                        // Si encontró uno o más, está duplicado.
                         alert("¡Error! Un participante con ese número de teléfono o cédula ya existe.\nBúscalo en la lista para editarlo.");
-                        return; // Detener la ejecución
+                        return; 
                     }
-                    // Si existingData.length === 0, (o sea, 404 o un array vacío), la ejecución continúa...
-
                 } catch (e) {
-                    // Si el fetch falla por red, etc.
                     console.error("Error en la verificación de duplicados:", e);
                     alert(`Error verificando duplicados: ${e.message}`);
-                    return; // Detener la ejecución
+                    return;
                 }
             }
-            // --- FIN DEL BLOQUE CORREGIDO ---
+            // --- Fin del bloque de verificación ---
 
-
+            // ==========================================================
+            // ¡AQUÍ ESTÁ LA CORRECCIÓN PARA EL ERROR 400!
+            // Añadimos "tickets: 0" al objeto.
+            // ==========================================================
             const newTransactionData = {
                 name: newName,
                 id_number: newIdNumber,
                 phone: newPhone,
                 email: newEmail,
                 status: 'PENDIENTE', 
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                tickets: 0 // <-- ¡ESTA ES LA LÍNEA AÑADIDA!
             };
 
             let newTransactionId = null;
             try {
+                // Esta es la línea (aprox 1307) que daba el error 400
                 const transResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Prefer': 'return=representation' },
                     body: JSON.stringify(newTransactionData)
                 });
                 
-                if (!transResponse.ok) throw new Error('No se pudo crear la transacción.');
+                // Esta es la línea (aprox 1313) que mostraba el error en consola
+                if (!transResponse.ok) {
+                    // Log más detallado para futura depuración
+                    const errorBody = await transResponse.json();
+                    console.error("Error detallado de Supabase:", errorBody);
+                    throw new Error(`No se pudo crear la transacción. (Status: ${transResponse.status})`);
+                }
                 
                 const newTransaction = (await transResponse.json())[0];
                 newTransactionId = newTransaction.id;
@@ -1324,9 +1330,11 @@
                     }
 
                     document.querySelector('.modal').remove();
+                    // completeVerification se encargará de actualizar el status y el conteo de boletos
                     await completeVerification(newTransactionId, newPhone, ticketQuantity, true); 
 
                 } else {
+                    // Lógica para boletos manuales
                     const ticketsInput = document.getElementById('manual-ticket-numbers').value;
                     if (!ticketsInput) {
                         alert("Debes escribir al menos un número de boleto manual.");
@@ -1375,6 +1383,7 @@
                         body: JSON.stringify(ticketsToInsert)
                     });
 
+                    // Actualizar la transacción a VERIFICADO y con el conteo de boletos
                     const patchResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${newTransactionId}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Prefer': 'return=representation' },
@@ -1393,10 +1402,13 @@
             
             } catch (error) {
                 console.error("Error guardando participante manual:", error);
+                // Si la transacción se creó (newTransactionId existe) pero algo falló después
+                // (ej. boletos inválidos), borramos la transacción "huérfana"
                 if (newTransactionId) {
                     console.warn("Borrando transacción huérfana...");
                     await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?id=eq.${newTransactionId}`, { method: 'DELETE', headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } });
                 }
+                // No mostrar alertas de validación (que ya se mostraron)
                 if (error.message !== "Boletos manuales vacíos" && error.message !== "Números manuales inválidos" && error.message !== "Boletos ya asignados" && error.message !== "Cantidad inválida") {
                     alert(`Ocurrió un error inesperado: ${error.message}`);
                 }
