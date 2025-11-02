@@ -601,9 +601,6 @@
     <script>
         const CONFIG = {
             supabaseUrl: "https://iqigjulbvmkokorecjie.supabase.co",
-            // ==========================================================
-            // ¡ESTA ES LA LLAVE CORRECTA Y COMPLETA!
-            // ==========================================================
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxaWdqdWxidm1rb2tvcmVjamllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQ0MjAzNiwiZXhwIjoyMDY5MDE4MDM2fQ.F_ewIibBG7QgpSYfnUKzosl46prz7Kv_BD8-Xnrxj-c",
             totalTickets: 9999,
         };
@@ -1244,6 +1241,10 @@
             document.getElementById('manual-ticket-group').style.display = (selection === 'manual') ? 'block' : 'none';
         }
 
+        // ==========================================================
+        // ¡INICIO DE LA FUNCIÓN MODIFICADA!
+        // Esta es la función que daba el error 406.
+        // ==========================================================
         async function saveManualParticipant() {
             const newName = document.getElementById('manual-name').value;
             const newIdNumber = document.getElementById('manual-id_number').value || null;
@@ -1256,21 +1257,41 @@
                 return;
             }
 
+            // --- ESTE ES EL BLOQUE CORREGIDO ---
             if (newPhone || newIdNumber) {
                 let orFilter = [];
                 if (newPhone) orFilter.push(`phone.eq.${newPhone}`);
                 if (newIdNumber) orFilter.push(`id_number.eq.${newIdNumber}`);
                 
                 try {
-                    const checkResponse = await fetch(`${CONFIG.supabaseUrl}/rest/v1/transactions?or=(${orFilter.join(',')})&select=id`, {
-                        headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}`, 'Accept': 'application/vnd.pgrst.object+json' }
+                    const checkUrl = `${CONFIG.supabaseUrl}/rest/v1/transactions?or=(${orFilter.join(',')})&select=id`;
+                    const checkResponse = await fetch(checkUrl, {
+                        headers: { 'apikey': CONFIG.supabaseKey, 'Authorization': `Bearer ${CONFIG.supabaseKey}` } // QUITÉ EL HEADER 'Accept'
                     });
-                    if (checkResponse.ok) {
-                        alert("¡Error! Un participante con ese número de teléfono o cédula ya existe.\nBúscalo en la lista para editarlo.");
-                        return;
+                    
+                    // Si el checkResponse NO está ok, Y TAMPOCO es un 404 (que es "ok" en este caso)
+                    if (!checkResponse.ok && checkResponse.status !== 404) {
+                        throw new Error(`Error de Supabase (check): ${checkResponse.statusText}`);
                     }
-                } catch (e) { /* Está bien si no lo encuentra */ }
+
+                    const existingData = await checkResponse.json();
+
+                    if (existingData.length > 0) {
+                        // Si encontró uno o más, está duplicado.
+                        alert("¡Error! Un participante con ese número de teléfono o cédula ya existe.\nBúscalo en la lista para editarlo.");
+                        return; // Detener la ejecución
+                    }
+                    // Si existingData.length === 0, (o sea, 404 o un array vacío), la ejecución continúa...
+
+                } catch (e) {
+                    // Si el fetch falla por red, etc.
+                    console.error("Error en la verificación de duplicados:", e);
+                    alert(`Error verificando duplicados: ${e.message}`);
+                    return; // Detener la ejecución
+                }
             }
+            // --- FIN DEL BLOQUE CORREGIDO ---
+
 
             const newTransactionData = {
                 name: newName,
@@ -1381,6 +1402,9 @@
                 }
             }
         }
+        // ==========================================================
+        // ¡FIN DE LA FUNCIÓN MODIFICADA!
+        // ==========================================================
         
         function showTicketsModal(tickets, phone, isRegeneration = false) {
             const modal = document.createElement('div');
